@@ -117,22 +117,40 @@
                 </div>
             </div>
 
-            <!-- Tabs Nav -->
-            <nav class="flex items-center gap-1 bg-[#131d38] p-1.5 rounded-2xl border border-slate-800 text-xs overflow-x-auto custom-scrollbar">
-                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn px-4 py-2 rounded-xl font-semibold transition-all bg-blue-600 text-white">Dashboard</button>
-                <button onclick="switchTab('jadwal')" id="nav-jadwal" class="nav-btn px-4 py-2 rounded-xl font-semibold text-slate-400 hover:text-white transition-all">Jadwal Kuliah</button>
-                <button onclick="switchTab('tugas')" id="nav-tugas" class="nav-btn px-4 py-2 rounded-xl font-semibold text-slate-400 hover:text-white transition-all">Tugas</button>
-                <button onclick="switchTab('agenda')" id="nav-agenda" class="nav-btn px-4 py-2 rounded-xl font-semibold text-slate-400 hover:text-white transition-all">Agenda</button>
-                <button onclick="switchTab('keuangan')" id="nav-keuangan" class="nav-btn nav-owner-only px-4 py-2 rounded-xl font-semibold text-slate-400 hover:text-white transition-all">Keuangan</button>
-                <button onclick="switchTab('kalender')" id="nav-kalender" class="nav-btn px-4 py-2 rounded-xl font-semibold text-slate-400 hover:text-white transition-all">Kalender</button>
+            <!-- Tabs Nav (Berbasis Ikon, Teks Muncul Saat Klik/Aktif) -->
+            <nav class="flex items-center gap-1.5 bg-[#131d38] p-1.5 rounded-2xl border border-slate-800 text-xs overflow-x-auto custom-scrollbar">
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" title="Dashboard" class="nav-btn flex items-center gap-2 px-3.5 py-2 rounded-xl font-semibold transition-all bg-blue-600 text-white">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4 shrink-0"></i>
+                    <span class="nav-text">Dashboard</span>
+                </button>
+                <button onclick="switchTab('jadwal')" id="nav-jadwal" title="Jadwal Kuliah" class="nav-btn flex items-center gap-2 px-3.5 py-2 rounded-xl font-semibold text-slate-400 hover:text-white transition-all">
+                    <i data-lucide="calendar-range" class="w-4 h-4 shrink-0"></i>
+                    <span class="nav-text hidden">Jadwal Kuliah</span>
+                </button>
+                <button onclick="switchTab('tugas')" id="nav-tugas" title="Tugas" class="nav-btn flex items-center gap-2 px-3.5 py-2 rounded-xl font-semibold text-slate-400 hover:text-white transition-all">
+                    <i data-lucide="file-text" class="w-4 h-4 shrink-0"></i>
+                    <span class="nav-text hidden">Tugas</span>
+                </button>
+                <button onclick="switchTab('agenda')" id="nav-agenda" title="Agenda" class="nav-btn flex items-center gap-2 px-3.5 py-2 rounded-xl font-semibold text-slate-400 hover:text-white transition-all">
+                    <i data-lucide="calendar-clock" class="w-4 h-4 shrink-0"></i>
+                    <span class="nav-text hidden">Agenda</span>
+                </button>
+                <button onclick="switchTab('keuangan')" id="nav-keuangan" title="Keuangan" class="nav-btn nav-owner-only flex items-center gap-2 px-3.5 py-2 rounded-xl font-semibold text-slate-400 hover:text-white transition-all">
+                    <i data-lucide="wallet" class="w-4 h-4 shrink-0"></i>
+                    <span class="nav-text hidden">Keuangan</span>
+                </button>
+                <button onclick="switchTab('kalender')" id="nav-kalender" title="Kalender Interaktif" class="nav-btn flex items-center gap-2 px-3.5 py-2 rounded-xl font-semibold text-slate-400 hover:text-white transition-all">
+                    <i data-lucide="calendar-days" class="w-4 h-4 shrink-0"></i>
+                    <span class="nav-text hidden">Kalender</span>
+                </button>
             </nav>
 
             <div class="flex items-center gap-2">
-                <button onclick="switchTab('settings')" id="nav-settings" class="nav-owner-only flex items-center gap-1 bg-[#131d38] hover:bg-slate-800 text-slate-300 text-xs font-semibold px-3 py-2 rounded-xl border border-slate-800 transition">
-                    <i data-lucide="settings" class="w-3.5 h-3.5"></i> Settings
+                <button onclick="switchTab('settings')" id="nav-settings" title="Pengaturan" class="nav-owner-only flex items-center gap-1.5 bg-[#131d38] hover:bg-slate-800 text-slate-300 text-xs font-semibold px-3 py-2 rounded-xl border border-slate-800 transition">
+                    <i data-lucide="settings" class="w-4 h-4"></i> <span class="hidden sm:inline">Settings</span>
                 </button>
-                <button onclick="logout()" class="flex items-center gap-1 bg-red-950/60 hover:bg-red-900/60 text-red-400 text-xs font-semibold px-3 py-2 rounded-xl border border-red-800/50 transition">
-                    <i data-lucide="log-out" class="w-3.5 h-3.5"></i> Keluar
+                <button onclick="logout()" title="Keluar" class="flex items-center gap-1.5 bg-red-950/60 hover:bg-red-900/60 text-red-400 text-xs font-semibold px-3 py-2 rounded-xl border border-red-800/50 transition">
+                    <i data-lucide="log-out" class="w-4 h-4"></i> <span class="hidden sm:inline">Keluar</span>
                 </button>
             </div>
         </header>
@@ -159,20 +177,22 @@
                         </div>
                     </div>
 
+                    <!-- REAL TIME WAKTU & TANGGAL -->
                     <div class="bg-white/10 backdrop-blur-md rounded-2xl px-5 py-3 border border-white/20 text-right z-10 w-full md:w-auto flex md:flex-col justify-between items-center md:items-end">
                         <span class="text-[10px] uppercase font-bold tracking-wider text-blue-200">INGAT WAKTU</span>
                         <div id="realtimeClock" class="font-extrabold text-base tracking-wide text-white">00.00.00 WIB</div>
+                        <div id="realtimeDateSub" class="text-[11px] text-blue-100 font-medium mt-0.5">Senin, 1 Januari 2026</div>
                     </div>
                 </div>
 
                 <!-- PINTAS HARI INI & BESOK -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div class="bg-[#0f172a] rounded-3xl p-6 border border-slate-800 shadow-sm">
-                        <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center justify-between mb-4 border-b border-slate-800/80 pb-3">
                             <h3 class="font-bold text-sm text-slate-100 flex items-center gap-2">
                                 <i data-lucide="sun" class="w-4 h-4 text-sky-400"></i> Pintas Hari Ini
                             </h3>
-                            <span id="dashTodayName" class="text-xs text-slate-400 font-semibold">Hari Ini</span>
+                            <span id="dashTodayName" class="text-xs text-sky-400 font-bold bg-sky-950/60 border border-sky-800/50 px-2.5 py-0.5 rounded-lg">Hari Ini</span>
                         </div>
                         <div id="todayList" class="space-y-2.5 min-h-[120px] flex flex-col justify-center">
                             <p class="text-xs text-slate-500 text-center">Tidak ada agenda atau jadwal khusus hari ini.</p>
@@ -180,13 +200,15 @@
                     </div>
 
                     <div class="bg-[#0f172a] rounded-3xl p-6 border border-slate-800 shadow-sm">
-                        <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center justify-between mb-4 border-b border-slate-800/80 pb-3">
                             <h3 class="font-bold text-sm text-slate-100 flex items-center gap-2">
                                 <i data-lucide="calendar" class="w-4 h-4 text-indigo-400"></i> Pintas Agenda / Besok
                             </h3>
-                            <span id="dashTomorrowName" class="text-xs text-indigo-400 font-semibold">Besok</span>
+                            <span id="dashTomorrowName" class="text-xs text-indigo-400 font-bold bg-indigo-950/60 border border-indigo-800/50 px-2.5 py-0.5 rounded-lg">Besok</span>
                         </div>
-                        <div id="tomorrowList" class="space-y-2"></div>
+                        <div id="tomorrowList" class="space-y-2.5 min-h-[120px] flex flex-col justify-center">
+                            <p class="text-xs text-slate-500 text-center">Tidak ada jadwal kuliah atau agenda untuk besok.</p>
+                        </div>
                     </div>
                 </div>
 
@@ -447,9 +469,7 @@
                 <h3 id="previewTitle" class="text-sm font-bold text-white truncate max-w-md">Preview File</h3>
                 <button onclick="closePreviewModal()" class="text-slate-400 hover:text-white p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
-            <div id="previewContainer" class="flex-1 overflow-auto bg-[#131d38] rounded-2xl p-2 flex items-center justify-center min-h-[300px]">
-                <!-- Filled dynamically -->
-            </div>
+            <div id="previewContainer" class="flex-1 overflow-auto bg-[#131d38] rounded-2xl p-2 flex items-center justify-center min-h-[300px]"></div>
             <div class="mt-4 flex justify-end gap-2">
                 <a id="previewDownloadBtn" download href="#" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2 rounded-xl flex items-center gap-1.5">
                     <i data-lucide="download" class="w-4 h-4"></i> Unduh File
@@ -492,7 +512,7 @@
         </div>
     </div>
 
-    <!-- MODAL AGENDA (Dengan Tempat, Status, Kriteria, & Upload File PDF/JPG <= 3MB) -->
+    <!-- MODAL AGENDA -->
     <div id="modalAgenda" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
         <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl text-xs space-y-4">
             <h3 id="agendaModalHeader" class="text-base font-bold text-white mb-2">Tambah / Edit Agenda</h3>
@@ -550,7 +570,7 @@
         </div>
     </div>
 
-    <!-- MODAL TUGAS (Edit, Status Terkumpul/Belum, Status Pengerjaan, Catatan/Rangkuman, Upload File Maks 3MB) -->
+    <!-- MODAL TUGAS -->
     <div id="modalTugas" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
         <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl text-xs space-y-4">
             <h3 id="tugasModalHeader" class="text-base font-bold text-white mb-2">Tambah / Edit Tugas</h3>
@@ -604,7 +624,7 @@
         </div>
     </div>
 
-    <!-- MODAL JADWAL KULIAH (Edit, Ruang & Dosen Pengampu) -->
+    <!-- MODAL JADWAL KULIAH -->
     <div id="modalJadwal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
         <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl text-xs space-y-4">
             <h3 id="jadwalModalHeader" class="text-base font-bold text-white mb-2">Tambah / Edit Jadwal Kuliah</h3>
@@ -720,14 +740,17 @@
             ],
             schedules: [
                 { id: '1', hari: 'Senin', matkul: 'Latihan Bahasa', ruang: 'R.301', dosen: 'Dr. Siti, M.Pd', jam: '07.30 - 09.00' },
-                { id: '2', hari: 'Senin', matkul: 'Filsafat Ilmu Sosial', ruang: 'R.402', dosen: 'Prof. Ahmad', jam: '09.00 - 11.20' }
+                { id: '2', hari: 'Senin', matkul: 'Filsafat Ilmu Sosial', ruang: 'R.402', dosen: 'Prof. Ahmad', jam: '09.00 - 11.20' },
+                { id: '3', hari: 'Selasa', matkul: 'Kewirausahaan', ruang: 'R.201', dosen: 'Ir. Handojo, M.M', jam: '10.00 - 12.30' }
             ],
             settings: { themeMode: 'dark' }
         };
 
-        let currentCalendarDate = new Date(2026, 10, 8);
+        let currentCalendarDate = new Date(); 
+        currentCalendarDate.setDate(1); // Mencegah bug overflow pergeseran bulan
         let taskChartInstance = null;
         let financeChartInstance = null;
+        let lastDateCheckedStr = '';
 
         window.onload = function() {
             lucide.createIcons();
@@ -749,7 +772,6 @@
             if (saved) {
                 try { 
                     appState = JSON.parse(saved);
-                    // Migrasi data lama jika pengerjaan / catatan belum ada
                     appState.tasks.forEach(t => {
                         if (!t.pengerjaan) t.pengerjaan = 'Belum dikerjakan';
                         if (t.catatan === undefined) t.catatan = '';
@@ -762,7 +784,6 @@
             localStorage.setItem(DB_KEY, JSON.stringify(appState));
         }
 
-        // --- FILE HELPER (Base64 Reader <= 3MB) ---
         function readFileAsBase64(file) {
             return new Promise((resolve, reject) => {
                 if (file.size > 3 * 1024 * 1024) {
@@ -807,7 +828,6 @@
             document.getElementById('modalPreviewFile').classList.add('hidden');
         }
 
-        // --- MODAL CATATAN TUGAS ---
         function openTaskNoteModal(taskId) {
             const t = appState.tasks.find(x => x.id === taskId);
             if (t) {
@@ -821,7 +841,6 @@
             document.getElementById('modalTaskNote').classList.add('hidden');
         }
 
-        // --- THEME SWITCHER ---
         function toggleAppTheme() {
             appState.settings.themeMode = (appState.settings.themeMode === 'dark') ? 'light' : 'dark';
             saveState();
@@ -846,7 +865,6 @@
             }
         }
 
-        // --- DEVICE NOTIFICATION ---
         function requestDeviceNotificationPermission() {
             if (!("Notification" in window)) {
                 showToast("Browser tidak mendukung notifikasi.", "error");
@@ -868,7 +886,6 @@
             }
         }
 
-        // --- AUTH & LOGIN ---
         function openGoogleAccountChooser() {
             const list = document.getElementById('googleAccountsList');
             list.innerHTML = '';
@@ -911,6 +928,7 @@
 
         function loginAsGuest() {
             appState.currentUser = { name: "Tamu", email: "guest@myjadwal.com", avatar: 'https://placehold.co/100x100/64748b/white?text=G', accessId: 'MJ-GUEST', isGuest: true };
+            saveState();
             initAppAfterLogin();
         }
 
@@ -931,6 +949,7 @@
 
         function setupUserUI() {
             const user = appState.currentUser;
+            if(!user) return;
             document.getElementById('dashUserName').innerText = user.name;
             document.getElementById('userAvatar').src = user.avatar;
             document.getElementById('dashAccessID').innerText = user.accessId || 'MJ-000000';
@@ -951,22 +970,43 @@
             });
         }
 
-        // --- REALTIME CLOCK ---
+        // --- REAL TIME CLOCK, HARI, DAN TANGGAL LENGKAP ---
         function startClock() {
             const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
             const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
 
-            setInterval(() => {
+            const updateTime = () => {
                 const now = new Date();
                 const hh = String(now.getHours()).padStart(2, '0');
                 const mm = String(now.getMinutes()).padStart(2, '0');
                 const ss = String(now.getSeconds()).padStart(2, '0');
+                
+                const dayName = days[now.getDay()];
+                const dateNum = now.getDate();
+                const monthName = months[now.getMonth()];
+                const yearNum = now.getFullYear();
+
+                // Format Jam
                 document.getElementById('realtimeClock').innerText = `${hh}.${mm}.${ss} WIB`;
-                document.getElementById('dashGreeting').innerText = `${days[now.getDay()].toUpperCase()}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
-            }, 1000);
+                // Format Hari & Tanggal di Bawah Jam Realtime
+                document.getElementById('realtimeDateSub').innerText = `${dayName}, ${dateNum} ${monthName} ${yearNum}`;
+                // Format Salam Header
+                document.getElementById('dashGreeting').innerText = `${dayName.toUpperCase()}, ${dateNum} ${monthName} ${yearNum}`;
+
+                // Otomatis Perbarui Pintasan saat Pergantian Hari Berjalan
+                const currentDateStr = `${yearNum}-${now.getMonth()}-${dateNum}`;
+                if (lastDateCheckedStr !== currentDateStr) {
+                    lastDateCheckedStr = currentDateStr;
+                    if (appState.currentUser) {
+                        renderDashboard();
+                    }
+                }
+            };
+
+            updateTime();
+            setInterval(updateTime, 1000);
         }
 
-        // --- TAB SWITCHER ---
         function switchTab(tabId) {
             document.querySelectorAll('section[id^="view-"]').forEach(sec => sec.classList.add('hidden'));
             document.getElementById(`view-${tabId}`).classList.remove('hidden');
@@ -974,17 +1014,20 @@
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.classList.remove('bg-blue-600', 'text-white');
                 btn.classList.add('text-slate-400');
+                const textSpan = btn.querySelector('.nav-text');
+                if (textSpan) textSpan.classList.add('hidden');
             });
 
             const activeBtn = document.getElementById(`nav-${tabId}`);
             if (activeBtn) {
                 activeBtn.classList.add('bg-blue-600', 'text-white');
                 activeBtn.classList.remove('text-slate-400');
+                const activeText = activeBtn.querySelector('.nav-text');
+                if (activeText) activeText.classList.remove('hidden');
             }
-            if(tabId === 'kalender') renderFullCalendar();
+            if (tabId === 'kalender') renderFullCalendar();
         }
 
-        // --- RENDER ALL & STATS ---
         function renderAll() {
             renderDashboard();
             renderAgendaGrid();
@@ -995,6 +1038,7 @@
             lucide.createIcons();
         }
 
+        // --- RENDER DASHBOARD & PINTASAN HARIAN DINAMIS ---
         function renderDashboard() {
             const doneTasks = appState.tasks.filter(t => t.status === 'Terkumpul').length;
             const taskPct = appState.tasks.length > 0 ? Math.round((doneTasks / appState.tasks.length) * 100) : 0;
@@ -1015,20 +1059,135 @@
             document.getElementById('dashSaldoHighlight').innerText = saldoFmt;
             document.getElementById('chartSaldoNote').innerText = `Saldo: ${saldoFmt}`;
 
-            // Pintasan Besok
-            const tomList = document.getElementById('tomorrowList');
-            tomList.innerHTML = '';
-            appState.schedules.filter(s => s.hari === 'Senin').forEach(s => {
-                tomList.innerHTML += `
-                    <div class="p-2.5 bg-[#131d38] rounded-xl flex justify-between items-center text-xs">
+            // SISTEM PINTASAN HARIAN DINAMIS (HARI INI & BESOK)
+            const daysArr = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(today.getDate() + 1);
+
+            const todayDayName = daysArr[today.getDay()];
+            const tomorrowDayName = daysArr[tomorrow.getDay()];
+
+            const formatDateISO = (d) => {
+                const yyyy = d.getFullYear();
+                const mm = String(d.getMonth() + 1).padStart(2, '0');
+                const dd = String(d.getDate()).padStart(2, '0');
+                return `${yyyy}-${mm}-${dd}`;
+            };
+
+            const todayISO = formatDateISO(today);
+            const tomorrowISO = formatDateISO(tomorrow);
+
+            document.getElementById('dashTodayName').innerText = `${todayDayName} (Hari Ini)`;
+            document.getElementById('dashTomorrowName').innerText = `${tomorrowDayName} (Besok)`;
+
+            // 1. Render Pintasan Hari Ini (Jadwal Kuliah + Agenda + Tugas Tenggat Hari Ini)
+            const todayListEl = document.getElementById('todayList');
+            todayListEl.innerHTML = '';
+            let todayItemsCount = 0;
+
+            const todaySchedules = appState.schedules.filter(s => s.hari === todayDayName);
+            todaySchedules.forEach(s => {
+                todayItemsCount++;
+                todayListEl.innerHTML += `
+                    <div class="p-2.5 bg-[#131d38] rounded-xl flex justify-between items-center text-xs border border-slate-800">
                         <div>
-                            <span class="font-bold text-slate-200 block">${s.matkul}</span>
-                            <span class="text-[10px] text-slate-400">R: ${s.ruang} | ${s.dosen}</span>
+                            <span class="text-[10px] uppercase font-bold text-sky-400 block">Jadwal Kuliah</span>
+                            <span class="font-bold text-slate-100 block">${s.matkul}</span>
+                            <span class="text-[10px] text-slate-400">Ruang: ${s.ruang} | Dosen: ${s.dosen}</span>
                         </div>
-                        <span class="text-slate-400 font-mono text-[11px]">${s.jam}</span>
+                        <span class="text-sky-300 font-mono text-[11px] font-bold bg-sky-950/60 px-2 py-1 rounded-lg border border-sky-800/40">${s.jam}</span>
                     </div>
                 `;
             });
+
+            const todayAgendas = appState.agendas.filter(a => a.tanggal === todayISO);
+            todayAgendas.forEach(a => {
+                todayItemsCount++;
+                todayListEl.innerHTML += `
+                    <div class="p-2.5 bg-[#131d38] rounded-xl flex justify-between items-center text-xs border border-purple-900/40">
+                        <div>
+                            <span class="text-[10px] uppercase font-bold text-purple-400 block">Agenda (${a.kriteria})</span>
+                            <span class="font-bold text-slate-100 block">${a.nama}</span>
+                            <span class="text-[10px] text-slate-400">Lokasi: ${a.lokasi}</span>
+                        </div>
+                        <span class="text-purple-300 font-mono text-[11px] font-bold bg-purple-950/60 px-2 py-1 rounded-lg border border-purple-800/40">${a.jam} WIB</span>
+                    </div>
+                `;
+            });
+
+            const todayTasks = appState.tasks.filter(t => t.deadline.startsWith(todayISO));
+            todayTasks.forEach(t => {
+                todayItemsCount++;
+                todayListEl.innerHTML += `
+                    <div class="p-2.5 bg-[#131d38] rounded-xl flex justify-between items-center text-xs border border-amber-900/40">
+                        <div>
+                            <span class="text-[10px] uppercase font-bold text-amber-400 block">Deadline Tugas</span>
+                            <span class="font-bold text-slate-100 block">${t.nama}</span>
+                            <span class="text-[10px] text-slate-400">Dosen: ${t.dosen}</span>
+                        </div>
+                        <span class="text-amber-300 font-mono text-[11px] font-bold bg-amber-950/60 px-2 py-1 rounded-lg border border-amber-800/40">${t.deadline.split('T')[1] || ''}</span>
+                    </div>
+                `;
+            });
+
+            if (todayItemsCount === 0) {
+                todayListEl.innerHTML = `<p class="text-xs text-slate-500 text-center py-4">Tidak ada agenda atau jadwal khusus hari ini.</p>`;
+            }
+
+            // 2. Render Pintasan Besok (Jadwal Kuliah + Agenda + Tugas Tenggat Besok)
+            const tomorrowListEl = document.getElementById('tomorrowList');
+            tomorrowListEl.innerHTML = '';
+            let tomorrowItemsCount = 0;
+
+            const tomorrowSchedules = appState.schedules.filter(s => s.hari === tomorrowDayName);
+            tomorrowSchedules.forEach(s => {
+                tomorrowItemsCount++;
+                tomorrowListEl.innerHTML += `
+                    <div class="p-2.5 bg-[#131d38] rounded-xl flex justify-between items-center text-xs border border-slate-800">
+                        <div>
+                            <span class="text-[10px] uppercase font-bold text-indigo-400 block">Jadwal Kuliah</span>
+                            <span class="font-bold text-slate-200 block">${s.matkul}</span>
+                            <span class="text-[10px] text-slate-400">Ruang: ${s.ruang} | Dosen: ${s.dosen}</span>
+                        </div>
+                        <span class="text-indigo-300 font-mono text-[11px] font-bold bg-indigo-950/60 px-2 py-1 rounded-lg border border-indigo-800/40">${s.jam}</span>
+                    </div>
+                `;
+            });
+
+            const tomorrowAgendas = appState.agendas.filter(a => a.tanggal === tomorrowISO);
+            tomorrowAgendas.forEach(a => {
+                tomorrowItemsCount++;
+                tomorrowListEl.innerHTML += `
+                    <div class="p-2.5 bg-[#131d38] rounded-xl flex justify-between items-center text-xs border border-purple-900/40">
+                        <div>
+                            <span class="text-[10px] uppercase font-bold text-purple-400 block">Agenda Besok</span>
+                            <span class="font-bold text-slate-200 block">${a.nama}</span>
+                            <span class="text-[10px] text-slate-400">Lokasi: ${a.lokasi}</span>
+                        </div>
+                        <span class="text-purple-300 font-mono text-[11px] font-bold bg-purple-950/60 px-2 py-1 rounded-lg border border-purple-800/40">${a.jam} WIB</span>
+                    </div>
+                `;
+            });
+
+            const tomorrowTasks = appState.tasks.filter(t => t.deadline.startsWith(tomorrowISO));
+            tomorrowTasks.forEach(t => {
+                tomorrowItemsCount++;
+                tomorrowListEl.innerHTML += `
+                    <div class="p-2.5 bg-[#131d38] rounded-xl flex justify-between items-center text-xs border border-amber-900/40">
+                        <div>
+                            <span class="text-[10px] uppercase font-bold text-amber-400 block">Deadline Tugas Besok</span>
+                            <span class="font-bold text-slate-200 block">${t.nama}</span>
+                            <span class="text-[10px] text-slate-400">Dosen: ${t.dosen}</span>
+                        </div>
+                        <span class="text-amber-300 font-mono text-[11px] font-bold bg-amber-950/60 px-2 py-1 rounded-lg border border-amber-800/40">${t.deadline.split('T')[1] || ''}</span>
+                    </div>
+                `;
+            });
+
+            if (tomorrowItemsCount === 0) {
+                tomorrowListEl.innerHTML = `<p class="text-xs text-slate-500 text-center py-4">Tidak ada jadwal kuliah atau agenda untuk besok.</p>`;
+            }
 
             renderCharts(inc, exp);
         }
@@ -1054,7 +1213,6 @@
             });
         }
 
-        // --- KALENDER WIDGET & INTERACTIVE CLICK ---
         function renderCalendarWidget() {
             const grid = document.getElementById('calendarGrid');
             grid.innerHTML = '';
@@ -1135,9 +1293,14 @@
         }
 
         function closeCalendarDetailModal() { document.getElementById('modalCalendarDetail').classList.add('hidden'); }
-        function changeMonth(dir) { currentCalendarDate.setMonth(currentCalendarDate.getMonth() + dir); renderCalendarWidget(); renderFullCalendar(); }
+        
+        function changeMonth(dir) { 
+            currentCalendarDate.setDate(1); 
+            currentCalendarDate.setMonth(currentCalendarDate.getMonth() + dir); 
+            renderCalendarWidget(); 
+            renderFullCalendar(); 
+        }
 
-        // --- AGENDA MANAGEMENT (CRUD + QUICK STATUS + KRITERIA + FILE MAX 3MB) ---
         function openAgendaModal(editId = null) {
             const form = document.querySelector('#modalAgenda form');
             form.reset();
@@ -1169,6 +1332,10 @@
 
         async function saveAgenda(e) {
             e.preventDefault();
+            if(appState.currentUser && appState.currentUser.isGuest) {
+                showToast("Akses Tamu tidak diizinkan menambahkan data.", "error");
+                return;
+            }
             const id = document.getElementById('agendaId').value;
             const nama = document.getElementById('agendaNama').value;
             const lokasi = document.getElementById('agendaLokasi').value;
@@ -1214,7 +1381,6 @@
             renderAll();
         }
 
-        // Quick Update Status Agenda tanpa Modal Edit
         function updateAgendaStatusQuick(id, newStatus) {
             const ag = appState.agendas.find(a => a.id === id);
             if (ag) {
@@ -1247,7 +1413,6 @@
                         <div class="space-y-2">
                             <div class="flex justify-between items-center gap-2">
                                 <span class="text-[10px] font-bold uppercase text-purple-400 bg-purple-950/60 px-2 py-0.5 rounded border border-purple-800/40">${a.kriteria || 'Umum'}</span>
-                                <!-- Quick Select Status Agenda -->
                                 <select onchange="updateAgendaStatusQuick('${a.id}', this.value)" class="text-[10px] font-bold px-2 py-1 rounded border bg-[#131d38] text-slate-200 border-slate-700 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer">
                                     <option value="Belum Terlaksana" ${a.status === 'Belum Terlaksana' ? 'selected' : ''}>Belum Terlaksana</option>
                                     <option value="Terlaksana" ${a.status === 'Terlaksana' ? 'selected' : ''}>Terlaksana</option>
@@ -1269,7 +1434,6 @@
             });
         }
 
-        // --- TUGAS MANAGEMENT (CRUD + EDIT + QUICK STATUS + PENGERJAAN + CATATAN + FILE MAX 3MB) ---
         function openTugasModal(editId = null) {
             const form = document.querySelector('#modalTugas form');
             form.reset();
@@ -1301,6 +1465,10 @@
 
         async function saveTugas(e) {
             e.preventDefault();
+            if(appState.currentUser && appState.currentUser.isGuest) {
+                showToast("Akses Tamu tidak diizinkan menambahkan data.", "error");
+                return;
+            }
             const id = document.getElementById('tugasId').value;
             const nama = document.getElementById('tugasNama').value;
             const dosen = document.getElementById('tugasDosen').value;
@@ -1346,7 +1514,6 @@
             renderAll();
         }
 
-        // Quick Update Status Pengumpulan tanpa Modal Edit
         function updateTugasStatusQuick(id, newStatus) {
             const t = appState.tasks.find(x => x.id === id);
             if (t) {
@@ -1357,7 +1524,6 @@
             }
         }
 
-        // Quick Update Status Pengerjaan tanpa Modal Edit
         function updateTugasPengerjaanQuick(id, newPengerjaan) {
             const t = appState.tasks.find(x => x.id === id);
             if (t) {
@@ -1396,8 +1562,6 @@
                         <div class="space-y-3">
                             <div class="flex justify-between items-center gap-2">
                                 <span class="text-[10px] font-bold uppercase text-amber-400 bg-amber-950/60 px-2 py-0.5 rounded border border-amber-800/40">Tugas Kuliah</span>
-                                
-                                <!-- Quick Select Status Pengumpulan -->
                                 <select onchange="updateTugasStatusQuick('${t.id}', this.value)" class="text-[10px] font-bold px-2 py-1 rounded border bg-[#131d38] text-slate-200 border-slate-700 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer">
                                     <option value="Belum Terkumpul" ${t.status === 'Belum Terkumpul' ? 'selected' : ''}>Belum Terkumpul</option>
                                     <option value="Terkumpul" ${t.status === 'Terkumpul' ? 'selected' : ''}>Terkumpul</option>
@@ -1408,7 +1572,6 @@
                             <p class="text-xs text-slate-400 flex items-center gap-1"><i data-lucide="user" class="w-3.5 h-3.5 text-slate-500"></i> ${t.dosen}</p>
                             <p class="text-xs text-slate-500 font-mono">Deadline: ${t.deadline.replace('T', ' ')}</p>
 
-                            <!-- Quick Select Status Pengerjaan -->
                             <div class="pt-2 border-t border-slate-800/60 flex items-center justify-between">
                                 <span class="text-[11px] text-slate-400 font-semibold">Proses Pengerjaan:</span>
                                 <select onchange="updateTugasPengerjaanQuick('${t.id}', this.value)" class="text-[11px] font-semibold px-2 py-1 rounded-xl bg-[#131d38] text-sky-300 border border-slate-700 focus:outline-none focus:ring-1 focus:ring-sky-500 cursor-pointer">
@@ -1430,7 +1593,6 @@
             });
         }
 
-        // --- JADWAL KULIAH MANAGEMENT (CRUD + EDIT + RUANG + DOSEN) ---
         function openJadwalModal(editId = null) {
             const form = document.querySelector('#modalJadwal form');
             form.reset();
@@ -1457,6 +1619,10 @@
 
         function saveJadwal(e) {
             e.preventDefault();
+            if(appState.currentUser && appState.currentUser.isGuest) {
+                showToast("Akses Tamu tidak diizinkan menambahkan data.", "error");
+                return;
+            }
             const id = document.getElementById('jadwalId').value;
             const hari = document.getElementById('jadwalHari').value;
             const matkul = document.getElementById('jadwalMatkul').value;
@@ -1521,12 +1687,15 @@
             });
         }
 
-        // --- KEUANGAN MANAGEMENT ---
         function openFinanceModal() { document.getElementById('modalFinance').classList.remove('hidden'); }
         function closeFinanceModal() { document.getElementById('modalFinance').classList.add('hidden'); }
 
         function saveFinance(e) {
             e.preventDefault();
+            if(appState.currentUser && appState.currentUser.isGuest) {
+                showToast("Akses Tamu tidak diizinkan mencatat keuangan.", "error");
+                return;
+            }
             const desc = document.getElementById('finDesc').value;
             const amount = parseFloat(document.getElementById('finAmount').value);
             const type = document.getElementById('finType').value;
@@ -1546,7 +1715,6 @@
 
         function deleteFinance(id) { appState.finances = appState.finances.filter(f => f.id !== id); saveState(); renderAll(); }
 
-        // --- AUTO NOTIFICATION CHECK ---
         const notifiedSet = new Set();
         function checkUpcomingNotifications() {
             const now = new Date().getTime();
@@ -1561,7 +1729,6 @@
             });
         }
 
-        // --- EXPORT & IMPORT ---
         function exportData() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
             const a = document.createElement('a'); a.setAttribute("href", dataStr); a.setAttribute("download", `MyJadwal_Backup.json`);
@@ -1579,7 +1746,6 @@
             reader.readAsText(file);
         }
 
-        // --- TOAST HELPER ---
         function showToast(msg, type = 'info') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
