@@ -747,7 +747,7 @@
         };
 
         let currentCalendarDate = new Date(); 
-        currentCalendarDate.setDate(1); // Mencegah bug overflow pergeseran bulan
+        currentCalendarDate.setDate(1); 
         let taskChartInstance = null;
         let financeChartInstance = null;
         let lastDateCheckedStr = '';
@@ -767,11 +767,16 @@
             }
         };
 
+        // Mempertahankan session currentUser agar tidak tereset saat load/save
         function loadState() {
             const saved = localStorage.getItem(DB_KEY);
             if (saved) {
                 try { 
-                    appState = JSON.parse(saved);
+                    const parsed = JSON.parse(saved);
+                    appState = { ...appState, ...parsed };
+                    if (!appState.currentUser && parsed.currentUser) {
+                        appState.currentUser = parsed.currentUser;
+                    }
                     appState.tasks.forEach(t => {
                         if (!t.pengerjaan) t.pengerjaan = 'Belum dikerjakan';
                         if (t.catatan === undefined) t.catatan = '';
@@ -986,15 +991,18 @@
                 const monthName = months[now.getMonth()];
                 const yearNum = now.getFullYear();
 
-                // Format Jam
                 document.getElementById('realtimeClock').innerText = `${hh}.${mm}.${ss} WIB`;
-                // Format Hari & Tanggal di Bawah Jam Realtime
                 document.getElementById('realtimeDateSub').innerText = `${dayName}, ${dateNum} ${monthName} ${yearNum}`;
-                // Format Salam Header
                 document.getElementById('dashGreeting').innerText = `${dayName.toUpperCase()}, ${dateNum} ${monthName} ${yearNum}`;
 
-                // Otomatis Perbarui Pintasan saat Pergantian Hari Berjalan
-                const currentDateStr = `${yearNum}-${now.getMonth()}-${dateNum}`;
+                const formatDateISO = (d) => {
+                    const yyyy = d.getFullYear();
+                    const mm = String(d.getMonth() + 1).padStart(2, '0');
+                    const dd = String(d.getDate()).padStart(2, '0');
+                    return `${yyyy}-${mm}-${dd}`;
+                };
+
+                const currentDateStr = formatDateISO(now);
                 if (lastDateCheckedStr !== currentDateStr) {
                     lastDateCheckedStr = currentDateStr;
                     if (appState.currentUser) {
@@ -1059,7 +1067,6 @@
             document.getElementById('dashSaldoHighlight').innerText = saldoFmt;
             document.getElementById('chartSaldoNote').innerText = `Saldo: ${saldoFmt}`;
 
-            // SISTEM PINTASAN HARIAN DINAMIS (HARI INI & BESOK)
             const daysArr = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
             const today = new Date();
             const tomorrow = new Date(today);
@@ -1081,7 +1088,6 @@
             document.getElementById('dashTodayName').innerText = `${todayDayName} (Hari Ini)`;
             document.getElementById('dashTomorrowName').innerText = `${tomorrowDayName} (Besok)`;
 
-            // 1. Render Pintasan Hari Ini (Jadwal Kuliah + Agenda + Tugas Tenggat Hari Ini)
             const todayListEl = document.getElementById('todayList');
             todayListEl.innerHTML = '';
             let todayItemsCount = 0;
@@ -1135,7 +1141,6 @@
                 todayListEl.innerHTML = `<p class="text-xs text-slate-500 text-center py-4">Tidak ada agenda atau jadwal khusus hari ini.</p>`;
             }
 
-            // 2. Render Pintasan Besok (Jadwal Kuliah + Agenda + Tugas Tenggat Besok)
             const tomorrowListEl = document.getElementById('tomorrowList');
             tomorrowListEl.innerHTML = '';
             let tomorrowItemsCount = 0;
