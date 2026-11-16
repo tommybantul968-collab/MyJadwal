@@ -40,31 +40,63 @@
         body { font-family: 'Inter', sans-serif; }
         .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 9999px; }
-        .light .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #6366f1; border-radius: 9999px; }
+        html.light .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; }
+
+        /* Perbaikan Menyeluruh Mode Terang (Light Mode) */
+        html.light body { background-color: #f8fafc !important; color: #0f172a !important; }
+        html.light header { background-color: rgba(255, 255, 255, 0.95) !important; border-color: #e2e8f0 !important; }
+        html.light header h2 { color: #0f172a !important; }
+        html.light .bg-\[\#0f172a\] { background-color: #ffffff !important; border-color: #e2e8f0 !important; box-shadow: 0 4px 15px -3px rgba(15, 23, 42, 0.08); }
+        html.light .bg-\[\#131d38\] { background-color: #f1f5f9 !important; border-color: #cbd5e1 !important; color: #1e293b !important; }
+        html.light .bg-\[\#1a2647\] { background-color: #e2e8f0 !important; color: #1e293b !important; }
+        html.light .border-slate-800, html.light .border-slate-800\/80, html.light .border-slate-800\/60, html.light .border-slate-700 { border-color: #e2e8f0 !important; }
+        
+        html.light main section:not(#view-dashboard) h2,
+        html.light main h3,
+        html.light main h4,
+        html.light .bg-\[\#0f172a\] .text-white,
+        html.light .bg-\[\#0f172a\] .text-slate-100,
+        html.light .bg-\[\#0f172a\] .text-slate-200,
+        html.light .bg-\[\#131d38\] .text-white,
+        html.light .bg-\[\#131d38\] .text-slate-100,
+        html.light .bg-\[\#131d38\] .text-slate-200,
+        html.light table td.text-white { color: #0f172a !important; }
+
+        html.light .text-slate-300 { color: #334155 !important; }
+        html.light .text-slate-400 { color: #475569 !important; }
+        html.light .text-slate-500 { color: #64748b !important; }
+        html.light input, html.light select, html.light textarea {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+            border-color: #cbd5e1 !important;
+        }
+        html.light nav.bg-\[\#131d38\] { background-color: #ffffff !important; border-color: #e2e8f0 !important; }
+        html.light .nav-btn.text-slate-400 { color: #475569 !important; }
+        html.light .nav-btn.text-slate-400:hover { color: #0f172a !important; background-color: #f1f5f9 !important; }
     </style>
 </head>
-<body class="bg-[#080d1a] text-slate-200 dark:bg-[#080d1a] dark:text-slate-200 min-h-screen flex flex-col transition-colors duration-300">
+<body class="bg-[#070b19] text-slate-200 dark:bg-[#070b19] dark:text-slate-200 min-h-screen flex flex-col transition-colors duration-300">
 
     <!-- Toast Notification Container -->
-    <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-3 max-w-sm w-full pointer-events-none"></div>
+    <div id="toastContainer" class="fixed top-4 right-4 z-50 flex flex-col gap-3 max-w-xs w-full pointer-events-none"></div>
 
     <!-- 1. WELCOME & LOGIN SCREEN -->
-    <div id="authScreen" class="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-blue-900 via-slate-900 to-indigo-950 p-4 transition-all duration-500">
-        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl shadow-2xl p-8 max-w-md w-full text-center relative overflow-hidden">
-            <div class="absolute -top-12 -right-12 w-36 h-36 bg-blue-500/20 rounded-full blur-2xl"></div>
-            <div class="absolute -bottom-12 -left-12 w-36 h-36 bg-purple-500/20 rounded-full blur-2xl"></div>
+    <div id="authScreen" class="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-tr from-violet-950 via-slate-900 to-blue-950 p-4 transition-all duration-500">
+        <div class="bg-[#0f172a] border border-slate-800/80 rounded-3xl shadow-2xl p-6 sm:p-8 max-w-md w-full text-center relative overflow-hidden">
+            <div class="absolute -top-12 -right-12 w-36 h-36 bg-pink-500/20 rounded-full blur-3xl"></div>
+            <div class="absolute -bottom-12 -left-12 w-36 h-36 bg-cyan-500/20 rounded-full blur-3xl"></div>
             
-            <div class="inline-flex items-center justify-center w-20 h-20 bg-blue-950 text-blue-400 border border-blue-800/50 rounded-2xl mb-6 shadow-inner animate-bounce">
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-tr from-blue-600 to-violet-600 text-white rounded-2xl mb-6 shadow-lg shadow-violet-500/30 animate-bounce">
                 <i data-lucide="calendar-check-2" class="w-10 h-10"></i>
             </div>
             
-            <h1 class="text-3xl font-bold text-white mb-2 tracking-tight">MyJadwal</h1>
-            <p class="text-xs text-slate-400 mb-8">Kelola agenda, tugas, keuangan, dan jadwal kuliahmu dalam satu portal workspace.</p>
+            <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-violet-400 mb-2 tracking-tight">MyJadwal</h1>
+            <p class="text-xs text-slate-400 mb-8">Kelola agenda, tugas, keuangan, dan jadwal kuliahmu dalam satu portal workspace penuh warna.</p>
             
             <div class="space-y-4">
-                <button onclick="openGoogleAccountChooser()" class="w-full flex items-center justify-center gap-3 bg-[#131d38] hover:bg-slate-800 text-slate-200 border border-slate-700 font-medium py-3 px-4 rounded-xl shadow transition">
-                    <svg class="w-5 h-5" viewBox="0 0 24 24">
+                <button onclick="openGoogleAccountChooser()" class="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 px-4 rounded-xl shadow-md transition">
+                    <svg class="w-5 h-5 bg-white rounded-full p-0.5" viewBox="0 0 24 24">
                         <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                         <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
                         <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
@@ -79,8 +111,8 @@
                 </div>
 
                 <div class="flex gap-2">
-                    <input type="text" id="sharedAccessInput" placeholder="Masukkan ID Akses..." class="flex-1 bg-[#131d38] border border-slate-700 text-xs rounded-xl px-3 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <button onclick="loginAsGuest()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs px-4 py-2.5 rounded-xl transition">Lihat</button>
+                    <input type="text" id="sharedAccessInput" placeholder="Masukkan ID Akses..." class="flex-1 bg-[#131d38] border border-slate-700 text-xs rounded-xl px-3 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-violet-500">
+                    <button onclick="loginAsGuest()" class="bg-violet-600 hover:bg-violet-700 text-white font-medium text-xs px-4 py-2.5 rounded-xl transition">Lihat</button>
                 </div>
             </div>
             <p class="text-[11px] text-slate-500 mt-6">&copy; 2026 MyJadwal Workspace.</p>
@@ -97,7 +129,7 @@
                 <input type="email" id="customGoogleEmail" required placeholder="nama@gmail.com" class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white">
                 <div class="flex justify-end gap-2">
                     <button type="button" onclick="closeGoogleChooser()" class="px-3 py-2 rounded-xl border border-slate-700 text-slate-300">Batal</button>
-                    <button type="submit" class="px-4 py-2 rounded-xl bg-blue-600 text-white font-medium">Lanjutkan</button>
+                    <button type="submit" class="px-4 py-2 rounded-xl bg-violet-600 text-white font-medium">Lanjutkan</button>
                 </div>
             </form>
         </div>
@@ -106,105 +138,130 @@
     <!-- MAIN APP STRUCTURE -->
     <div id="mainApp" class="hidden flex-1 flex flex-col min-h-screen">
         <!-- TOP NAVIGATION BAR -->
-        <header class="bg-[#0b1329]/90 border-b border-slate-800 backdrop-blur-md sticky top-0 z-30 px-4 md:px-8 py-3 flex flex-wrap items-center justify-between gap-4">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/20 border border-blue-400/30">
+        <header class="bg-[#0b1329]/90 border-b border-slate-800/80 backdrop-blur-md sticky top-0 z-30 px-3 sm:px-6 py-3 flex items-center justify-between gap-3">
+            <div onclick="switchTab('dashboard')" class="flex items-center gap-2.5 cursor-pointer">
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-gradient-to-tr from-pink-500 via-purple-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-purple-500/30 border border-purple-400/30">
                     <i data-lucide="calendar-check-2" class="w-5 h-5"></i>
                 </div>
                 <div>
-                    <h2 class="font-extrabold text-white text-base leading-tight">MyJadwal</h2>
-                    <span id="accessModeBadge" class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-blue-950 text-blue-400 border border-blue-800/50">Pemilik</span>
+                    <h2 class="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white via-indigo-200 to-purple-200 text-sm sm:text-base leading-tight">MyJadwal</h2>
+                    <span id="accessModeBadge" class="text-[9px] uppercase font-bold px-1.5 py-0.5 rounded bg-violet-950 text-violet-400 border border-violet-800/50">Pemilik</span>
                 </div>
-            </div>
-
-            <!-- Tabs Nav (Berbasis Ikon, Teks Muncul Saat Klik/Aktif) -->
-            <nav class="flex items-center gap-1.5 bg-[#131d38] p-1.5 rounded-2xl border border-slate-800 text-xs overflow-x-auto custom-scrollbar">
-                <button onclick="switchTab('dashboard')" id="nav-dashboard" title="Dashboard" class="nav-btn flex items-center gap-2 px-3.5 py-2 rounded-xl font-semibold transition-all bg-blue-600 text-white">
-                    <i data-lucide="layout-dashboard" class="w-4 h-4 shrink-0"></i>
-                    <span class="nav-text">Dashboard</span>
-                </button>
-                <button onclick="switchTab('jadwal')" id="nav-jadwal" title="Jadwal Kuliah" class="nav-btn flex items-center gap-2 px-3.5 py-2 rounded-xl font-semibold text-slate-400 hover:text-white transition-all">
-                    <i data-lucide="calendar-range" class="w-4 h-4 shrink-0"></i>
-                    <span class="nav-text hidden">Jadwal Kuliah</span>
-                </button>
-                <button onclick="switchTab('tugas')" id="nav-tugas" title="Tugas" class="nav-btn flex items-center gap-2 px-3.5 py-2 rounded-xl font-semibold text-slate-400 hover:text-white transition-all">
-                    <i data-lucide="file-text" class="w-4 h-4 shrink-0"></i>
-                    <span class="nav-text hidden">Tugas</span>
-                </button>
-                <button onclick="switchTab('agenda')" id="nav-agenda" title="Agenda" class="nav-btn flex items-center gap-2 px-3.5 py-2 rounded-xl font-semibold text-slate-400 hover:text-white transition-all">
-                    <i data-lucide="calendar-clock" class="w-4 h-4 shrink-0"></i>
-                    <span class="nav-text hidden">Agenda</span>
-                </button>
-                <button onclick="switchTab('keuangan')" id="nav-keuangan" title="Keuangan" class="nav-btn nav-owner-only flex items-center gap-2 px-3.5 py-2 rounded-xl font-semibold text-slate-400 hover:text-white transition-all">
-                    <i data-lucide="wallet" class="w-4 h-4 shrink-0"></i>
-                    <span class="nav-text hidden">Keuangan</span>
-                </button>
-                <button onclick="switchTab('kalender')" id="nav-kalender" title="Kalender Interaktif" class="nav-btn flex items-center gap-2 px-3.5 py-2 rounded-xl font-semibold text-slate-400 hover:text-white transition-all">
-                    <i data-lucide="calendar-days" class="w-4 h-4 shrink-0"></i>
-                    <span class="nav-text hidden">Kalender</span>
-                </button>
-            </nav>
-
-            <div class="flex items-center gap-2">
-                <button onclick="switchTab('settings')" id="nav-settings" title="Pengaturan" class="nav-owner-only flex items-center gap-1.5 bg-[#131d38] hover:bg-slate-800 text-slate-300 text-xs font-semibold px-3 py-2 rounded-xl border border-slate-800 transition">
-                    <i data-lucide="settings" class="w-4 h-4"></i> <span class="hidden sm:inline">Settings</span>
-                </button>
-                <button onclick="logout()" title="Keluar" class="flex items-center gap-1.5 bg-red-950/60 hover:bg-red-900/60 text-red-400 text-xs font-semibold px-3 py-2 rounded-xl border border-red-800/50 transition">
-                    <i data-lucide="log-out" class="w-4 h-4"></i> <span class="hidden sm:inline">Keluar</span>
-                </button>
             </div>
         </header>
 
         <!-- MAIN CONTENT AREA -->
-        <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 space-y-6">
+        <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 space-y-4 sm:space-y-6">
+
+            <!-- HERO BANNER -->
+            <div class="bg-gradient-to-r from-violet-600 via-indigo-600 to-pink-600 rounded-3xl p-4 sm:p-6 text-white shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4 relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
+                <div class="relative z-10">
+                    <span id="dashGreeting" class="text-[10px] font-bold uppercase tracking-widest text-violet-200 block mb-0.5">SELAMAT DATANG</span>
+                    <h2 id="dashUserName" class="text-xl sm:text-2xl font-black tracking-tight text-white">Mahasiswa</h2>
+                    <div class="flex items-center gap-1.5 mt-1.5 flex-wrap">
+                        <span class="text-[10px] text-violet-200 uppercase font-semibold">ID Akses:</span>
+                        <code id="dashAccessID" class="text-xs font-mono font-bold bg-black/25 px-2 py-0.5 rounded border border-white/20 text-pink-200">MJ-000000</code>
+                        <button onclick="copyAccessID()" title="Salin ID Akses" class="text-violet-200 hover:text-white transition p-0.5">
+                            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- REAL TIME WAKTU & TANGGAL -->
+                <div class="bg-white/10 backdrop-blur-md rounded-2xl px-4 py-2.5 border border-white/20 text-right z-10 w-full md:w-auto flex md:flex-col justify-between items-center md:items-end">
+                    <span class="text-[9px] uppercase font-bold tracking-wider text-violet-200">WAKTU SEKARANG</span>
+                    <div id="realtimeClock" class="font-extrabold text-sm sm:text-base tracking-wide text-white">00.00.00 WIB</div>
+                    <div id="realtimeDateSub" class="text-[10px] text-violet-100 font-medium mt-0.5">Senin, 1 Januari 2026</div>
+                </div>
+            </div>
+
+            <!-- NAVIGASI IKON FITUR (Responsif & Rapi di HP) -->
+            <nav class="flex items-center justify-start gap-2 bg-[#131d38] p-2 rounded-2xl border border-slate-800 text-xs overflow-x-auto custom-scrollbar shadow-sm">
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" title="Dashboard" class="nav-btn flex items-center gap-2 px-3.5 py-2 rounded-xl font-semibold transition-all bg-gradient-to-r from-violet-600 to-indigo-600 text-white shrink-0 shadow-sm">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4 shrink-0"></i>
+                    <span class="nav-text">Dashboard</span>
+                </button>
+                <button onclick="switchTab('jadwal')" id="nav-jadwal" title="Jadwal Kuliah" class="nav-btn flex items-center gap-2 px-3.5 py-2 rounded-xl font-semibold text-slate-400 hover:text-white hover:bg-slate-800/50 transition-all shrink-0">
+                    <i data-lucide="calendar-range" class="w-4 h-4 shrink-0 text-cyan-400"></i>
+                    <span class="nav-text hidden">Jadwal Kuliah</span>
+                </button>
+                <button onclick="switchTab('tugas')" id="nav-tugas" title="Tugas" class="nav-btn flex items-center gap-2 px-3.5 py-2 rounded-xl font-semibold text-slate-400 hover:text-white hover:bg-slate-800/50 transition-all shrink-0">
+                    <i data-lucide="file-text" class="w-4 h-4 shrink-0 text-amber-400"></i>
+                    <span class="nav-text hidden">Tugas</span>
+                </button>
+                <button onclick="switchTab('agenda')" id="nav-agenda" title="Agenda" class="nav-btn flex items-center gap-2 px-3.5 py-2 rounded-xl font-semibold text-slate-400 hover:text-white hover:bg-slate-800/50 transition-all shrink-0">
+                    <i data-lucide="calendar-clock" class="w-4 h-4 shrink-0 text-pink-400"></i>
+                    <span class="nav-text hidden">Agenda</span>
+                </button>
+                <button onclick="switchTab('keuangan')" id="nav-keuangan" title="Keuangan" class="nav-btn nav-owner-only flex items-center gap-2 px-3.5 py-2 rounded-xl font-semibold text-slate-400 hover:text-white hover:bg-slate-800/50 transition-all shrink-0">
+                    <i data-lucide="wallet" class="w-4 h-4 shrink-0 text-emerald-400"></i>
+                    <span class="nav-text hidden">Keuangan</span>
+                </button>
+                <button onclick="switchTab('kalender')" id="nav-kalender" title="Kalender Interaktif" class="nav-btn flex items-center gap-2 px-3.5 py-2 rounded-xl font-semibold text-slate-400 hover:text-white hover:bg-slate-800/50 transition-all shrink-0">
+                    <i data-lucide="calendar-days" class="w-4 h-4 shrink-0 text-purple-400"></i>
+                    <span class="nav-text hidden">Kalender</span>
+                </button>
+                <button onclick="switchTab('settings')" id="nav-settings" title="Settings" class="nav-btn nav-owner-only flex items-center gap-2 px-3.5 py-2 rounded-xl font-semibold text-slate-400 hover:text-white hover:bg-slate-800/50 transition-all shrink-0">
+                    <i data-lucide="settings" class="w-4 h-4 shrink-0 text-blue-400"></i>
+                    <span class="nav-text hidden">Settings</span>
+                </button>
+            </nav>
 
             <!-- DASHBOARD VIEW -->
             <section id="view-dashboard" class="space-y-6">
-                <!-- HERO BANNER -->
-                <div class="bg-gradient-to-r from-blue-700 via-indigo-700 to-sky-600 rounded-3xl p-6 text-white shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4 relative overflow-hidden">
-                    <div class="flex items-center gap-4 relative z-10">
-                        <img id="userAvatar" src="https://placehold.co/100x100/3b82f6/white?text=User" class="w-14 h-14 rounded-2xl border-2 border-white/30 shadow-lg" alt="Avatar">
+                <!-- WIDGET PENGINGAT ALARM WAKTU NYATA -->
+                <div class="bg-[#0f172a] rounded-3xl p-4 sm:p-5 border border-slate-800 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                    <div class="flex items-center gap-3 sm:gap-4">
+                        <div id="alarmIconBox" class="w-12 h-12 rounded-2xl bg-amber-950/70 text-amber-400 border border-amber-800/50 flex items-center justify-center shrink-0">
+                            <i data-lucide="alarm-clock" class="w-6 h-6"></i>
+                        </div>
                         <div>
-                            <span id="dashGreeting" class="text-[10px] font-bold uppercase tracking-widest text-blue-200 block mb-0.5">SELAMAT DATANG</span>
-                            <h2 id="dashUserName" class="text-2xl font-black tracking-tight">Mahasiswa</h2>
-                            <div class="flex items-center gap-1.5 mt-0.5">
-                                <span class="text-[10px] text-blue-200 uppercase font-semibold">ID Akses Unik:</span>
-                                <code id="dashAccessID" class="text-xs font-mono font-bold bg-black/20 px-2 py-0.5 rounded border border-white/20 text-sky-200">MJ-000000</code>
-                                <button onclick="copyAccessID()" title="Salin ID Akses" class="text-blue-200 hover:text-white transition p-0.5">
-                                    <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-                                </button>
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="text-[10px] font-extrabold uppercase tracking-wider text-amber-400">PENGINGAT ALARM WAKTU NYATA</span>
+                                <span id="alarmStatusBadge" class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-950/70 text-emerald-400 border border-emerald-800/40">Aktif</span>
                             </div>
+                            <h4 id="nextEventTitle" class="font-bold text-sm text-white mt-0.5">Memindai jadwal & agenda terdekat...</h4>
+                            <p id="nextEventSub" class="text-xs text-slate-400">Alarm otomatis berbunyi 15 menit & tepat saat waktu tiba.</p>
                         </div>
                     </div>
 
-                    <!-- REAL TIME WAKTU & TANGGAL -->
-                    <div class="bg-white/10 backdrop-blur-md rounded-2xl px-5 py-3 border border-white/20 text-right z-10 w-full md:w-auto flex md:flex-col justify-between items-center md:items-end">
-                        <span class="text-[10px] uppercase font-bold tracking-wider text-blue-200">INGAT WAKTU</span>
-                        <div id="realtimeClock" class="font-extrabold text-base tracking-wide text-white">00.00.00 WIB</div>
-                        <div id="realtimeDateSub" class="text-[11px] text-blue-100 font-medium mt-0.5">Senin, 1 Januari 2026</div>
+                    <div class="flex flex-wrap items-center gap-3 w-full md:w-auto justify-between md:justify-end">
+                        <div class="bg-[#131d38] px-4 py-2 rounded-2xl border border-slate-800 text-center">
+                            <span class="text-[9px] uppercase font-bold text-slate-400 block">HITUNG MUNDUR</span>
+                            <span id="realtimeCountdown" class="font-mono font-black text-base text-amber-400">-- : -- : --</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="testAlarmSound()" title="Uji Suara Alarm" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl flex items-center gap-1.5 transition shadow-md">
+                                <i data-lucide="volume-2" class="w-4 h-4"></i> Tes Alarm
+                            </button>
+                            <button onclick="stopAlarmSound()" id="stopAlarmBtn" class="hidden bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl flex items-center gap-1.5 animate-pulse transition shadow-md">
+                                <i data-lucide="bell-off" class="w-4 h-4"></i> Matikan
+                            </button>
+                        </div>
                     </div>
                 </div>
 
                 <!-- PINTAS HARI INI & BESOK -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div class="bg-[#0f172a] rounded-3xl p-6 border border-slate-800 shadow-sm">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                    <div class="bg-[#0f172a] rounded-3xl p-4 sm:p-6 border border-slate-800 shadow-sm">
                         <div class="flex items-center justify-between mb-4 border-b border-slate-800/80 pb-3">
                             <h3 class="font-bold text-sm text-slate-100 flex items-center gap-2">
-                                <i data-lucide="sun" class="w-4 h-4 text-sky-400"></i> Pintas Hari Ini
+                                <i data-lucide="sun" class="w-4 h-4 text-amber-400"></i> Pintas Hari Ini
                             </h3>
-                            <span id="dashTodayName" class="text-xs text-sky-400 font-bold bg-sky-950/60 border border-sky-800/50 px-2.5 py-0.5 rounded-lg">Hari Ini</span>
+                            <span id="dashTodayName" class="text-xs text-amber-400 font-bold bg-amber-950/60 border border-amber-800/50 px-2.5 py-0.5 rounded-lg">Hari Ini</span>
                         </div>
                         <div id="todayList" class="space-y-2.5 min-h-[120px] flex flex-col justify-center">
                             <p class="text-xs text-slate-500 text-center">Tidak ada agenda atau jadwal khusus hari ini.</p>
                         </div>
                     </div>
 
-                    <div class="bg-[#0f172a] rounded-3xl p-6 border border-slate-800 shadow-sm">
+                    <div class="bg-[#0f172a] rounded-3xl p-4 sm:p-6 border border-slate-800 shadow-sm">
                         <div class="flex items-center justify-between mb-4 border-b border-slate-800/80 pb-3">
                             <h3 class="font-bold text-sm text-slate-100 flex items-center gap-2">
-                                <i data-lucide="calendar" class="w-4 h-4 text-indigo-400"></i> Pintas Agenda / Besok
+                                <i data-lucide="calendar" class="w-4 h-4 text-cyan-400"></i> Pintas Agenda / Besok
                             </h3>
-                            <span id="dashTomorrowName" class="text-xs text-indigo-400 font-bold bg-indigo-950/60 border border-indigo-800/50 px-2.5 py-0.5 rounded-lg">Besok</span>
+                            <span id="dashTomorrowName" class="text-xs text-cyan-400 font-bold bg-cyan-950/60 border border-cyan-800/50 px-2.5 py-0.5 rounded-lg">Besok</span>
                         </div>
                         <div id="tomorrowList" class="space-y-2.5 min-h-[120px] flex flex-col justify-center">
                             <p class="text-xs text-slate-500 text-center">Tidak ada jadwal kuliah atau agenda untuk besok.</p>
@@ -213,113 +270,117 @@
                 </div>
 
                 <!-- BANNER AKTIVITAS & KEUANGAN AKTIF -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div class="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-3xl p-6 text-white shadow-lg flex flex-col justify-between">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                    <div class="bg-gradient-to-tr from-blue-600 via-indigo-600 to-violet-600 rounded-3xl p-5 sm:p-6 text-white shadow-lg flex flex-col justify-between">
                         <div>
                             <span class="text-[10px] font-extrabold tracking-widest uppercase text-blue-200 block mb-2">AKTIVITAS UTAMA</span>
-                            <h3 class="text-2xl font-bold mb-2">Jadwal & Tugas Kuliah</h3>
+                            <h3 class="text-xl sm:text-2xl font-bold mb-2 text-white">Jadwal & Tugas Kuliah</h3>
                             <p class="text-xs text-blue-100 max-w-sm mb-6">Kelola seluruh kegiatan perkuliahan dan deadline tugas dengan mudah dan akurat.</p>
                         </div>
-                        <div class="flex gap-3">
+                        <div class="flex gap-3 flex-wrap">
                             <button onclick="switchTab('jadwal')" class="bg-white text-blue-600 hover:bg-blue-50 font-bold text-xs px-5 py-2.5 rounded-xl shadow transition">Buka Jadwal &rarr;</button>
-                            <button onclick="switchTab('tugas')" class="bg-blue-700 hover:bg-blue-800 text-white font-bold text-xs px-5 py-2.5 rounded-xl transition">Lihat Tugas</button>
+                            <button onclick="switchTab('tugas')" class="bg-blue-900/40 border border-white/20 hover:bg-blue-900/60 text-white font-bold text-xs px-5 py-2.5 rounded-xl transition">Lihat Tugas</button>
                         </div>
                     </div>
 
-                    <div class="bg-[#0f172a] rounded-3xl p-6 border border-slate-800 flex flex-col justify-between">
+                    <div class="bg-gradient-to-tr from-emerald-950/60 via-[#0f172a] to-teal-950/50 rounded-3xl p-5 sm:p-6 border border-emerald-900/40 flex flex-col justify-between shadow-sm">
                         <div>
-                            <span class="text-[10px] font-extrabold tracking-widest uppercase text-slate-400 block mb-1">KEUANGAN AKTIF</span>
+                            <span class="text-[10px] font-extrabold tracking-widest uppercase text-emerald-400 block mb-1">KEUANGAN AKTIF</span>
                             <span class="text-xs text-slate-400 block">SISA SALDO KEUANGAN</span>
-                            <h2 id="dashSaldoHighlight" class="text-3xl font-black text-emerald-400 my-3 tracking-tight">Rp 0</h2>
+                            <h2 id="dashSaldoHighlight" class="text-2xl sm:text-3xl font-black text-emerald-400 my-3 tracking-tight">Rp 0</h2>
                         </div>
                         <div>
-                            <button onclick="switchTab('keuangan')" class="nav-owner-only bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-5 py-2.5 rounded-xl transition">Buka Keuangan &rarr;</button>
+                            <button onclick="switchTab('keuangan')" class="nav-owner-only bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-5 py-2.5 rounded-xl transition shadow-md">Buka Keuangan &rarr;</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- 4 STATISTIK KOMPAK GRID -->
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div class="bg-[#0f172a] p-5 rounded-2xl border border-slate-800 flex justify-between items-center">
-                        <div>
-                            <span class="text-[10px] uppercase font-bold text-slate-400 block mb-1">SELURUH TUGAS</span>
-                            <h4 id="statTotalTugas" class="text-2xl font-black">0</h4>
-                            <span id="statTugasPct" class="text-xs font-semibold text-emerald-400">0% Terkumpul</span>
+                <!-- 4 STATISTIK KOMPAK GRID (Warna Bervariasi) -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                    <div class="bg-[#0f172a] p-4 sm:p-5 rounded-2xl border border-blue-900/40 shadow-sm flex justify-between items-center relative overflow-hidden">
+                        <div class="absolute -right-6 -bottom-6 w-20 h-20 bg-blue-500/10 rounded-full blur-xl"></div>
+                        <div class="relative z-10">
+                            <span class="text-[10px] uppercase font-bold text-blue-400 block mb-1">SELURUH TUGAS</span>
+                            <h4 id="statTotalTugas" class="text-xl sm:text-2xl font-black text-white">0</h4>
+                            <span id="statTugasPct" class="text-[11px] font-semibold text-blue-300">0% Terkumpul</span>
                         </div>
-                        <div class="p-3 bg-blue-950/80 text-blue-400 rounded-2xl border border-blue-900/50"><i data-lucide="file-text" class="w-6 h-6"></i></div>
+                        <div class="p-3 bg-blue-950/90 text-blue-400 rounded-2xl border border-blue-800/50 relative z-10"><i data-lucide="file-text" class="w-5 h-5 sm:w-6 sm:h-6"></i></div>
                     </div>
 
-                    <div class="bg-[#0f172a] p-5 rounded-2xl border border-slate-800 flex justify-between items-center">
-                        <div>
-                            <span class="text-[10px] uppercase font-bold text-slate-400 block mb-1">JUMLAH AGENDA</span>
-                            <h4 id="statTotalAgenda" class="text-2xl font-black">0</h4>
-                            <span id="statAgendaPending" class="text-xs font-semibold text-orange-400">0 Belum Terlaksana</span>
+                    <div class="bg-[#0f172a] p-4 sm:p-5 rounded-2xl border border-pink-900/40 shadow-sm flex justify-between items-center relative overflow-hidden">
+                        <div class="absolute -right-6 -bottom-6 w-20 h-20 bg-pink-500/10 rounded-full blur-xl"></div>
+                        <div class="relative z-10">
+                            <span class="text-[10px] uppercase font-bold text-pink-400 block mb-1">JUMLAH AGENDA</span>
+                            <h4 id="statTotalAgenda" class="text-xl sm:text-2xl font-black text-white">0</h4>
+                            <span id="statAgendaPending" class="text-[11px] font-semibold text-pink-300">0 Belum Terlaksana</span>
                         </div>
-                        <div class="p-3 bg-orange-950/80 text-orange-400 rounded-2xl border border-orange-900/50"><i data-lucide="calendar" class="w-6 h-6"></i></div>
+                        <div class="p-3 bg-pink-950/90 text-pink-400 rounded-2xl border border-pink-800/50 relative z-10"><i data-lucide="calendar" class="w-5 h-5 sm:w-6 sm:h-6"></i></div>
                     </div>
 
-                    <div class="bg-[#0f172a] p-5 rounded-2xl border border-slate-800 flex justify-between items-center">
-                        <div>
-                            <span class="text-[10px] uppercase font-bold text-slate-400 block mb-1">TOTAL PEMASUKAN</span>
-                            <h4 id="statTotalIncome" class="text-lg font-black text-emerald-400">Rp 0</h4>
-                            <span class="text-xs text-slate-500">Masuk</span>
+                    <div class="bg-[#0f172a] p-4 sm:p-5 rounded-2xl border border-emerald-900/40 shadow-sm flex justify-between items-center relative overflow-hidden">
+                        <div class="absolute -right-6 -bottom-6 w-20 h-20 bg-emerald-500/10 rounded-full blur-xl"></div>
+                        <div class="relative z-10">
+                            <span class="text-[10px] uppercase font-bold text-emerald-400 block mb-1">PEMASUKAN</span>
+                            <h4 id="statTotalIncome" class="text-sm sm:text-lg font-black text-emerald-400 truncate max-w-[120px]">Rp 0</h4>
+                            <span class="text-[11px] text-slate-400">Total Masuk</span>
                         </div>
-                        <div class="p-2.5 bg-emerald-950/80 text-emerald-400 rounded-2xl border border-emerald-900/50"><i data-lucide="arrow-down-left" class="w-5 h-5"></i></div>
+                        <div class="p-2.5 bg-emerald-950/90 text-emerald-400 rounded-2xl border border-emerald-800/50 relative z-10"><i data-lucide="arrow-down-left" class="w-5 h-5"></i></div>
                     </div>
 
-                    <div class="bg-[#0f172a] p-5 rounded-2xl border border-slate-800 flex justify-between items-center">
-                        <div>
-                            <span class="text-[10px] uppercase font-bold text-slate-400 block mb-1">TOTAL PENGELUARAN</span>
-                            <h4 id="statTotalExpense" class="text-lg font-black text-red-400">Rp 0</h4>
-                            <span class="text-xs text-slate-500">Keluar</span>
+                    <div class="bg-[#0f172a] p-4 sm:p-5 rounded-2xl border border-rose-900/40 shadow-sm flex justify-between items-center relative overflow-hidden">
+                        <div class="absolute -right-6 -bottom-6 w-20 h-20 bg-rose-500/10 rounded-full blur-xl"></div>
+                        <div class="relative z-10">
+                            <span class="text-[10px] uppercase font-bold text-rose-400 block mb-1">PENGELUARAN</span>
+                            <h4 id="statTotalExpense" class="text-sm sm:text-lg font-black text-rose-400 truncate max-w-[120px]">Rp 0</h4>
+                            <span class="text-[11px] text-slate-400">Total Keluar</span>
                         </div>
-                        <div class="p-2.5 bg-red-950/80 text-red-400 rounded-2xl border border-red-900/50"><i data-lucide="arrow-up-right" class="w-5 h-5"></i></div>
+                        <div class="p-2.5 bg-rose-950/90 text-rose-400 rounded-2xl border border-rose-800/50 relative z-10"><i data-lucide="arrow-up-right" class="w-5 h-5"></i></div>
                     </div>
                 </div>
 
                 <!-- KALENDER AKADEMIK INTERAKTIF -->
-                <div class="bg-[#0f172a] rounded-3xl p-6 border border-slate-800 shadow-sm">
-                    <div class="flex items-center justify-between mb-4">
+                <div class="bg-[#0f172a] rounded-3xl p-4 sm:p-6 border border-slate-800 shadow-sm">
+                    <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
                         <h3 class="font-bold text-sm text-slate-100 flex items-center gap-2">
-                            <i data-lucide="calendar-days" class="w-4 h-4 text-sky-400"></i> Kalender Akademik Interaktif
+                            <i data-lucide="calendar-days" class="w-4 h-4 text-violet-400"></i> Kalender Akademik Interaktif
                         </h3>
                         <div class="flex items-center gap-2">
                             <button onclick="changeMonth(-1)" class="p-1.5 bg-[#1a2647] hover:bg-slate-700 rounded-xl text-slate-300"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
-                            <span id="calendarMonthYear" class="text-xs font-bold text-blue-400 px-2">Januari 2026</span>
+                            <span id="calendarMonthYear" class="text-xs font-bold text-violet-400 px-2">Januari 2026</span>
                             <button onclick="changeMonth(1)" class="p-1.5 bg-[#1a2647] hover:bg-slate-700 rounded-xl text-slate-300"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-7 gap-2 mb-3 text-center text-[11px] font-semibold text-slate-400">
+                    <div class="grid grid-cols-7 gap-1 sm:gap-2 mb-3 text-center text-[11px] font-semibold text-slate-400">
                         <div>Mg</div><div>Sn</div><div>Sl</div><div>Rb</div><div>Km</div><div>Jm</div><div>Sb</div>
                     </div>
-                    <div id="calendarGrid" class="grid grid-cols-7 gap-2 text-xs"></div>
+                    <div id="calendarGrid" class="grid grid-cols-7 gap-1 sm:gap-2 text-xs"></div>
                     <p class="text-[11px] text-slate-500 mt-4 italic">Klik tanggal pada kalender untuk melihat detail jadwal/deadline/agenda.</p>
                 </div>
 
                 <!-- DUAL CHARTS -->
-                <div class="bg-[#0f172a] rounded-3xl p-6 border border-slate-800 shadow-sm space-y-4">
-                    <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <div class="bg-[#0f172a] rounded-3xl p-4 sm:p-6 border border-slate-800 shadow-sm space-y-4">
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-3 flex-wrap gap-2">
                         <h3 class="font-bold text-sm text-slate-100 flex items-center gap-2">
-                            <i data-lucide="pie-chart" class="w-4 h-4 text-purple-400"></i> Flowchart Rasio Keuangan & Status Pengerjaan Tugas
+                            <i data-lucide="pie-chart" class="w-4 h-4 text-pink-400"></i> Flowchart Rasio Keuangan & Tugas
                         </h3>
                         <span id="chartSaldoNote" class="text-xs text-slate-400 font-semibold">Saldo: Rp 0</span>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center py-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center py-4">
                         <div class="flex flex-col items-center">
-                            <div class="w-44 h-44 relative"><canvas id="financePieChart"></canvas></div>
+                            <div class="w-40 h-40 sm:w-44 sm:h-44 relative"><canvas id="financePieChart"></canvas></div>
                             <div class="flex gap-4 mt-4 text-[11px] font-bold">
                                 <span class="flex items-center gap-1.5 text-emerald-400"><span class="w-3 h-3 rounded-sm bg-emerald-500"></span> Pemasukan</span>
-                                <span class="flex items-center gap-1.5 text-red-400"><span class="w-3 h-3 rounded-sm bg-red-500"></span> Pengeluaran</span>
+                                <span class="flex items-center gap-1.5 text-rose-400"><span class="w-3 h-3 rounded-sm bg-rose-500"></span> Pengeluaran</span>
                             </div>
                         </div>
 
                         <div class="flex flex-col items-center">
-                            <div class="w-44 h-44 relative"><canvas id="taskProgressChart"></canvas></div>
+                            <div class="w-40 h-40 sm:w-44 sm:h-44 relative"><canvas id="taskProgressChart"></canvas></div>
                             <div class="flex flex-wrap justify-center gap-4 mt-4 text-[11px] font-bold">
                                 <span class="flex items-center gap-1.5 text-emerald-400"><span class="w-3 h-3 rounded-sm bg-emerald-500"></span> Terkumpul</span>
-                                <span class="flex items-center gap-1.5 text-red-400"><span class="w-3 h-3 rounded-sm bg-red-500"></span> Belum Terkumpul</span>
+                                <span class="flex items-center gap-1.5 text-amber-400"><span class="w-3 h-3 rounded-sm bg-amber-500"></span> Belum Terkumpul</span>
                             </div>
                         </div>
                     </div>
@@ -328,45 +389,45 @@
 
             <!-- AGENDA VIEW -->
             <section id="view-agenda" class="hidden space-y-6">
-                <div class="flex justify-between items-center">
+                <div class="flex justify-between items-center flex-wrap gap-4">
                     <div>
                         <h2 class="text-xl font-extrabold text-white">Manajemen Agenda</h2>
-                        <p class="text-xs text-slate-400">Atur jadwal pertemuan, kriteria, dan file penting.</p>
+                        <p class="text-xs text-slate-400">Atur jadwal pertemuan, kriteria, durasi, dan file penting.</p>
                     </div>
-                    <button onclick="openAgendaModal()" class="owner-only-btn bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl flex items-center gap-2 transition">
+                    <button onclick="openAgendaModal()" class="owner-only-btn bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl flex items-center gap-2 transition shadow-md">
                         <i data-lucide="plus" class="w-4 h-4"></i> Tambah Agenda
                     </button>
                 </div>
-                <div id="agendaGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+                <div id="agendaGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5"></div>
             </section>
 
             <!-- TUGAS VIEW -->
             <section id="view-tugas" class="hidden space-y-6">
-                <div class="flex justify-between items-center">
+                <div class="flex justify-between items-center flex-wrap gap-4">
                     <div>
                         <h2 class="text-xl font-extrabold text-white">Manajemen Tugas Kuliah</h2>
-                        <p class="text-xs text-slate-400">Pantau tenggat waktu, lampirkan file (PDF/Img), catatan/rangkuman, status pengumpulan, dan proses pengerjaan.</p>
+                        <p class="text-xs text-slate-400">Pantau tenggat waktu, lampirkan file, catatan/rangkuman, dan status pengumpulan.</p>
                     </div>
-                    <button onclick="openTugasModal()" class="owner-only-btn bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl flex items-center gap-2 transition">
+                    <button onclick="openTugasModal()" class="owner-only-btn bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl flex items-center gap-2 transition shadow-md">
                         <i data-lucide="plus" class="w-4 h-4"></i> Tambah Tugas
                     </button>
                 </div>
-                <div id="tugasGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+                <div id="tugasGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5"></div>
             </section>
 
             <!-- KEUANGAN VIEW -->
             <section id="view-keuangan" class="hidden space-y-6">
-                <div class="flex justify-between items-center">
+                <div class="flex justify-between items-center flex-wrap gap-4">
                     <div>
                         <h2 class="text-xl font-extrabold text-white">Manajemen Keuangan</h2>
                         <p class="text-xs text-slate-400">Catat pemasukan dan pengeluaran.</p>
                     </div>
-                    <button onclick="openFinanceModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl flex items-center gap-2 transition">
+                    <button onclick="openFinanceModal()" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl flex items-center gap-2 transition shadow-md">
                         <i data-lucide="plus" class="w-4 h-4"></i> Catat Transaksi
                     </button>
                 </div>
-                <div class="bg-[#0f172a] rounded-3xl p-6 border border-slate-800 overflow-x-auto">
-                    <table class="w-full text-xs text-left">
+                <div class="bg-[#0f172a] rounded-3xl p-4 sm:p-6 border border-slate-800 overflow-x-auto custom-scrollbar">
+                    <table class="w-full text-xs text-left min-w-[500px]">
                         <thead class="text-slate-400 border-b border-slate-800">
                             <tr>
                                 <th class="pb-3">Tanggal</th>
@@ -383,38 +444,38 @@
 
             <!-- JADWAL KULIAH VIEW -->
             <section id="view-jadwal" class="hidden space-y-6">
-                <div class="flex justify-between items-center">
+                <div class="flex justify-between items-center flex-wrap gap-4">
                     <div>
                         <h2 class="text-xl font-extrabold text-white">Jadwal Kuliah Mingguan</h2>
                         <p class="text-xs text-slate-400">Susunan mata kuliah harian, ruangan, dan dosen pengampu.</p>
                     </div>
-                    <button onclick="openJadwalModal()" class="owner-only-btn bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl flex items-center gap-2 transition">
+                    <button onclick="openJadwalModal()" class="owner-only-btn bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl flex items-center gap-2 transition shadow-md">
                         <i data-lucide="plus" class="w-4 h-4"></i> Tambah Matkul
                     </button>
                 </div>
-                <div id="jadwalWeekGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+                <div id="jadwalWeekGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"></div>
             </section>
 
             <!-- KALENDER VIEW -->
             <section id="view-kalender" class="hidden space-y-6">
-                <div class="flex justify-between items-center">
+                <div class="flex justify-between items-center flex-wrap gap-4">
                     <div>
                         <h2 class="text-xl font-extrabold text-white">Kalender Interaktif Lengkap</h2>
                         <p class="text-xs text-slate-400">Klik tanggal untuk melihat rincian.</p>
                     </div>
                 </div>
-                <div class="bg-[#0f172a] rounded-3xl p-6 border border-slate-800">
-                    <div class="flex justify-between items-center mb-4">
-                        <span id="calendarFullMonthYear" class="text-sm font-bold text-white">November 2026</span>
+                <div class="bg-[#0f172a] rounded-3xl p-4 sm:p-6 border border-slate-800">
+                    <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
+                        <span id="calendarFullMonthYear" class="text-sm font-bold text-violet-400">November 2026</span>
                         <div class="flex gap-2">
-                            <button onclick="changeMonth(-1)" class="p-2 bg-[#131d38] rounded-xl"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
-                            <button onclick="changeMonth(1)" class="p-2 bg-[#131d38] rounded-xl"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+                            <button onclick="changeMonth(-1)" class="p-2 bg-[#131d38] rounded-xl hover:bg-slate-700 text-slate-300"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+                            <button onclick="changeMonth(1)" class="p-2 bg-[#131d38] rounded-xl hover:bg-slate-700 text-slate-300"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
                         </div>
                     </div>
-                    <div class="grid grid-cols-7 gap-2 mb-2 text-center text-xs font-semibold text-slate-400">
+                    <div class="grid grid-cols-7 gap-1 sm:gap-2 mb-2 text-center text-xs font-semibold text-slate-400">
                         <div>Ming</div><div>Sen</div><div>Sel</div><div>Rab</div><div>Kam</div><div>Jum</div><div>Sab</div>
                     </div>
-                    <div id="calendarFullGrid" class="grid grid-cols-7 gap-2"></div>
+                    <div id="calendarFullGrid" class="grid grid-cols-7 gap-1 sm:gap-2"></div>
                 </div>
             </section>
 
@@ -422,40 +483,51 @@
             <section id="view-settings" class="hidden space-y-6 max-w-2xl mx-auto">
                 <div>
                     <h2 class="text-xl font-extrabold text-white">Pengaturan Aplikasi</h2>
-                    <p class="text-xs text-slate-400">Tema visual & notifikasi perangkat.</p>
+                    <p class="text-xs text-slate-400">Tema visual, notifikasi, manajemen data, dan akun.</p>
                 </div>
-                <div class="bg-[#0f172a] rounded-3xl p-6 border border-slate-800 space-y-6">
-                    <div class="flex items-center justify-between pb-6 border-b border-slate-800">
+                <div class="bg-[#0f172a] rounded-3xl p-5 sm:p-6 border border-slate-800 space-y-6">
+                    <div class="flex items-center justify-between pb-6 border-b border-slate-800 flex-wrap gap-4">
                         <div>
                             <h4 class="text-sm font-bold text-white">Tema Visual Aplikasi</h4>
                             <p class="text-xs text-slate-400">Beralih antara Mode Gelap (Dark) dan Terang (Light).</p>
                         </div>
-                        <button onclick="toggleAppTheme()" id="themeToggleBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition">
+                        <button onclick="toggleAppTheme()" id="themeToggleBtn" class="bg-violet-600 hover:bg-violet-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-md">
                             <span id="themeBtnText">Mode Gelap</span>
                         </button>
                     </div>
 
-                    <div class="flex items-center justify-between pb-6 border-b border-slate-800">
+                    <div class="flex items-center justify-between pb-6 border-b border-slate-800 flex-wrap gap-4">
                         <div>
                             <h4 class="text-sm font-bold text-white">Notifikasi Perangkat Sistem</h4>
                             <p class="text-xs text-slate-400">Aktifkan push notification perangkat saat data baru masuk.</p>
                         </div>
-                        <button onclick="requestDeviceNotificationPermission()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition">
+                        <button onclick="requestDeviceNotificationPermission()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-md">
                             Aktifkan Notifikasi
                         </button>
                     </div>
 
-                    <div class="space-y-3">
+                    <div class="space-y-3 pb-6 border-b border-slate-800">
                         <h4 class="text-sm font-bold text-white">Cadangan & Pemulihan Data (JSON)</h4>
-                        <div class="flex gap-3">
-                            <button onclick="exportData()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition flex items-center gap-2">
+                        <div class="flex gap-3 flex-wrap">
+                            <button onclick="exportData()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-md">
                                 <i data-lucide="download" class="w-4 h-4"></i> Ekspor Data
                             </button>
-                            <label class="bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition cursor-pointer flex items-center gap-2">
+                            <label class="bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition cursor-pointer flex items-center gap-2 shadow-md">
                                 <i data-lucide="upload" class="w-4 h-4"></i> Impor Data
                                 <input type="file" id="importFileInput" accept=".json" onchange="importData(event)" class="hidden">
                             </label>
                         </div>
+                    </div>
+
+                    <!-- TOMBOL KELUAR DI DALAM SETTINGS -->
+                    <div class="flex items-center justify-between flex-wrap gap-4 pt-2">
+                        <div>
+                            <h4 class="text-sm font-bold text-rose-400">Keluar Sesi Akun</h4>
+                            <p class="text-xs text-slate-400">Akhiri sesi saat ini dan kembali ke halaman login.</p>
+                        </div>
+                        <button onclick="logout()" class="bg-rose-950/70 hover:bg-rose-900 text-rose-400 border border-rose-800/60 text-xs font-bold px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-md">
+                            <i data-lucide="log-out" class="w-4 h-4"></i> Keluar Akun
+                        </button>
                     </div>
                 </div>
             </section>
@@ -464,13 +536,13 @@
 
     <!-- MODAL PREVIEW FILE / IMAGE / PDF -->
     <div id="modalPreviewFile" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
-        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-2xl w-full p-6 shadow-2xl flex flex-col max-h-[90vh]">
+        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-2xl w-full p-4 sm:p-6 shadow-2xl flex flex-col max-h-[90vh]">
             <div class="flex justify-between items-center mb-4">
-                <h3 id="previewTitle" class="text-sm font-bold text-white truncate max-w-md">Preview File</h3>
+                <h3 id="previewTitle" class="text-sm font-bold text-white truncate max-w-xs sm:max-w-md">Preview File</h3>
                 <button onclick="closePreviewModal()" class="text-slate-400 hover:text-white p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
-            <div id="previewContainer" class="flex-1 overflow-auto bg-[#131d38] rounded-2xl p-2 flex items-center justify-center min-h-[300px]"></div>
-            <div class="mt-4 flex justify-end gap-2">
+            <div id="previewContainer" class="flex-1 overflow-auto bg-[#131d38] rounded-2xl p-2 flex items-center justify-center min-h-[250px] sm:min-h-[300px]"></div>
+            <div class="mt-4 flex justify-end gap-2 flex-wrap">
                 <a id="previewDownloadBtn" download href="#" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2 rounded-xl flex items-center gap-1.5">
                     <i data-lucide="download" class="w-4 h-4"></i> Unduh File
                 </a>
@@ -481,7 +553,7 @@
 
     <!-- MODAL CATATAN / RANGKUMAN TUGAS -->
     <div id="modalTaskNote" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
+        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl space-y-4">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
                 <div class="flex items-center gap-2">
                     <i data-lucide="notebook-pen" class="w-5 h-5 text-amber-400"></i>
@@ -500,7 +572,7 @@
 
     <!-- MODAL DETAIL TANGGAL KALENDER -->
     <div id="modalCalendarDetail" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl">
+        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl">
             <div class="flex justify-between items-center mb-4">
                 <h3 id="calDetailTitle" class="text-base font-bold text-white">Rincian Tanggal</h3>
                 <button onclick="closeCalendarDetailModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -514,7 +586,7 @@
 
     <!-- MODAL AGENDA -->
     <div id="modalAgenda" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl text-xs space-y-4">
+        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl text-xs space-y-4">
             <h3 id="agendaModalHeader" class="text-base font-bold text-white mb-2">Tambah / Edit Agenda</h3>
             <form onsubmit="saveAgenda(event)" class="space-y-3">
                 <input type="hidden" id="agendaId">
@@ -526,7 +598,7 @@
                     <label class="font-semibold block mb-1 text-slate-300">Nama Tempat / Lokasi</label>
                     <input type="text" id="agendaLokasi" placeholder="Contoh: Gedung Rektorat Lt 3" required class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white">
                 </div>
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="font-semibold block mb-1 text-slate-300">Kriteria Agenda</label>
                         <select id="agendaKriteria" class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white">
@@ -545,7 +617,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
                         <label class="font-semibold block mb-1 text-slate-300">Tanggal</label>
                         <input type="date" id="agendaTanggal" required class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white">
@@ -553,6 +625,10 @@
                     <div>
                         <label class="font-semibold block mb-1 text-slate-300">Jam</label>
                         <input type="time" id="agendaJam" required class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white">
+                    </div>
+                    <div>
+                        <label class="font-semibold block mb-1 text-slate-300">Durasi (Jam)</label>
+                        <input type="number" id="agendaDurasi" step="any" min="0" placeholder="1.5" class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white">
                     </div>
                 </div>
                 <div>
@@ -564,7 +640,7 @@
                 </div>
                 <div class="flex justify-end gap-2 pt-3">
                     <button type="button" onclick="closeAgendaModal()" class="px-4 py-2 rounded-xl border border-slate-700 text-slate-300">Batal</button>
-                    <button type="submit" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold">Simpan Agenda</button>
+                    <button type="submit" class="px-4 py-2 rounded-xl bg-pink-600 hover:bg-pink-700 text-white font-bold">Simpan Agenda</button>
                 </div>
             </form>
         </div>
@@ -572,7 +648,7 @@
 
     <!-- MODAL TUGAS -->
     <div id="modalTugas" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl text-xs space-y-4">
+        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl text-xs space-y-4">
             <h3 id="tugasModalHeader" class="text-base font-bold text-white mb-2">Tambah / Edit Tugas</h3>
             <form onsubmit="saveTugas(event)" class="space-y-3">
                 <input type="hidden" id="tugasId">
@@ -588,7 +664,7 @@
                     <label class="font-semibold block mb-1 text-slate-300">Deadline Tanggal & Jam</label>
                     <input type="datetime-local" id="tugasDeadline" required class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white">
                 </div>
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="font-semibold block mb-1 text-slate-300">Status Pengerjaan</label>
                         <select id="tugasPengerjaan" class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white">
@@ -607,10 +683,10 @@
                 </div>
                 <div>
                     <label class="font-semibold block mb-1 text-slate-300">Catatan / Rangkuman Tugas</label>
-                    <textarea id="tugasCatatan" rows="3" placeholder="Tulis rincian instruksi, poin penting, atau rangkuman tugas di sini..." class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white resize-none custom-scrollbar"></textarea>
+                    <textarea id="tugasCatatan" rows="3" placeholder="Tulis rincian instruksi atau rangkuman tugas..." class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white resize-none custom-scrollbar"></textarea>
                 </div>
                 <div>
-                    <label class="font-semibold block mb-1 text-slate-300">Lampiran Berkas Ketugasan (PDF/Gambar/Doc, Maks 3 MB)</label>
+                    <label class="font-semibold block mb-1 text-slate-300">Lampiran Berkas Ketugasan (Maks 3 MB)</label>
                     <input type="file" id="tugasFile" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg" class="w-full text-slate-400 bg-[#131d38] border border-slate-700 rounded-xl p-2">
                     <div id="tugasFileExisting" class="hidden text-[11px] text-sky-400 mt-1 flex items-center gap-1">
                         <i data-lucide="file" class="w-3 h-3"></i> <span>Sudah ada file terlampir</span>
@@ -618,7 +694,7 @@
                 </div>
                 <div class="flex justify-end gap-2 pt-3">
                     <button type="button" onclick="closeTugasModal()" class="px-4 py-2 rounded-xl border border-slate-700 text-slate-300">Batal</button>
-                    <button type="submit" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold">Simpan Tugas</button>
+                    <button type="submit" class="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold">Simpan Tugas</button>
                 </div>
             </form>
         </div>
@@ -626,7 +702,7 @@
 
     <!-- MODAL JADWAL KULIAH -->
     <div id="modalJadwal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl text-xs space-y-4">
+        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl text-xs space-y-4">
             <h3 id="jadwalModalHeader" class="text-base font-bold text-white mb-2">Tambah / Edit Jadwal Kuliah</h3>
             <form onsubmit="saveJadwal(event)" class="space-y-3">
                 <input type="hidden" id="jadwalId">
@@ -646,10 +722,10 @@
                     <label class="font-semibold block mb-1 text-slate-300">Mata Kuliah</label>
                     <input type="text" id="jadwalMatkul" required placeholder="Contoh: Filsafat Ilmu" class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white">
                 </div>
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="font-semibold block mb-1 text-slate-300">Ruangan</label>
-                        <input type="text" id="jadwalRuang" required placeholder="Contoh: R.402 / Lab 2" class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white">
+                        <input type="text" id="jadwalRuang" required placeholder="R.402 / Lab 2" class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white">
                     </div>
                     <div>
                         <label class="font-semibold block mb-1 text-slate-300">Jam Perks</label>
@@ -658,11 +734,11 @@
                 </div>
                 <div>
                     <label class="font-semibold block mb-1 text-slate-300">Dosen Pengampu</label>
-                    <input type="text" id="jadwalDosen" required placeholder="Contoh: Dr. Supriadi, M.Hum" class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white">
+                    <input type="text" id="jadwalDosen" required placeholder="Dr. Supriadi, M.Hum" class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white">
                 </div>
                 <div class="flex justify-end gap-2 pt-3">
                     <button type="button" onclick="closeJadwalModal()" class="px-4 py-2 rounded-xl border border-slate-700 text-slate-300">Batal</button>
-                    <button type="submit" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold">Simpan Jadwal</button>
+                    <button type="submit" class="px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white font-bold">Simpan Jadwal</button>
                 </div>
             </form>
         </div>
@@ -670,7 +746,7 @@
 
     <!-- MODAL KEUANGAN -->
     <div id="modalFinance" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl text-xs">
+        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl text-xs">
             <h3 class="text-base font-bold text-white mb-4">Catat Transaksi Keuangan</h3>
             <form onsubmit="saveFinance(event)" class="space-y-3">
                 <div>
@@ -694,7 +770,7 @@
                 </div>
                 <div class="flex justify-end gap-2 pt-3">
                     <button type="button" onclick="closeFinanceModal()" class="px-4 py-2 rounded-xl border border-slate-700 text-slate-300">Batal</button>
-                    <button type="submit" class="px-4 py-2 rounded-xl bg-blue-600 text-white font-bold">Simpan</button>
+                    <button type="submit" class="px-4 py-2 rounded-xl bg-emerald-600 text-white font-bold">Simpan</button>
                 </div>
             </form>
         </div>
@@ -702,7 +778,7 @@
 
     <!-- SCRIPT LOGIC -->
     <script>
-        const DB_KEY = 'MYJADWAL_DATA_V6';
+        const DB_KEY = 'MYJADWAL_DATA_V7';
         let appState = {
             currentUser: null,
             savedAccounts: [],
@@ -713,8 +789,9 @@
                     lokasi: 'Pantai', 
                     kriteria: 'Khusus', 
                     status: 'Belum Terlaksana', 
-                    tanggal: '2026-11-09', 
+                    tanggal: '2026-11-17', 
                     jam: '15:00',
+                    durasi: 2,
                     fileData: null,
                     fileName: null,
                     fileType: null
@@ -725,10 +802,10 @@
                     id: 'TG-1', 
                     nama: 'Makalah Filsafat Ilmu Sosial', 
                     dosen: 'Dr. Budi', 
-                    deadline: '2026-11-10T23:59', 
+                    deadline: '2026-11-18T23:59', 
                     pengerjaan: 'Belum dikerjakan',
                     status: 'Belum Terkumpul',
-                    catatan: 'Buat pembahasan minimal 5 halaman, referensi minimal 3 jurnal terindeks Sinta.',
+                    catatan: 'Buat pembahasan minimal 5 halaman.',
                     fileData: null,
                     fileName: null,
                     fileType: null
@@ -751,15 +828,17 @@
         let taskChartInstance = null;
         let financeChartInstance = null;
         let lastDateCheckedStr = '';
+        let alarmInterval = null;
+        let triggeredAlarmIds = new Set();
 
         window.onload = function() {
             lucide.createIcons();
             loadState();
             applyTheme();
             startClock();
-            setInterval(checkUpcomingNotifications, 60000);
+            setInterval(checkUpcomingNotifications, 30000);
 
-            if (appState.currentUser) {
+            if (appState.currentUser && appState.currentUser.email) {
                 document.getElementById('authScreen').classList.add('hidden');
                 document.getElementById('mainApp').classList.remove('hidden');
                 setupUserUI();
@@ -767,26 +846,150 @@
             }
         };
 
-        // Mempertahankan session currentUser agar tidak tereset saat load/save
         function loadState() {
             const saved = localStorage.getItem(DB_KEY);
             if (saved) {
                 try { 
                     const parsed = JSON.parse(saved);
-                    appState = { ...appState, ...parsed };
-                    if (!appState.currentUser && parsed.currentUser) {
-                        appState.currentUser = parsed.currentUser;
-                    }
-                    appState.tasks.forEach(t => {
-                        if (!t.pengerjaan) t.pengerjaan = 'Belum dikerjakan';
-                        if (t.catatan === undefined) t.catatan = '';
-                    });
-                } catch(e) {}
+                    const activeSession = appState.currentUser || parsed.currentUser;
+                    appState = {
+                        ...appState,
+                        ...parsed,
+                        currentUser: activeSession
+                    };
+                } catch(e) {
+                    console.error("Gagal memuat state:", e);
+                }
             }
         }
 
         function saveState() {
-            localStorage.setItem(DB_KEY, JSON.stringify(appState));
+            try {
+                localStorage.setItem(DB_KEY, JSON.stringify(appState));
+            } catch (e) {
+                showToast("Penyimpanan penuh!", "error");
+            }
+        }
+
+        function playBeepTone() {
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                const ctx = new AudioCtx();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(880, ctx.currentTime);
+                osc.frequency.setValueAtTime(1046.5, ctx.currentTime + 0.15);
+                gain.gain.setValueAtTime(0.25, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.5);
+            } catch (e) {}
+        }
+
+        function startAlarmSound(reasonText) {
+            if (alarmInterval) clearInterval(alarmInterval);
+            playBeepTone();
+            alarmInterval = setInterval(playBeepTone, 1200);
+            document.getElementById('stopAlarmBtn').classList.remove('hidden');
+            document.getElementById('alarmIconBox').classList.add('animate-bounce', 'bg-red-950', 'text-red-400', 'border-red-700');
+            if (reasonText) {
+                showToast(`ALARM: ${reasonText}`, "info");
+                sendSystemNotification("Pengingat Waktu MyJadwal", reasonText);
+            }
+        }
+
+        function testAlarmSound() {
+            startAlarmSound("Uji coba alarm waktu nyata berhasil!");
+            setTimeout(() => {
+                if (alarmInterval) stopAlarmSound();
+            }, 4000);
+        }
+
+        function stopAlarmSound() {
+            if (alarmInterval) {
+                clearInterval(alarmInterval);
+                alarmInterval = null;
+            }
+            document.getElementById('stopAlarmBtn').classList.add('hidden');
+            document.getElementById('alarmIconBox').classList.remove('animate-bounce', 'bg-red-950', 'text-red-400', 'border-red-700');
+        }
+
+        function updateRealtimeAlarmWidget(now) {
+            const upcomingEvents = [];
+
+            appState.agendas.forEach(a => {
+                if (a.status === 'Belum Terlaksana' && a.tanggal && a.jam) {
+                    const targetTime = new Date(`${a.tanggal}T${a.jam}:00`).getTime();
+                    if (!isNaN(targetTime) && targetTime >= now.getTime() - 60000) {
+                        upcomingEvents.push({
+                            id: 'AG-' + a.id,
+                            title: `Agenda: ${a.nama}`,
+                            sub: `Lokasi: ${a.lokasi} | Pukul ${a.jam} WIB`,
+                            time: targetTime
+                        });
+                    }
+                }
+            });
+
+            appState.tasks.forEach(t => {
+                if (t.status === 'Belum Terkumpul' && t.deadline) {
+                    const targetTime = new Date(t.deadline).getTime();
+                    if (!isNaN(targetTime) && targetTime >= now.getTime() - 60000) {
+                        upcomingEvents.push({
+                            id: 'TG-' + t.id,
+                            title: `Deadline Tugas: ${t.nama}`,
+                            sub: `Dosen: ${t.dosen} | Batas ${t.deadline.replace('T', ' ')}`,
+                            time: targetTime
+                        });
+                    }
+                }
+            });
+
+            upcomingEvents.sort((a, b) => a.time - b.time);
+
+            const titleEl = document.getElementById('nextEventTitle');
+            const subEl = document.getElementById('nextEventSub');
+            const countEl = document.getElementById('realtimeCountdown');
+
+            if (upcomingEvents.length === 0) {
+                titleEl.innerText = "Tidak ada jadwal/deadline mendesak";
+                subEl.innerText = "Semua agenda & tugas terpantau aman.";
+                countEl.innerText = "00 : 00 : 00";
+                return;
+            }
+
+            const nearest = upcomingEvents[0];
+            const diff = nearest.time - now.getTime();
+
+            titleEl.innerText = nearest.title;
+            subEl.innerText = nearest.sub;
+
+            if (diff <= 0) {
+                countEl.innerText = "WAKTUNYA TIBA!";
+                if (!triggeredAlarmIds.has(nearest.id + '_NOW')) {
+                    triggeredAlarmIds.add(nearest.id + '_NOW');
+                    startAlarmSound(`${nearest.title} telah tiba!`);
+                }
+            } else {
+                const totalSec = Math.floor(diff / 1000);
+                const days = Math.floor(totalSec / 86400);
+                const hrs = Math.floor((totalSec % 86400) / 3600);
+                const mins = Math.floor((totalSec % 3600) / 60);
+                const secs = totalSec % 60;
+
+                const pad = n => String(n).padStart(2, '0');
+                countEl.innerText = days > 0 
+                    ? `${days}h ${pad(hrs)}:${pad(mins)}:${pad(secs)}`
+                    : `${pad(hrs)} : ${pad(mins)} : ${pad(secs)}`;
+
+                if (diff <= 15 * 60 * 1000 && diff > 14 * 60 * 1000 && !triggeredAlarmIds.has(nearest.id + '_15M')) {
+                    triggeredAlarmIds.add(nearest.id + '_15M');
+                    startAlarmSound(`15 Menit lagi: ${nearest.title}`);
+                }
+            }
         }
 
         function readFileAsBase64(file) {
@@ -821,7 +1024,7 @@
                     <div class="text-center p-6 space-y-3">
                         <i data-lucide="file-text" class="w-16 h-16 text-blue-400 mx-auto"></i>
                         <p class="text-xs text-slate-300 font-semibold">${fileName}</p>
-                        <p class="text-[11px] text-slate-400">Preview langsung tidak tersedia untuk format file ini. Klik tombol unduh di bawah.</p>
+                        <p class="text-[11px] text-slate-400">Preview langsung tidak tersedia. Klik tombol unduh.</p>
                     </div>
                 `;
             }
@@ -860,7 +1063,7 @@
             if (isDark) {
                 document.documentElement.classList.add('dark');
                 document.documentElement.classList.remove('light');
-                body.className = "bg-[#080d1a] text-slate-200 min-h-screen flex flex-col transition-colors duration-300";
+                body.className = "bg-[#070b19] text-slate-200 min-h-screen flex flex-col transition-colors duration-300";
                 if(btnText) btnText.innerText = "Mode Gelap";
             } else {
                 document.documentElement.classList.remove('dark');
@@ -922,7 +1125,7 @@
             if (!email) return;
             let acc = appState.savedAccounts.find(a => a.email.toLowerCase() === email.toLowerCase());
             if (!acc) {
-                acc = { name: email.split('@')[0], email: email, avatar: 'https://placehold.co/100x100/3b82f6/white?text=U', accessId: 'MJ-' + Math.floor(100000 + Math.random() * 900000) };
+                acc = { name: email.split('@')[0], email: email, accessId: 'MJ-' + Math.floor(100000 + Math.random() * 900000) };
                 appState.savedAccounts.push(acc);
             }
             appState.currentUser = { ...acc, isGuest: false };
@@ -932,7 +1135,7 @@
         }
 
         function loginAsGuest() {
-            appState.currentUser = { name: "Tamu", email: "guest@myjadwal.com", avatar: 'https://placehold.co/100x100/64748b/white?text=G', accessId: 'MJ-GUEST', isGuest: true };
+            appState.currentUser = { name: "Tamu", email: "guest@myjadwal.com", accessId: 'MJ-GUEST', isGuest: true };
             saveState();
             initAppAfterLogin();
         }
@@ -948,6 +1151,7 @@
         function logout() {
             appState.currentUser = null;
             saveState();
+            stopAlarmSound();
             document.getElementById('mainApp').classList.add('hidden');
             document.getElementById('authScreen').classList.remove('hidden');
         }
@@ -956,7 +1160,6 @@
             const user = appState.currentUser;
             if(!user) return;
             document.getElementById('dashUserName').innerText = user.name;
-            document.getElementById('userAvatar').src = user.avatar;
             document.getElementById('dashAccessID').innerText = user.accessId || 'MJ-000000';
             const badge = document.getElementById('accessModeBadge');
             if (user.isGuest) {
@@ -975,7 +1178,6 @@
             });
         }
 
-        // --- REAL TIME CLOCK, HARI, DAN TANGGAL LENGKAP ---
         function startClock() {
             const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
             const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
@@ -994,6 +1196,10 @@
                 document.getElementById('realtimeClock').innerText = `${hh}.${mm}.${ss} WIB`;
                 document.getElementById('realtimeDateSub').innerText = `${dayName}, ${dateNum} ${monthName} ${yearNum}`;
                 document.getElementById('dashGreeting').innerText = `${dayName.toUpperCase()}, ${dateNum} ${monthName} ${yearNum}`;
+
+                if (appState.currentUser) {
+                    updateRealtimeAlarmWidget(now);
+                }
 
                 const formatDateISO = (d) => {
                     const yyyy = d.getFullYear();
@@ -1020,18 +1226,18 @@
             document.getElementById(`view-${tabId}`).classList.remove('hidden');
 
             document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('bg-blue-600', 'text-white');
+                btn.classList.remove('bg-gradient-to-r', 'from-violet-600', 'to-indigo-600', 'text-white', 'shadow-sm');
                 btn.classList.add('text-slate-400');
-                const textSpan = btn.querySelector('.nav-text');
-                if (textSpan) textSpan.classList.add('hidden');
+                const txt = btn.querySelector('.nav-text');
+                if (txt) txt.classList.add('hidden');
             });
 
             const activeBtn = document.getElementById(`nav-${tabId}`);
             if (activeBtn) {
-                activeBtn.classList.add('bg-blue-600', 'text-white');
+                activeBtn.classList.add('bg-gradient-to-r', 'from-violet-600', 'to-indigo-600', 'text-white', 'shadow-sm');
                 activeBtn.classList.remove('text-slate-400');
-                const activeText = activeBtn.querySelector('.nav-text');
-                if (activeText) activeText.classList.remove('hidden');
+                const activeTxt = activeBtn.querySelector('.nav-text');
+                if (activeTxt) activeTxt.classList.remove('hidden');
             }
             if (tabId === 'kalender') renderFullCalendar();
         }
@@ -1046,7 +1252,6 @@
             lucide.createIcons();
         }
 
-        // --- RENDER DASHBOARD & PINTASAN HARIAN DINAMIS ---
         function renderDashboard() {
             const doneTasks = appState.tasks.filter(t => t.status === 'Terkumpul').length;
             const taskPct = appState.tasks.length > 0 ? Math.round((doneTasks / appState.tasks.length) * 100) : 0;
@@ -1092,47 +1297,45 @@
             todayListEl.innerHTML = '';
             let todayItemsCount = 0;
 
-            const todaySchedules = appState.schedules.filter(s => s.hari === todayDayName);
-            todaySchedules.forEach(s => {
+            appState.schedules.filter(s => s.hari === todayDayName).forEach(s => {
                 todayItemsCount++;
                 todayListEl.innerHTML += `
-                    <div class="p-2.5 bg-[#131d38] rounded-xl flex justify-between items-center text-xs border border-slate-800">
+                    <div class="p-2.5 bg-[#131d38] rounded-xl flex justify-between items-center text-xs border border-slate-800 gap-2">
                         <div>
-                            <span class="text-[10px] uppercase font-bold text-sky-400 block">Jadwal Kuliah</span>
+                            <span class="text-[10px] uppercase font-bold text-cyan-400 block">Jadwal Kuliah</span>
                             <span class="font-bold text-slate-100 block">${s.matkul}</span>
                             <span class="text-[10px] text-slate-400">Ruang: ${s.ruang} | Dosen: ${s.dosen}</span>
                         </div>
-                        <span class="text-sky-300 font-mono text-[11px] font-bold bg-sky-950/60 px-2 py-1 rounded-lg border border-sky-800/40">${s.jam}</span>
+                        <span class="text-cyan-300 font-mono text-[11px] font-bold bg-cyan-950/60 px-2 py-1 rounded-lg border border-cyan-800/40 shrink-0">${s.jam}</span>
                     </div>
                 `;
             });
 
-            const todayAgendas = appState.agendas.filter(a => a.tanggal === todayISO);
-            todayAgendas.forEach(a => {
+            appState.agendas.filter(a => a.tanggal === todayISO).forEach(a => {
                 todayItemsCount++;
+                let durasiText = a.durasi ? ` (${a.durasi} Jam)` : '';
                 todayListEl.innerHTML += `
-                    <div class="p-2.5 bg-[#131d38] rounded-xl flex justify-between items-center text-xs border border-purple-900/40">
+                    <div class="p-2.5 bg-[#131d38] rounded-xl flex justify-between items-center text-xs border border-pink-900/40 gap-2">
                         <div>
-                            <span class="text-[10px] uppercase font-bold text-purple-400 block">Agenda (${a.kriteria})</span>
+                            <span class="text-[10px] uppercase font-bold text-pink-400 block">Agenda (${a.kriteria})</span>
                             <span class="font-bold text-slate-100 block">${a.nama}</span>
                             <span class="text-[10px] text-slate-400">Lokasi: ${a.lokasi}</span>
                         </div>
-                        <span class="text-purple-300 font-mono text-[11px] font-bold bg-purple-950/60 px-2 py-1 rounded-lg border border-purple-800/40">${a.jam} WIB</span>
+                        <span class="text-pink-300 font-mono text-[11px] font-bold bg-pink-950/60 px-2 py-1 rounded-lg border border-pink-800/40 shrink-0">${a.jam}${durasiText} WIB</span>
                     </div>
                 `;
             });
 
-            const todayTasks = appState.tasks.filter(t => t.deadline.startsWith(todayISO));
-            todayTasks.forEach(t => {
+            appState.tasks.filter(t => t.deadline.startsWith(todayISO)).forEach(t => {
                 todayItemsCount++;
                 todayListEl.innerHTML += `
-                    <div class="p-2.5 bg-[#131d38] rounded-xl flex justify-between items-center text-xs border border-amber-900/40">
+                    <div class="p-2.5 bg-[#131d38] rounded-xl flex justify-between items-center text-xs border border-amber-900/40 gap-2">
                         <div>
                             <span class="text-[10px] uppercase font-bold text-amber-400 block">Deadline Tugas</span>
                             <span class="font-bold text-slate-100 block">${t.nama}</span>
                             <span class="text-[10px] text-slate-400">Dosen: ${t.dosen}</span>
                         </div>
-                        <span class="text-amber-300 font-mono text-[11px] font-bold bg-amber-950/60 px-2 py-1 rounded-lg border border-amber-800/40">${t.deadline.split('T')[1] || ''}</span>
+                        <span class="text-amber-300 font-mono text-[11px] font-bold bg-amber-950/60 px-2 py-1 rounded-lg border border-amber-800/40 shrink-0">${t.deadline.split('T')[1] || ''}</span>
                     </div>
                 `;
             });
@@ -1145,47 +1348,45 @@
             tomorrowListEl.innerHTML = '';
             let tomorrowItemsCount = 0;
 
-            const tomorrowSchedules = appState.schedules.filter(s => s.hari === tomorrowDayName);
-            tomorrowSchedules.forEach(s => {
+            appState.schedules.filter(s => s.hari === tomorrowDayName).forEach(s => {
                 tomorrowItemsCount++;
                 tomorrowListEl.innerHTML += `
-                    <div class="p-2.5 bg-[#131d38] rounded-xl flex justify-between items-center text-xs border border-slate-800">
+                    <div class="p-2.5 bg-[#131d38] rounded-xl flex justify-between items-center text-xs border border-slate-800 gap-2">
                         <div>
-                            <span class="text-[10px] uppercase font-bold text-indigo-400 block">Jadwal Kuliah</span>
+                            <span class="text-[10px] uppercase font-bold text-cyan-400 block">Jadwal Kuliah</span>
                             <span class="font-bold text-slate-200 block">${s.matkul}</span>
                             <span class="text-[10px] text-slate-400">Ruang: ${s.ruang} | Dosen: ${s.dosen}</span>
                         </div>
-                        <span class="text-indigo-300 font-mono text-[11px] font-bold bg-indigo-950/60 px-2 py-1 rounded-lg border border-indigo-800/40">${s.jam}</span>
+                        <span class="text-cyan-300 font-mono text-[11px] font-bold bg-cyan-950/60 px-2 py-1 rounded-lg border border-cyan-800/40 shrink-0">${s.jam}</span>
                     </div>
                 `;
             });
 
-            const tomorrowAgendas = appState.agendas.filter(a => a.tanggal === tomorrowISO);
-            tomorrowAgendas.forEach(a => {
+            appState.agendas.filter(a => a.tanggal === tomorrowISO).forEach(a => {
                 tomorrowItemsCount++;
+                let durasiText = a.durasi ? ` (${a.durasi} Jam)` : '';
                 tomorrowListEl.innerHTML += `
-                    <div class="p-2.5 bg-[#131d38] rounded-xl flex justify-between items-center text-xs border border-purple-900/40">
+                    <div class="p-2.5 bg-[#131d38] rounded-xl flex justify-between items-center text-xs border border-pink-900/40 gap-2">
                         <div>
-                            <span class="text-[10px] uppercase font-bold text-purple-400 block">Agenda Besok</span>
+                            <span class="text-[10px] uppercase font-bold text-pink-400 block">Agenda Besok</span>
                             <span class="font-bold text-slate-200 block">${a.nama}</span>
                             <span class="text-[10px] text-slate-400">Lokasi: ${a.lokasi}</span>
                         </div>
-                        <span class="text-purple-300 font-mono text-[11px] font-bold bg-purple-950/60 px-2 py-1 rounded-lg border border-purple-800/40">${a.jam} WIB</span>
+                        <span class="text-pink-300 font-mono text-[11px] font-bold bg-pink-950/60 px-2 py-1 rounded-lg border border-pink-800/40 shrink-0">${a.jam}${durasiText} WIB</span>
                     </div>
                 `;
             });
 
-            const tomorrowTasks = appState.tasks.filter(t => t.deadline.startsWith(tomorrowISO));
-            tomorrowTasks.forEach(t => {
+            appState.tasks.filter(t => t.deadline.startsWith(tomorrowISO)).forEach(t => {
                 tomorrowItemsCount++;
                 tomorrowListEl.innerHTML += `
-                    <div class="p-2.5 bg-[#131d38] rounded-xl flex justify-between items-center text-xs border border-amber-900/40">
+                    <div class="p-2.5 bg-[#131d38] rounded-xl flex justify-between items-center text-xs border border-amber-900/40 gap-2">
                         <div>
                             <span class="text-[10px] uppercase font-bold text-amber-400 block">Deadline Tugas Besok</span>
                             <span class="font-bold text-slate-200 block">${t.nama}</span>
                             <span class="text-[10px] text-slate-400">Dosen: ${t.dosen}</span>
                         </div>
-                        <span class="text-amber-300 font-mono text-[11px] font-bold bg-amber-950/60 px-2 py-1 rounded-lg border border-amber-800/40">${t.deadline.split('T')[1] || ''}</span>
+                        <span class="text-amber-300 font-mono text-[11px] font-bold bg-amber-950/60 px-2 py-1 rounded-lg border border-amber-800/40 shrink-0">${t.deadline.split('T')[1] || ''}</span>
                     </div>
                 `;
             });
@@ -1202,7 +1403,7 @@
             if (financeChartInstance) financeChartInstance.destroy();
             financeChartInstance = new Chart(ctxFin, {
                 type: 'doughnut',
-                data: { labels: ['Pemasukan', 'Pengeluaran'], datasets: [{ data: [inc, exp], backgroundColor: ['#10b981', '#ef4444'], borderWidth: 0 }] },
+                data: { labels: ['Pemasukan', 'Pengeluaran'], datasets: [{ data: [inc, exp], backgroundColor: ['#10b981', '#f43f5e'], borderWidth: 0 }] },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
             });
 
@@ -1213,7 +1414,7 @@
             if (taskChartInstance) taskChartInstance.destroy();
             taskChartInstance = new Chart(ctxTask, {
                 type: 'doughnut',
-                data: { labels: ['Terkumpul', 'Belum Terkumpul'], datasets: [{ data: [done, notDone], backgroundColor: ['#10b981', '#ef4444'], borderWidth: 0 }] },
+                data: { labels: ['Terkumpul', 'Belum Terkumpul'], datasets: [{ data: [done, notDone], backgroundColor: ['#10b981', '#f59e0b'], borderWidth: 0 }] },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
             });
         }
@@ -1236,7 +1437,7 @@
                 const hasAgenda = appState.agendas.some(a => a.tanggal === dateStr);
                 const hasTask = appState.tasks.some(t => t.deadline.startsWith(dateStr));
 
-                let dot = (hasAgenda || hasTask) ? `<span class="w-1.5 h-1.5 rounded-full bg-blue-500 mt-0.5"></span>` : '';
+                let dot = (hasAgenda || hasTask) ? `<span class="w-1.5 h-1.5 rounded-full bg-pink-500 mt-0.5"></span>` : '';
                 grid.innerHTML += `
                     <div onclick="openCalendarDetail('${dateStr}', ${day}, '${mNames[month]}', ${year})" class="aspect-square bg-[#131d38] hover:bg-slate-700 cursor-pointer rounded-xl p-1 flex flex-col items-center justify-center text-xs transition">
                         <span class="font-bold">${day}</span>
@@ -1278,16 +1479,19 @@
             if (ags.length === 0 && tsk.length === 0) {
                 body.innerHTML = `<div class="p-4 bg-[#131d38] rounded-xl text-center text-slate-400">Hari ini tidak ada agenda / deadline tugas.</div>`;
             } else {
-                ags.forEach(a => body.innerHTML += `
-                    <div class="p-3 bg-purple-950/40 border border-purple-800 rounded-xl space-y-1">
-                        <div class="flex justify-between items-center"><span class="text-[10px] font-bold text-purple-400 uppercase">Agenda (${a.kriteria})</span><span class="text-[10px] bg-slate-800 px-2 py-0.5 rounded text-slate-300">${a.status}</span></div>
+                ags.forEach(a => {
+                    let durasiText = a.durasi ? ` (${a.durasi} Jam)` : '';
+                    body.innerHTML += `
+                    <div class="p-3 bg-pink-950/40 border border-pink-800/60 rounded-xl space-y-1">
+                        <div class="flex justify-between items-center"><span class="text-[10px] font-bold text-pink-400 uppercase">Agenda (${a.kriteria})</span><span class="text-[10px] bg-slate-800 px-2 py-0.5 rounded text-slate-300">${a.status}</span></div>
                         <div class="font-bold text-white">${a.nama}</div>
-                        <div class="text-[11px] text-slate-300">Lokasi: ${a.lokasi} | Jam: ${a.jam}</div>
+                        <div class="text-[11px] text-slate-300">Lokasi: ${a.lokasi} | Jam: ${a.jam}${durasiText}</div>
                     </div>
-                `);
+                `;
+                });
                 tsk.forEach(t => body.innerHTML += `
-                    <div class="p-3 bg-blue-950/40 border border-blue-800 rounded-xl space-y-1">
-                        <div class="flex justify-between items-center"><span class="text-[10px] font-bold text-blue-400 uppercase">Deadline Tugas</span><span class="text-[10px] bg-slate-800 px-2 py-0.5 rounded text-slate-300">${t.status} (${t.pengerjaan || 'Belum dikerjakan'})</span></div>
+                    <div class="p-3 bg-amber-950/40 border border-amber-800/60 rounded-xl space-y-1">
+                        <div class="flex justify-between items-center"><span class="text-[10px] font-bold text-amber-400 uppercase">Deadline Tugas</span><span class="text-[10px] bg-slate-800 px-2 py-0.5 rounded text-slate-300">${t.status} (${t.pengerjaan || 'Belum dikerjakan'})</span></div>
                         <div class="font-bold text-white">${t.nama}</div>
                         <div class="text-[11px] text-slate-300">Dosen: ${t.dosen}</div>
                         ${t.catatan ? `<div class="text-[10px] text-amber-300 italic truncate">Catatan: ${t.catatan}</div>` : ''}
@@ -1323,6 +1527,7 @@
                     document.getElementById('agendaStatus').value = ag.status || 'Belum Terlaksana';
                     document.getElementById('agendaTanggal').value = ag.tanggal;
                     document.getElementById('agendaJam').value = ag.jam;
+                    document.getElementById('agendaDurasi').value = ag.durasi !== undefined && ag.durasi !== null ? ag.durasi : '';
                     if (ag.fileData) {
                         document.getElementById('agendaFileExisting').classList.remove('hidden');
                     }
@@ -1348,6 +1553,8 @@
             const status = document.getElementById('agendaStatus').value;
             const tanggal = document.getElementById('agendaTanggal').value;
             const jam = document.getElementById('agendaJam').value;
+            const durasiRaw = document.getElementById('agendaDurasi').value;
+            const durasi = durasiRaw !== '' ? parseFloat(durasiRaw) : null;
             const fileInput = document.getElementById('agendaFile');
 
             let fileData = null, fileName = null, fileType = null;
@@ -1371,12 +1578,12 @@
             if (id) {
                 const idx = appState.agendas.findIndex(a => a.id === id);
                 if (idx !== -1) {
-                    appState.agendas[idx] = { id, nama, lokasi, kriteria, status, tanggal, jam, fileData, fileName, fileType };
+                    appState.agendas[idx] = { id, nama, lokasi, kriteria, status, tanggal, jam, durasi, fileData, fileName, fileType };
                 }
                 showToast("Agenda berhasil diperbarui!", "success");
             } else {
                 const newId = 'AG-' + Date.now();
-                appState.agendas.push({ id: newId, nama, lokasi, kriteria, status, tanggal, jam, fileData, fileName, fileType });
+                appState.agendas.push({ id: newId, nama, lokasi, kriteria, status, tanggal, jam, durasi, fileData, fileName, fileType });
                 showToast("Agenda baru ditambahkan!", "success");
                 sendSystemNotification("Agenda Baru", `Agenda: ${nama}`);
             }
@@ -1408,17 +1615,19 @@
             grid.innerHTML = '';
             appState.agendas.forEach(a => {
                 let fileBtnHtml = a.fileData ? `
-                    <button onclick="previewFileModal('${a.fileData}', '${a.fileName}', '${a.fileType}')" class="w-full mt-2 py-1.5 px-3 bg-[#131d38] hover:bg-slate-800 text-sky-400 font-semibold text-[11px] rounded-xl border border-slate-700 flex items-center justify-center gap-1.5 transition">
+                    <button onclick="previewFileModal('${a.fileData}', '${a.fileName}', '${a.fileType}')" class="w-full mt-2 py-1.5 px-3 bg-[#131d38] hover:bg-slate-800 text-pink-400 font-semibold text-[11px] rounded-xl border border-pink-900/40 flex items-center justify-center gap-1.5 transition">
                         <i data-lucide="paperclip" class="w-3.5 h-3.5"></i> Lihat / Download Lampiran
                     </button>
                 ` : '';
 
+                let durasiHtml = a.durasi ? ` | ${a.durasi} Jam` : '';
+
                 grid.innerHTML += `
-                    <div class="bg-[#0f172a] p-5 rounded-3xl border border-slate-800 space-y-3 flex flex-col justify-between">
+                    <div class="bg-[#0f172a] p-4 sm:p-5 rounded-3xl border border-pink-950/50 space-y-3 flex flex-col justify-between shadow-sm">
                         <div class="space-y-2">
                             <div class="flex justify-between items-center gap-2">
-                                <span class="text-[10px] font-bold uppercase text-purple-400 bg-purple-950/60 px-2 py-0.5 rounded border border-purple-800/40">${a.kriteria || 'Umum'}</span>
-                                <select onchange="updateAgendaStatusQuick('${a.id}', this.value)" class="text-[10px] font-bold px-2 py-1 rounded border bg-[#131d38] text-slate-200 border-slate-700 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer">
+                                <span class="text-[10px] font-bold uppercase text-pink-400 bg-pink-950/60 px-2 py-0.5 rounded border border-pink-800/40">${a.kriteria || 'Umum'}</span>
+                                <select onchange="updateAgendaStatusQuick('${a.id}', this.value)" class="text-[10px] font-bold px-2 py-1 rounded border bg-[#131d38] text-slate-200 border-slate-700 focus:outline-none focus:ring-1 focus:ring-pink-500 cursor-pointer">
                                     <option value="Belum Terlaksana" ${a.status === 'Belum Terlaksana' ? 'selected' : ''}>Belum Terlaksana</option>
                                     <option value="Terlaksana" ${a.status === 'Terlaksana' ? 'selected' : ''}>Terlaksana</option>
                                     <option value="Tidak Terlaksana" ${a.status === 'Tidak Terlaksana' ? 'selected' : ''}>Tidak Terlaksana</option>
@@ -1426,12 +1635,12 @@
                                 </select>
                             </div>
                             <h4 class="font-bold text-white text-sm">${a.nama}</h4>
-                            <p class="text-xs text-slate-400 flex items-center gap-1"><i data-lucide="map-pin" class="w-3.5 h-3.5 text-slate-500"></i> ${a.lokasi}</p>
-                            <p class="text-xs text-slate-500 font-mono">${a.tanggal} | ${a.jam} WIB</p>
+                            <p class="text-xs text-slate-400 flex items-center gap-1"><i data-lucide="map-pin" class="w-3.5 h-3.5 text-pink-500"></i> ${a.lokasi}</p>
+                            <p class="text-xs text-slate-400 font-mono">${a.tanggal} | ${a.jam} WIB${durasiHtml}</p>
                             ${fileBtnHtml}
                         </div>
                         <div class="flex justify-end gap-2 pt-3 border-t border-slate-800/80">
-                            <button onclick="openAgendaModal('${a.id}')" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-blue-400 font-bold text-xs flex items-center gap-1"><i data-lucide="edit-3" class="w-3.5 h-3.5"></i> Edit</button>
+                            <button onclick="openAgendaModal('${a.id}')" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-pink-400 font-bold text-xs flex items-center gap-1"><i data-lucide="edit-3" class="w-3.5 h-3.5"></i> Edit</button>
                             <button onclick="deleteAgenda('${a.id}')" class="px-3 py-1.5 rounded-xl bg-red-950/40 hover:bg-red-900/40 text-red-400 font-bold text-xs flex items-center gap-1"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Hapus</button>
                         </div>
                     </div>
@@ -1551,7 +1760,7 @@
             grid.innerHTML = '';
             appState.tasks.forEach(t => {
                 let fileBtnHtml = t.fileData ? `
-                    <button onclick="previewFileModal('${t.fileData}', '${t.fileName}', '${t.fileType}')" class="w-full mt-2 py-1.5 px-3 bg-[#131d38] hover:bg-slate-800 text-sky-400 font-semibold text-[11px] rounded-xl border border-slate-700 flex items-center justify-center gap-1.5 transition">
+                    <button onclick="previewFileModal('${t.fileData}', '${t.fileName}', '${t.fileType}')" class="w-full mt-2 py-1.5 px-3 bg-[#131d38] hover:bg-slate-800 text-amber-400 font-semibold text-[11px] rounded-xl border border-amber-900/40 flex items-center justify-center gap-1.5 transition">
                         <i data-lucide="file-check-2" class="w-3.5 h-3.5"></i> Lihat / Download File Ketugasan
                     </button>
                 ` : '';
@@ -1563,23 +1772,23 @@
                 ` : '';
 
                 grid.innerHTML += `
-                    <div class="bg-[#0f172a] p-5 rounded-3xl border border-slate-800 space-y-3 flex flex-col justify-between">
+                    <div class="bg-[#0f172a] p-4 sm:p-5 rounded-3xl border border-amber-950/50 space-y-3 flex flex-col justify-between shadow-sm">
                         <div class="space-y-3">
                             <div class="flex justify-between items-center gap-2">
                                 <span class="text-[10px] font-bold uppercase text-amber-400 bg-amber-950/60 px-2 py-0.5 rounded border border-amber-800/40">Tugas Kuliah</span>
-                                <select onchange="updateTugasStatusQuick('${t.id}', this.value)" class="text-[10px] font-bold px-2 py-1 rounded border bg-[#131d38] text-slate-200 border-slate-700 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer">
+                                <select onchange="updateTugasStatusQuick('${t.id}', this.value)" class="text-[10px] font-bold px-2 py-1 rounded border bg-[#131d38] text-slate-200 border-slate-700 focus:outline-none focus:ring-1 focus:ring-amber-500 cursor-pointer">
                                     <option value="Belum Terkumpul" ${t.status === 'Belum Terkumpul' ? 'selected' : ''}>Belum Terkumpul</option>
                                     <option value="Terkumpul" ${t.status === 'Terkumpul' ? 'selected' : ''}>Terkumpul</option>
                                 </select>
                             </div>
 
                             <h4 class="font-bold text-white text-sm">${t.nama}</h4>
-                            <p class="text-xs text-slate-400 flex items-center gap-1"><i data-lucide="user" class="w-3.5 h-3.5 text-slate-500"></i> ${t.dosen}</p>
-                            <p class="text-xs text-slate-500 font-mono">Deadline: ${t.deadline.replace('T', ' ')}</p>
+                            <p class="text-xs text-slate-400 flex items-center gap-1"><i data-lucide="user" class="w-3.5 h-3.5 text-amber-500"></i> ${t.dosen}</p>
+                            <p class="text-xs text-slate-400 font-mono">Deadline: ${t.deadline.replace('T', ' ')}</p>
 
-                            <div class="pt-2 border-t border-slate-800/60 flex items-center justify-between">
-                                <span class="text-[11px] text-slate-400 font-semibold">Proses Pengerjaan:</span>
-                                <select onchange="updateTugasPengerjaanQuick('${t.id}', this.value)" class="text-[11px] font-semibold px-2 py-1 rounded-xl bg-[#131d38] text-sky-300 border border-slate-700 focus:outline-none focus:ring-1 focus:ring-sky-500 cursor-pointer">
+                            <div class="pt-2 border-t border-slate-800/60 flex items-center justify-between gap-2">
+                                <span class="text-[11px] text-slate-400 font-semibold">Proses:</span>
+                                <select onchange="updateTugasPengerjaanQuick('${t.id}', this.value)" class="text-[11px] font-semibold px-2 py-1 rounded-xl bg-[#131d38] text-amber-300 border border-slate-700 focus:outline-none focus:ring-1 focus:ring-amber-500 cursor-pointer">
                                     <option value="Belum dikerjakan" ${t.pengerjaan === 'Belum dikerjakan' ? 'selected' : ''}>Belum dikerjakan</option>
                                     <option value="Dalam proses" ${t.pengerjaan === 'Dalam proses' ? 'selected' : ''}>Dalam proses</option>
                                     <option value="Selesai" ${t.pengerjaan === 'Selesai' ? 'selected' : ''}>Selesai</option>
@@ -1590,7 +1799,7 @@
                             ${fileBtnHtml}
                         </div>
                         <div class="flex justify-end gap-2 pt-3 border-t border-slate-800/80">
-                            <button onclick="openTugasModal('${t.id}')" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-blue-400 font-bold text-xs flex items-center gap-1"><i data-lucide="edit-3" class="w-3.5 h-3.5"></i> Edit</button>
+                            <button onclick="openTugasModal('${t.id}')" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-400 font-bold text-xs flex items-center gap-1"><i data-lucide="edit-3" class="w-3.5 h-3.5"></i> Edit</button>
                             <button onclick="deleteTugas('${t.id}')" class="px-3 py-1.5 rounded-xl bg-red-950/40 hover:bg-red-900/40 text-red-400 font-bold text-xs flex items-center gap-1"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Hapus</button>
                         </div>
                     </div>
@@ -1668,24 +1877,24 @@
                 appState.schedules.filter(s => s.hari === d).forEach(s => {
                     html += `
                         <div class="p-3 bg-[#131d38] rounded-2xl text-xs space-y-1.5 border border-slate-800">
-                            <div class="flex justify-between items-start font-bold text-slate-100">
+                            <div class="flex justify-between items-start font-bold text-slate-100 gap-2">
                                 <span class="text-sm">${s.matkul}</span>
-                                <span class="text-sky-400 font-mono text-[11px] bg-sky-950/60 px-2 py-0.5 rounded border border-sky-800/40">${s.jam}</span>
+                                <span class="text-cyan-400 font-mono text-[11px] bg-cyan-950/60 px-2 py-0.5 rounded border border-cyan-800/40 shrink-0">${s.jam}</span>
                             </div>
                             <div class="text-[11px] text-slate-400 space-y-0.5">
-                                <p class="flex items-center gap-1"><i data-lucide="door-open" class="w-3 h-3 text-slate-500"></i> Ruangan: <span class="text-slate-200 font-semibold">${s.ruang}</span></p>
-                                <p class="flex items-center gap-1"><i data-lucide="graduation-cap" class="w-3 h-3 text-slate-500"></i> Dosen: <span class="text-slate-300">${s.dosen}</span></p>
+                                <p class="flex items-center gap-1"><i data-lucide="door-open" class="w-3 h-3 text-cyan-500"></i> Ruangan: <span class="text-slate-200 font-semibold">${s.ruang}</span></p>
+                                <p class="flex items-center gap-1"><i data-lucide="graduation-cap" class="w-3 h-3 text-cyan-500"></i> Dosen: <span class="text-slate-300">${s.dosen}</span></p>
                             </div>
                             <div class="flex justify-end gap-2 pt-2 border-t border-slate-800/60">
-                                <button onclick="openJadwalModal('${s.id}')" class="text-blue-400 hover:underline text-[11px] font-bold">Edit</button>
+                                <button onclick="openJadwalModal('${s.id}')" class="text-cyan-400 hover:underline text-[11px] font-bold">Edit</button>
                                 <button onclick="deleteJadwal('${s.id}')" class="text-red-400 hover:underline text-[11px] font-bold">Hapus</button>
                             </div>
                         </div>
                     `;
                 });
                 grid.innerHTML += `
-                    <div class="bg-[#0f172a] p-5 rounded-3xl border border-slate-800 space-y-3">
-                        <h4 class="font-extrabold text-blue-400 border-b border-slate-800 pb-2 text-sm">${d}</h4>
+                    <div class="bg-[#0f172a] p-4 sm:p-5 rounded-3xl border border-cyan-950/50 space-y-3 shadow-sm">
+                        <h4 class="font-extrabold text-cyan-400 border-b border-slate-800 pb-2 text-sm">${d}</h4>
                         <div class="space-y-2.5">${html || '<p class="text-xs text-slate-500">Tidak ada jadwal kuliah.</p>'}</div>
                     </div>
                 `;
@@ -1714,7 +1923,7 @@
             const tbody = document.getElementById('financeTableBody');
             tbody.innerHTML = '';
             appState.finances.forEach(f => {
-                tbody.innerHTML += `<tr><td class="py-3 text-slate-400">${f.date}</td><td class="py-3 font-semibold text-white">${f.desc}</td><td class="py-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${f.type === 'Pemasukan' ? 'bg-emerald-950 text-emerald-400' : 'bg-red-950 text-red-400'}">${f.type}</span></td><td class="py-3 text-right font-bold ${f.type === 'Pemasukan' ? 'text-emerald-400' : 'text-red-400'}">${f.type === 'Pemasukan' ? '+' : '-'} Rp ${f.amount.toLocaleString()}</td><td class="py-3 text-center"><button onclick="deleteFinance('${f.id}')" class="text-red-400 hover:underline font-bold">Hapus</button></td></tr>`;
+                tbody.innerHTML += `<tr><td class="py-3 text-slate-400">${f.date}</td><td class="py-3 font-semibold text-white">${f.desc}</td><td class="py-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${f.type === 'Pemasukan' ? 'bg-emerald-950 text-emerald-400' : 'bg-rose-950 text-rose-400'}">${f.type}</span></td><td class="py-3 text-right font-bold ${f.type === 'Pemasukan' ? 'text-emerald-400' : 'text-rose-400'}">${f.type === 'Pemasukan' ? '+' : '-'} Rp ${f.amount.toLocaleString()}</td><td class="py-3 text-center"><button onclick="deleteFinance('${f.id}')" class="text-rose-400 hover:underline font-bold">Hapus</button></td></tr>`;
             });
         }
 
@@ -1745,7 +1954,14 @@
             if (!file) return;
             const reader = new FileReader();
             reader.onload = function(evt) {
-                try { appState = JSON.parse(evt.target.result); saveState(); renderAll(); showToast("Data diimpor!", "success"); }
+                try { 
+                    const imported = JSON.parse(evt.target.result);
+                    const activeUser = appState.currentUser;
+                    appState = { ...imported, currentUser: activeUser }; 
+                    saveState(); 
+                    renderAll(); 
+                    showToast("Data diimpor!", "success"); 
+                }
                 catch(err) { showToast("Gagal membaca file.", "error"); }
             };
             reader.readAsText(file);
@@ -1754,8 +1970,8 @@
         function showToast(msg, type = 'info') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
-            let bg = type === 'success' ? 'bg-emerald-600' : (type === 'error' ? 'bg-red-600' : 'bg-blue-600');
-            toast.className = `p-4 rounded-2xl shadow-xl text-xs font-bold text-white pointer-events-auto transition-all duration-300 ${bg}`;
+            let bg = type === 'success' ? 'bg-emerald-600' : (type === 'error' ? 'bg-rose-600' : 'bg-violet-600');
+            toast.className = `p-3 sm:p-4 rounded-2xl shadow-xl text-xs font-bold text-white pointer-events-auto transition-all duration-300 ${bg}`;
             toast.innerText = msg;
             container.appendChild(toast);
             setTimeout(() => toast.remove(), 3500);
