@@ -787,7 +787,7 @@
 
     <!-- SCRIPT LOGIC -->
     <script>
-        const DB_KEY = 'MYJADWAL_DATA_V9';
+        const DB_KEY = 'MYJADWAL_DATA_V10';
         let appState = {
             currentUser: null,
             savedAccounts: [],
@@ -829,7 +829,7 @@
                 { id: '2', hari: 'Senin', matkul: 'Filsafat Ilmu Sosial', ruang: 'R.402', dosen: 'Prof. Ahmad', jam: '09.00 - 11.20' },
                 { id: '3', hari: 'Selasa', matkul: 'Kewirausahaan', ruang: 'R.201', dosen: 'Ir. Handojo, M.M', jam: '10.00 - 12.30' }
             ],
-            settings: { themeMode: 'dark' }
+            settings: { themeMode: 'dark', notificationsEnabled: false }
         };
 
         let currentCalendarDate = new Date(); 
@@ -852,12 +852,15 @@
                 document.getElementById('mainApp').classList.remove('hidden');
                 setupUserUI();
                 renderAll();
+            } else {
+                document.getElementById('authScreen').classList.remove('hidden');
+                document.getElementById('mainApp').classList.add('hidden');
             }
         };
 
         // Fungsi Load State dengan migrasi otomatis agar sesi akun & data aman tersimpan
         function loadState() {
-            const possibleKeys = [DB_KEY, 'MYJADWAL_DATA_V8', 'MYJADWAL_DATA_V7', 'MYJADWAL_DATA_V6', 'MYJADWAL_DATA_V5'];
+            const possibleKeys = [DB_KEY, 'MYJADWAL_DATA_V9', 'MYJADWAL_DATA_V8', 'MYJADWAL_DATA_V7', 'MYJADWAL_DATA_V6', 'MYJADWAL_DATA_V5'];
             let loadedData = null;
 
             for (const key of possibleKeys) {
@@ -875,13 +878,12 @@
                     appState = {
                         ...appState,
                         ...loadedData,
-                        currentUser: loadedData.currentUser || appState.currentUser,
+                        currentUser: loadedData.currentUser !== undefined ? loadedData.currentUser : appState.currentUser,
                         settings: {
                             ...appState.settings,
                             ...(loadedData.settings || {})
                         }
                     };
-                    saveState(); 
                 } catch(e) {
                     console.error("Gagal memuat state:", e);
                 }
@@ -918,8 +920,10 @@
             if (alarmInterval) clearInterval(alarmInterval);
             playBeepTone();
             alarmInterval = setInterval(playBeepTone, 1200);
-            document.getElementById('stopAlarmBtn').classList.remove('hidden');
-            document.getElementById('alarmIconBox').classList.add('animate-bounce', 'bg-red-950', 'text-red-400', 'border-red-700');
+            const stopBtn = document.getElementById('stopAlarmBtn');
+            const iconBox = document.getElementById('alarmIconBox');
+            if (stopBtn) stopBtn.classList.remove('hidden');
+            if (iconBox) iconBox.classList.add('animate-bounce', 'bg-red-950', 'text-red-400', 'border-red-700');
             if (reasonText) {
                 showToast(`ALARM: ${reasonText}`, "info");
                 sendSystemNotification("Pengingat Waktu MyJadwal", reasonText);
@@ -938,8 +942,10 @@
                 clearInterval(alarmInterval);
                 alarmInterval = null;
             }
-            document.getElementById('stopAlarmBtn').classList.add('hidden');
-            document.getElementById('alarmIconBox').classList.remove('animate-bounce', 'bg-red-950', 'text-red-400', 'border-red-700');
+            const stopBtn = document.getElementById('stopAlarmBtn');
+            const iconBox = document.getElementById('alarmIconBox');
+            if (stopBtn) stopBtn.classList.add('hidden');
+            if (iconBox) iconBox.classList.remove('animate-bounce', 'bg-red-950', 'text-red-400', 'border-red-700');
         }
 
         function updateRealtimeAlarmWidget(now) {
@@ -978,6 +984,7 @@
             const titleEl = document.getElementById('nextEventTitle');
             const subEl = document.getElementById('nextEventSub');
             const countEl = document.getElementById('realtimeCountdown');
+            if (!titleEl || !subEl || !countEl) return;
 
             if (upcomingEvents.length === 0) {
                 titleEl.innerText = "Tidak ada jadwal/deadline mendesak";
@@ -1105,16 +1112,20 @@
             }
             Notification.requestPermission().then(permission => {
                 if (permission === "granted") {
+                    appState.settings.notificationsEnabled = true;
+                    saveState();
                     showToast("Notifikasi perangkat diaktifkan!", "success");
                     new Notification("MyJadwal", { body: "Notifikasi sistem aktif!" });
                 } else {
+                    appState.settings.notificationsEnabled = false;
+                    saveState();
                     showToast("Izin notifikasi ditolak.", "error");
                 }
             });
         }
 
         function sendSystemNotification(title, bodyText) {
-            if ("Notification" in window && Notification.permission === "granted") {
+            if (appState.settings && appState.settings.notificationsEnabled && "Notification" in window && Notification.permission === "granted") {
                 new Notification(title, { body: bodyText });
             }
         }
@@ -1175,24 +1186,29 @@
 
         function logout() {
             appState.currentUser = null;
-            saveState();
+            saveState(); // LANGSUNG SIMPAN PERUBAHAN KE LOCALSTORAGE SUPAYA TIDAK TER-RESET KETIKA DI-REFRESH
             stopAlarmSound();
             document.getElementById('mainApp').classList.add('hidden');
             document.getElementById('authScreen').classList.remove('hidden');
+            showToast("Berhasil keluar akun.", "info");
         }
 
         function setupUserUI() {
             const user = appState.currentUser;
             if(!user) return;
-            document.getElementById('dashUserName').innerText = user.name;
-            document.getElementById('dashAccessID').innerText = user.accessId || 'MJ-000000';
+            const userNameEl = document.getElementById('dashUserName');
+            const accessIdEl = document.getElementById('dashAccessID');
+            if (userNameEl) userNameEl.innerText = user.name;
+            if (accessIdEl) accessIdEl.innerText = user.accessId || 'MJ-000000';
             const badge = document.getElementById('accessModeBadge');
-            if (user.isGuest) {
-                badge.innerText = "Tamu";
-                document.querySelectorAll('.nav-owner-only, .owner-only-btn').forEach(el => el.classList.add('hidden'));
-            } else {
-                badge.innerText = "Pemilik";
-                document.querySelectorAll('.nav-owner-only, .owner-only-btn').forEach(el => el.classList.remove('hidden'));
+            if (badge) {
+                if (user.isGuest) {
+                    badge.innerText = "Tamu";
+                    document.querySelectorAll('.nav-owner-only, .owner-only-btn').forEach(el => el.classList.add('hidden'));
+                } else {
+                    badge.innerText = "Pemilik";
+                    document.querySelectorAll('.nav-owner-only, .owner-only-btn').forEach(el => el.classList.remove('hidden'));
+                }
             }
         }
 
@@ -1218,9 +1234,13 @@
                 const monthName = months[now.getMonth()];
                 const yearNum = now.getFullYear();
 
-                document.getElementById('realtimeClock').innerText = `${hh}.${mm}.${ss} WIB`;
-                document.getElementById('realtimeDateSub').innerText = `${dayName}, ${dateNum} ${monthName} ${yearNum}`;
-                document.getElementById('dashGreeting').innerText = `${dayName.toUpperCase()}, ${dateNum} ${monthName} ${yearNum}`;
+                const clockEl = document.getElementById('realtimeClock');
+                const dateSubEl = document.getElementById('realtimeDateSub');
+                const greetingEl = document.getElementById('dashGreeting');
+
+                if (clockEl) clockEl.innerText = `${hh}.${mm}.${ss} WIB`;
+                if (dateSubEl) dateSubEl.innerText = `${dayName}, ${dateNum} ${monthName} ${yearNum}`;
+                if (greetingEl) greetingEl.innerText = `${dayName.toUpperCase()}, ${dateNum} ${monthName} ${yearNum}`;
 
                 if (appState.currentUser) {
                     updateRealtimeAlarmWidget(now);
@@ -1249,6 +1269,7 @@
         function switchTab(tabId) {
             document.querySelectorAll('section[id^="view-"]').forEach(sec => sec.classList.add('hidden'));
             const targetSec = document.getElementById(`view-${tabId}`);
+            if (!targetSec) return;
             targetSec.classList.remove('hidden');
             
             // Trigger animasi fade-in
@@ -1292,22 +1313,32 @@
         function renderDashboard() {
             const doneTasks = appState.tasks.filter(t => t.status === 'Terkumpul').length;
             const taskPct = appState.tasks.length > 0 ? Math.round((doneTasks / appState.tasks.length) * 100) : 0;
-            document.getElementById('statTotalTugas').innerText = appState.tasks.length;
-            document.getElementById('statTugasPct').innerText = `${taskPct}% Terkumpul`;
+            
+            const el1 = document.getElementById('statTotalTugas');
+            const el2 = document.getElementById('statTugasPct');
+            if (el1) el1.innerText = appState.tasks.length;
+            if (el2) el2.innerText = `${taskPct}% Terkumpul`;
 
             const pendingAg = appState.agendas.filter(a => a.status === 'Belum Terlaksana').length;
-            document.getElementById('statTotalAgenda').innerText = appState.agendas.length;
-            document.getElementById('statAgendaPending').innerText = `${pendingAg} Belum Terlaksana`;
+            const el3 = document.getElementById('statTotalAgenda');
+            const el4 = document.getElementById('statAgendaPending');
+            if (el3) el3.innerText = appState.agendas.length;
+            if (el4) el4.innerText = `${pendingAg} Belum Terlaksana`;
 
             let inc = appState.finances.filter(f => f.type === 'Pemasukan').reduce((a, b) => a + b.amount, 0);
             let exp = appState.finances.filter(f => f.type === 'Pengeluaran').reduce((a, b) => a + b.amount, 0);
             let saldo = inc - exp;
 
-            document.getElementById('statTotalIncome').innerText = `Rp ${inc.toLocaleString()}`;
-            document.getElementById('statTotalExpense').innerText = `Rp ${exp.toLocaleString()}`;
+            const el5 = document.getElementById('statTotalIncome');
+            const el6 = document.getElementById('statTotalExpense');
+            const el7 = document.getElementById('dashSaldoHighlight');
+            const el8 = document.getElementById('chartSaldoNote');
+
+            if (el5) el5.innerText = `Rp ${inc.toLocaleString()}`;
+            if (el6) el6.innerText = `Rp ${exp.toLocaleString()}`;
             const saldoFmt = (saldo < 0 ? `-Rp ${Math.abs(saldo).toLocaleString()}` : `Rp ${saldo.toLocaleString()}`);
-            document.getElementById('dashSaldoHighlight').innerText = saldoFmt;
-            document.getElementById('chartSaldoNote').innerText = `Saldo: ${saldoFmt}`;
+            if (el7) el7.innerText = saldoFmt;
+            if (el8) el8.innerText = `Saldo: ${saldoFmt}`;
 
             const daysArr = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
             const today = new Date();
@@ -1327,143 +1358,158 @@
             const todayISO = formatDateISO(today);
             const tomorrowISO = formatDateISO(tomorrow);
 
-            document.getElementById('dashTodayName').innerText = `${todayDayName} (Hari Ini)`;
-            document.getElementById('dashTomorrowName').innerText = `${tomorrowDayName} (Besok)`;
+            const dtName = document.getElementById('dashTodayName');
+            const tmName = document.getElementById('dashTomorrowName');
+            if (dtName) dtName.innerText = `${todayDayName} (Hari Ini)`;
+            if (tmName) tmName.innerText = `${tomorrowDayName} (Besok)`;
 
             const todayListEl = document.getElementById('todayList');
-            todayListEl.innerHTML = '';
-            let todayItemsCount = 0;
+            if (todayListEl) {
+                todayListEl.innerHTML = '';
+                let todayItemsCount = 0;
 
-            appState.schedules.filter(s => s.hari === todayDayName).forEach(s => {
-                todayItemsCount++;
-                todayListEl.innerHTML += `
-                    <div class="p-2.5 bg-[#131d38] rounded-xl flex justify-between items-center text-xs border border-slate-800 gap-2">
-                        <div>
-                            <span class="text-[10px] uppercase font-bold text-cyan-400 block">Jadwal Kuliah</span>
-                            <span class="font-bold text-slate-100 block">${s.matkul}</span>
-                            <span class="text-[10px] text-slate-400">Ruang: ${s.ruang} | Dosen: ${s.dosen}</span>
+                appState.schedules.filter(s => s.hari === todayDayName).forEach(s => {
+                    todayItemsCount++;
+                    todayListEl.innerHTML += `
+                        <div class="p-2.5 bg-[#131d38] rounded-xl flex justify-between items-center text-xs border border-slate-800 gap-2">
+                            <div>
+                                <span class="text-[10px] uppercase font-bold text-cyan-400 block">Jadwal Kuliah</span>
+                                <span class="font-bold text-slate-100 block">${s.matkul}</span>
+                                <span class="text-[10px] text-slate-400">Ruang: ${s.ruang} | Dosen: ${s.dosen}</span>
+                            </div>
+                            <span class="text-cyan-300 font-mono text-[11px] font-bold bg-cyan-950/60 px-2 py-1 rounded-lg border border-cyan-800/40 shrink-0">${s.jam}</span>
                         </div>
-                        <span class="text-cyan-300 font-mono text-[11px] font-bold bg-cyan-950/60 px-2 py-1 rounded-lg border border-cyan-800/40 shrink-0">${s.jam}</span>
-                    </div>
-                `;
-            });
+                    `;
+                });
 
-            appState.agendas.filter(a => a.tanggal === todayISO).forEach(a => {
-                todayItemsCount++;
-                let durasiText = a.durasi ? ` (${a.durasi} Jam)` : '';
-                todayListEl.innerHTML += `
-                    <div class="p-2.5 bg-[#131d38] rounded-xl flex justify-between items-center text-xs border border-pink-900/40 gap-2">
-                        <div>
-                            <span class="text-[10px] uppercase font-bold text-pink-400 block">Agenda (${a.kriteria})</span>
-                            <span class="font-bold text-slate-100 block">${a.nama}</span>
-                            <span class="text-[10px] text-slate-400">Lokasi: ${a.lokasi}</span>
+                appState.agendas.filter(a => a.tanggal === todayISO).forEach(a => {
+                    todayItemsCount++;
+                    let durasiText = a.durasi ? ` (${a.durasi} Jam)` : '';
+                    todayListEl.innerHTML += `
+                        <div class="p-2.5 bg-[#131d38] rounded-xl flex justify-between items-center text-xs border border-pink-900/40 gap-2">
+                            <div>
+                                <span class="text-[10px] uppercase font-bold text-pink-400 block">Agenda (${a.kriteria})</span>
+                                <span class="font-bold text-slate-100 block">${a.nama}</span>
+                                <span class="text-[10px] text-slate-400">Lokasi: ${a.lokasi}</span>
+                            </div>
+                            <span class="text-pink-300 font-mono text-[11px] font-bold bg-pink-950/60 px-2 py-1 rounded-lg border border-pink-800/40 shrink-0">${a.jam}${durasiText} WIB</span>
                         </div>
-                        <span class="text-pink-300 font-mono text-[11px] font-bold bg-pink-950/60 px-2 py-1 rounded-lg border border-pink-800/40 shrink-0">${a.jam}${durasiText} WIB</span>
-                    </div>
-                `;
-            });
+                    `;
+                });
 
-            appState.tasks.filter(t => t.deadline.startsWith(todayISO)).forEach(t => {
-                todayItemsCount++;
-                todayListEl.innerHTML += `
-                    <div class="p-2.5 bg-[#131d38] rounded-xl flex justify-between items-center text-xs border border-amber-900/40 gap-2">
-                        <div>
-                            <span class="text-[10px] uppercase font-bold text-amber-400 block">Deadline Tugas</span>
-                            <span class="font-bold text-slate-100 block">${t.nama}</span>
-                            <span class="text-[10px] text-slate-400">Dosen: ${t.dosen}</span>
+                appState.tasks.filter(t => t.deadline.startsWith(todayISO)).forEach(t => {
+                    todayItemsCount++;
+                    todayListEl.innerHTML += `
+                        <div class="p-2.5 bg-[#131d38] rounded-xl flex justify-between items-center text-xs border border-amber-900/40 gap-2">
+                            <div>
+                                <span class="text-[10px] uppercase font-bold text-amber-400 block">Deadline Tugas</span>
+                                <span class="font-bold text-slate-100 block">${t.nama}</span>
+                                <span class="text-[10px] text-slate-400">Dosen: ${t.dosen}</span>
+                            </div>
+                            <span class="text-amber-300 font-mono text-[11px] font-bold bg-amber-950/60 px-2 py-1 rounded-lg border border-amber-800/40 shrink-0">${t.deadline.split('T')[1] || ''}</span>
                         </div>
-                        <span class="text-amber-300 font-mono text-[11px] font-bold bg-amber-950/60 px-2 py-1 rounded-lg border border-amber-800/40 shrink-0">${t.deadline.split('T')[1] || ''}</span>
-                    </div>
-                `;
-            });
+                    `;
+                });
 
-            if (todayItemsCount === 0) {
-                todayListEl.innerHTML = `<p class="text-xs text-slate-500 text-center py-4">Tidak ada agenda atau jadwal khusus hari ini.</p>`;
+                if (todayItemsCount === 0) {
+                    todayListEl.innerHTML = `<p class="text-xs text-slate-500 text-center py-4">Tidak ada agenda atau jadwal khusus hari ini.</p>`;
+                }
             }
 
             const tomorrowListEl = document.getElementById('tomorrowList');
-            tomorrowListEl.innerHTML = '';
-            let tomorrowItemsCount = 0;
+            if (tomorrowListEl) {
+                tomorrowListEl.innerHTML = '';
+                let tomorrowItemsCount = 0;
 
-            appState.schedules.filter(s => s.hari === tomorrowDayName).forEach(s => {
-                tomorrowItemsCount++;
-                tomorrowListEl.innerHTML += `
-                    <div class="p-2.5 bg-[#131d38] rounded-xl flex justify-between items-center text-xs border border-slate-800 gap-2">
-                        <div>
-                            <span class="text-[10px] uppercase font-bold text-cyan-400 block">Jadwal Kuliah</span>
-                            <span class="font-bold text-slate-200 block">${s.matkul}</span>
-                            <span class="text-[10px] text-slate-400">Ruang: ${s.ruang} | Dosen: ${s.dosen}</span>
+                appState.schedules.filter(s => s.hari === tomorrowDayName).forEach(s => {
+                    tomorrowItemsCount++;
+                    tomorrowListEl.innerHTML += `
+                        <div class="p-2.5 bg-[#131d38] rounded-xl flex justify-between items-center text-xs border border-slate-800 gap-2">
+                            <div>
+                                <span class="text-[10px] uppercase font-bold text-cyan-400 block">Jadwal Kuliah</span>
+                                <span class="font-bold text-slate-200 block">${s.matkul}</span>
+                                <span class="text-[10px] text-slate-400">Ruang: ${s.ruang} | Dosen: ${s.dosen}</span>
+                            </div>
+                            <span class="text-cyan-300 font-mono text-[11px] font-bold bg-cyan-950/60 px-2 py-1 rounded-lg border border-cyan-800/40 shrink-0">${s.jam}</span>
                         </div>
-                        <span class="text-cyan-300 font-mono text-[11px] font-bold bg-cyan-950/60 px-2 py-1 rounded-lg border border-cyan-800/40 shrink-0">${s.jam}</span>
-                    </div>
-                `;
-            });
+                    `;
+                });
 
-            appState.agendas.filter(a => a.tanggal === tomorrowISO).forEach(a => {
-                tomorrowItemsCount++;
-                let durasiText = a.durasi ? ` (${a.durasi} Jam)` : '';
-                tomorrowListEl.innerHTML += `
-                    <div class="p-2.5 bg-[#131d38] rounded-xl flex justify-between items-center text-xs border border-pink-900/40 gap-2">
-                        <div>
-                            <span class="text-[10px] uppercase font-bold text-pink-400 block">Agenda Besok</span>
-                            <span class="font-bold text-slate-200 block">${a.nama}</span>
-                            <span class="text-[10px] text-slate-400">Lokasi: ${a.lokasi}</span>
+                appState.agendas.filter(a => a.tanggal === tomorrowISO).forEach(a => {
+                    tomorrowItemsCount++;
+                    let durasiText = a.durasi ? ` (${a.durasi} Jam)` : '';
+                    tomorrowListEl.innerHTML += `
+                        <div class="p-2.5 bg-[#131d38] rounded-xl flex justify-between items-center text-xs border border-pink-900/40 gap-2">
+                            <div>
+                                <span class="text-[10px] uppercase font-bold text-pink-400 block">Agenda Besok</span>
+                                <span class="font-bold text-slate-200 block">${a.nama}</span>
+                                <span class="text-[10px] text-slate-400">Lokasi: ${a.lokasi}</span>
+                            </div>
+                            <span class="text-pink-300 font-mono text-[11px] font-bold bg-pink-950/60 px-2 py-1 rounded-lg border border-pink-800/40 shrink-0">${a.jam}${durasiText} WIB</span>
                         </div>
-                        <span class="text-pink-300 font-mono text-[11px] font-bold bg-pink-950/60 px-2 py-1 rounded-lg border border-pink-800/40 shrink-0">${a.jam}${durasiText} WIB</span>
-                    </div>
-                `;
-            });
+                    `;
+                });
 
-            appState.tasks.filter(t => t.deadline.startsWith(tomorrowISO)).forEach(t => {
-                tomorrowItemsCount++;
-                tomorrowListEl.innerHTML += `
-                    <div class="p-2.5 bg-[#131d38] rounded-xl flex justify-between items-center text-xs border border-amber-900/40 gap-2">
-                        <div>
-                            <span class="text-[10px] uppercase font-bold text-amber-400 block">Deadline Tugas Besok</span>
-                            <span class="font-bold text-slate-200 block">${t.nama}</span>
-                            <span class="text-[10px] text-slate-400">Dosen: ${t.dosen}</span>
+                appState.tasks.filter(t => t.deadline.startsWith(tomorrowISO)).forEach(t => {
+                    tomorrowItemsCount++;
+                    tomorrowListEl.innerHTML += `
+                        <div class="p-2.5 bg-[#131d38] rounded-xl flex justify-between items-center text-xs border border-amber-900/40 gap-2">
+                            <div>
+                                <span class="text-[10px] uppercase font-bold text-amber-400 block">Deadline Tugas Besok</span>
+                                <span class="font-bold text-slate-200 block">${t.nama}</span>
+                                <span class="text-[10px] text-slate-400">Dosen: ${t.dosen}</span>
+                            </div>
+                            <span class="text-amber-300 font-mono text-[11px] font-bold bg-amber-950/60 px-2 py-1 rounded-lg border border-amber-800/40 shrink-0">${t.deadline.split('T')[1] || ''}</span>
                         </div>
-                        <span class="text-amber-300 font-mono text-[11px] font-bold bg-amber-950/60 px-2 py-1 rounded-lg border border-amber-800/40 shrink-0">${t.deadline.split('T')[1] || ''}</span>
-                    </div>
-                `;
-            });
+                    `;
+                });
 
-            if (tomorrowItemsCount === 0) {
-                tomorrowListEl.innerHTML = `<p class="text-xs text-slate-500 text-center py-4">Tidak ada jadwal kuliah atau agenda untuk besok.</p>`;
+                if (tomorrowItemsCount === 0) {
+                    tomorrowListEl.innerHTML = `<p class="text-xs text-slate-500 text-center py-4">Tidak ada jadwal kuliah atau agenda untuk besok.</p>`;
+                }
             }
 
             renderCharts(inc, exp);
         }
 
         function renderCharts(inc, exp) {
-            const ctxFin = document.getElementById('financePieChart').getContext('2d');
-            if (financeChartInstance) financeChartInstance.destroy();
-            financeChartInstance = new Chart(ctxFin, {
-                type: 'doughnut',
-                data: { labels: ['Pemasukan', 'Pengeluaran'], datasets: [{ data: [inc, exp], backgroundColor: ['#10b981', '#f43f5e'], borderWidth: 0 }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-            });
+            const finCanvas = document.getElementById('financePieChart');
+            if (finCanvas) {
+                const ctxFin = finCanvas.getContext('2d');
+                if (financeChartInstance) financeChartInstance.destroy();
+                financeChartInstance = new Chart(ctxFin, {
+                    type: 'doughnut',
+                    data: { labels: ['Pemasukan', 'Pengeluaran'], datasets: [{ data: [inc, exp], backgroundColor: ['#10b981', '#f43f5e'], borderWidth: 0 }] },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+                });
+            }
 
             const done = appState.tasks.filter(t => t.status === 'Terkumpul').length;
             const notDone = appState.tasks.filter(t => t.status === 'Belum Terkumpul').length;
 
-            const ctxTask = document.getElementById('taskProgressChart').getContext('2d');
-            if (taskChartInstance) taskChartInstance.destroy();
-            taskChartInstance = new Chart(ctxTask, {
-                type: 'doughnut',
-                data: { labels: ['Terkumpul', 'Belum Terkumpul'], datasets: [{ data: [done, notDone], backgroundColor: ['#10b981', '#f59e0b'], borderWidth: 0 }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-            });
+            const taskCanvas = document.getElementById('taskProgressChart');
+            if (taskCanvas) {
+                const ctxTask = taskCanvas.getContext('2d');
+                if (taskChartInstance) taskChartInstance.destroy();
+                taskChartInstance = new Chart(ctxTask, {
+                    type: 'doughnut',
+                    data: { labels: ['Terkumpul', 'Belum Terkumpul'], datasets: [{ data: [done, notDone], backgroundColor: ['#10b981', '#f59e0b'], borderWidth: 0 }] },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+                });
+            }
         }
 
         function renderCalendarWidget() {
             const grid = document.getElementById('calendarGrid');
+            if (!grid) return;
             grid.innerHTML = '';
             const year = currentCalendarDate.getFullYear();
             const month = currentCalendarDate.getMonth();
             const mNames = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
 
-            document.getElementById('calendarMonthYear').innerText = `${mNames[month]} ${year}`;
+            const mYearEl = document.getElementById('calendarMonthYear');
+            if (mYearEl) mYearEl.innerText = `${mNames[month]} ${year}`;
+
             const firstDayIndex = new Date(year, month, 1).getDay();
             const totalDays = new Date(year, month + 1, 0).getDate();
 
@@ -1486,12 +1532,15 @@
 
         function renderFullCalendar() {
             const grid = document.getElementById('calendarFullGrid');
+            if (!grid) return;
             grid.innerHTML = '';
             const year = currentCalendarDate.getFullYear();
             const month = currentCalendarDate.getMonth();
             const mNames = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
 
-            document.getElementById('calendarFullMonthYear').innerText = `${mNames[month]} ${year}`;
+            const fullMY = document.getElementById('calendarFullMonthYear');
+            if (fullMY) fullMY.innerText = `${mNames[month]} ${year}`;
+
             const firstDayIndex = new Date(year, month, 1).getDay();
             const totalDays = new Date(year, month + 1, 0).getDate();
 
@@ -1509,8 +1558,10 @@
         function openCalendarDetail(dateStr, dayNum, monthName, yearNum) {
             const ags = appState.agendas.filter(a => a.tanggal === dateStr);
             const tsk = appState.tasks.filter(t => t.deadline.startsWith(dateStr));
-            document.getElementById('calDetailTitle').innerText = `Rincian: ${dayNum} ${monthName} ${yearNum}`;
+            const dtTitle = document.getElementById('calDetailTitle');
+            if (dtTitle) dtTitle.innerText = `Rincian: ${dayNum} ${monthName} ${yearNum}`;
             const body = document.getElementById('calDetailBody');
+            if (!body) return;
             body.innerHTML = '';
 
             if (ags.length === 0 && tsk.length === 0) {
@@ -1549,7 +1600,7 @@
 
         function openAgendaModal(editId = null) {
             const form = document.querySelector('#modalAgenda form');
-            form.reset();
+            if(form) form.reset();
             document.getElementById('agendaId').value = '';
             document.getElementById('agendaFileExisting').classList.add('hidden');
 
@@ -1649,6 +1700,7 @@
 
         function renderAgendaGrid() {
             const grid = document.getElementById('agendaGrid');
+            if (!grid) return;
             grid.innerHTML = '';
             appState.agendas.forEach(a => {
                 let fileBtnHtml = a.fileData ? `
@@ -1687,7 +1739,7 @@
 
         function openTugasModal(editId = null) {
             const form = document.querySelector('#modalTugas form');
-            form.reset();
+            if(form) form.reset();
             document.getElementById('tugasId').value = '';
             document.getElementById('tugasFileExisting').classList.add('hidden');
 
@@ -1794,6 +1846,7 @@
 
         function renderTugasGrid() {
             const grid = document.getElementById('tugasGrid');
+            if (!grid) return;
             grid.innerHTML = '';
             appState.tasks.forEach(t => {
                 let fileBtnHtml = t.fileData ? `
@@ -1846,7 +1899,7 @@
 
         function openJadwalModal(editId = null) {
             const form = document.querySelector('#modalJadwal form');
-            form.reset();
+            if(form) form.reset();
             document.getElementById('jadwalId').value = '';
 
             if (editId) {
@@ -1908,6 +1961,7 @@
 
         function renderJadwalGrid() {
             const grid = document.getElementById('jadwalWeekGrid');
+            if (!grid) return;
             grid.innerHTML = '';
             ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'].forEach(d => {
                 let html = '';
@@ -1958,6 +2012,7 @@
 
         function renderFinanceView() {
             const tbody = document.getElementById('financeTableBody');
+            if (!tbody) return;
             tbody.innerHTML = '';
             appState.finances.forEach(f => {
                 tbody.innerHTML += `<tr><td class="py-3 text-slate-400">${f.date}</td><td class="py-3 font-semibold text-white">${f.desc}</td><td class="py-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${f.type === 'Pemasukan' ? 'bg-emerald-950 text-emerald-400' : 'bg-rose-950 text-rose-400'}">${f.type}</span></td><td class="py-3 text-right font-bold ${f.type === 'Pemasukan' ? 'text-emerald-400' : 'text-rose-400'}">${f.type === 'Pemasukan' ? '+' : '-'} Rp ${f.amount.toLocaleString()}</td><td class="py-3 text-center"><button onclick="deleteFinance('${f.id}')" class="text-rose-400 hover:underline font-bold">Hapus</button></td></tr>`;
@@ -2006,6 +2061,7 @@
 
         function showToast(msg, type = 'info') {
             const container = document.getElementById('toastContainer');
+            if (!container) return;
             const toast = document.createElement('div');
             let bg = type === 'success' ? 'bg-emerald-600' : (type === 'error' ? 'bg-rose-600' : 'bg-violet-600');
             toast.className = `p-3 sm:p-4 rounded-2xl shadow-xl text-xs font-bold text-white pointer-events-auto transition-all duration-300 ${bg}`;
