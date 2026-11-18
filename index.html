@@ -37,7 +37,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #6366f1; border-radius: 9999px; }
@@ -88,11 +88,11 @@
 <body class="bg-[#070b19] text-slate-200 dark:bg-[#070b19] dark:text-slate-200 min-h-screen flex flex-col transition-colors duration-300">
 
     <!-- Toast Notification Container -->
-    <div id="toastContainer" class="fixed top-4 right-4 z-50 flex flex-col gap-3 max-w-xs w-full pointer-events-none"></div>
+    <div id="toastContainer" class="fixed top-4 right-4 z-50 flex flex-col gap-3 max-w-xs w-full pointer-events-none px-4 sm:px-0"></div>
 
     <!-- 1. WELCOME & LOGIN SCREEN -->
-    <div id="authScreen" class="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-tr from-violet-950 via-slate-900 to-blue-950 p-4 transition-all duration-500">
-        <div class="bg-[#0f172a] border border-slate-800/80 rounded-3xl shadow-2xl p-6 sm:p-8 max-w-md w-full text-center relative overflow-hidden">
+    <div id="authScreen" class="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-tr from-violet-950 via-slate-900 to-blue-950 p-4 transition-all duration-500 overflow-y-auto">
+        <div class="bg-[#0f172a] border border-slate-800/80 rounded-3xl shadow-2xl p-6 sm:p-8 max-w-md w-full text-center relative overflow-hidden my-auto">
             <div class="absolute -top-12 -right-12 w-36 h-36 bg-pink-500/20 rounded-full blur-3xl"></div>
             <div class="absolute -bottom-12 -left-12 w-36 h-36 bg-cyan-500/20 rounded-full blur-3xl"></div>
             
@@ -105,7 +105,7 @@
             
             <div class="space-y-4">
                 <button onclick="openGoogleAccountChooser()" class="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 px-4 rounded-xl shadow-md transition">
-                    <svg class="w-5 h-5 bg-white rounded-full p-0.5" viewBox="0 0 24 24">
+                    <svg class="w-5 h-5 bg-white rounded-full p-0.5 shrink-0" viewBox="0 0 24 24">
                         <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                         <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
                         <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
@@ -121,7 +121,7 @@
 
                 <div class="flex gap-2">
                     <input type="text" id="sharedAccessInput" placeholder="Masukkan ID Akses..." class="flex-1 bg-[#131d38] border border-slate-700 text-xs rounded-xl px-3 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-violet-500">
-                    <button onclick="loginAsGuest()" class="bg-violet-600 hover:bg-violet-700 text-white font-medium text-xs px-4 py-2.5 rounded-xl transition">Lihat</button>
+                    <button onclick="loginAsGuest()" class="bg-violet-600 hover:bg-violet-700 text-white font-medium text-xs px-4 py-2.5 rounded-xl transition shrink-0">Lihat</button>
                 </div>
             </div>
             <p class="text-[11px] text-slate-500 mt-6">&copy; 2026 MyJadwal Workspace.</p>
@@ -129,8 +129,8 @@
     </div>
 
     <!-- MODAL GOOGLE CHOOSER -->
-    <div id="modalGoogleChooser" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-sm w-full p-6 shadow-2xl text-left text-xs">
+    <div id="modalGoogleChooser" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-sm w-full p-6 shadow-2xl text-left text-xs my-auto">
             <h3 class="text-sm font-bold text-white mb-2">Pilih Akun Google</h3>
             <p class="text-slate-400 mb-4">Pilih akun untuk masuk ke MyJadwal.</p>
             <div id="googleAccountsList" class="space-y-2 mb-4"></div>
@@ -149,7 +149,7 @@
         <!-- TOP NAVIGATION BAR -->
         <header class="bg-[#0b1329]/90 border-b border-slate-800/80 backdrop-blur-md sticky top-0 z-30 px-3 sm:px-6 py-3 flex items-center justify-between gap-3">
             <div onclick="switchTab('dashboard')" class="flex items-center gap-2.5 cursor-pointer">
-                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-gradient-to-tr from-pink-500 via-purple-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-purple-500/30 border border-purple-400/30">
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-gradient-to-tr from-pink-500 via-purple-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-purple-500/30 border border-purple-400/30 shrink-0">
                     <i data-lucide="calendar-check-2" class="w-5 h-5"></i>
                 </div>
                 <div>
@@ -236,15 +236,15 @@
                     </div>
 
                     <div class="flex flex-wrap items-center gap-3 w-full md:w-auto justify-between md:justify-end">
-                        <div class="bg-[#131d38] px-4 py-2 rounded-2xl border border-slate-800 text-center">
+                        <div class="bg-[#131d38] px-4 py-2 rounded-2xl border border-slate-800 text-center flex-1 md:flex-none">
                             <span class="text-[9px] uppercase font-bold text-slate-400 block">HITUNG MUNDUR</span>
                             <span id="realtimeCountdown" class="font-mono font-black text-base text-amber-400">-- : -- : --</span>
                         </div>
                         <div class="flex items-center gap-2">
-                            <button onclick="testAlarmSound()" title="Uji Suara Alarm" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl flex items-center gap-1.5 transition shadow-md">
+                            <button onclick="testAlarmSound()" title="Uji Suara Alarm" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl flex items-center gap-1.5 transition shadow-md shrink-0">
                                 <i data-lucide="volume-2" class="w-4 h-4"></i> Tes Alarm
                             </button>
-                            <button onclick="stopAlarmSound()" id="stopAlarmBtn" class="hidden bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl flex items-center gap-1.5 animate-pulse transition shadow-md">
+                            <button onclick="stopAlarmSound()" id="stopAlarmBtn" class="hidden bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl flex items-center gap-1.5 animate-pulse transition shadow-md shrink-0">
                                 <i data-lucide="bell-off" class="w-4 h-4"></i> Matikan
                             </button>
                         </div>
@@ -330,7 +330,7 @@
                         <div class="absolute -right-6 -bottom-6 w-20 h-20 bg-emerald-500/10 rounded-full blur-xl"></div>
                         <div class="relative z-10">
                             <span class="text-[10px] uppercase font-bold text-emerald-400 block mb-1">PEMASUKAN</span>
-                            <h4 id="statTotalIncome" class="text-sm sm:text-lg font-black text-emerald-400 truncate max-w-[120px]">Rp 0</h4>
+                            <h4 id="statTotalIncome" class="text-xs sm:text-lg font-black text-emerald-400 truncate max-w-[110px]">Rp 0</h4>
                             <span class="text-[11px] text-slate-400">Total Masuk</span>
                         </div>
                         <div class="p-2.5 bg-emerald-950/90 text-emerald-400 rounded-2xl border border-emerald-800/50 relative z-10"><i data-lucide="arrow-down-left" class="w-5 h-5"></i></div>
@@ -340,7 +340,7 @@
                         <div class="absolute -right-6 -bottom-6 w-20 h-20 bg-rose-500/10 rounded-full blur-xl"></div>
                         <div class="relative z-10">
                             <span class="text-[10px] uppercase font-bold text-rose-400 block mb-1">PENGELUARAN</span>
-                            <h4 id="statTotalExpense" class="text-sm sm:text-lg font-black text-rose-400 truncate max-w-[120px]">Rp 0</h4>
+                            <h4 id="statTotalExpense" class="text-xs sm:text-lg font-black text-rose-400 truncate max-w-[110px]">Rp 0</h4>
                             <span class="text-[11px] text-slate-400">Total Keluar</span>
                         </div>
                         <div class="p-2.5 bg-rose-950/90 text-rose-400 rounded-2xl border border-rose-800/50 relative z-10"><i data-lucide="arrow-up-right" class="w-5 h-5"></i></div>
@@ -544,8 +544,8 @@
     </div>
 
     <!-- MODAL PREVIEW FILE / IMAGE / PDF -->
-    <div id="modalPreviewFile" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
-        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-2xl w-full p-4 sm:p-6 shadow-2xl flex flex-col max-h-[90vh]">
+    <div id="modalPreviewFile" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-2xl w-full p-4 sm:p-6 shadow-2xl flex flex-col max-h-[90vh] my-auto">
             <div class="flex justify-between items-center mb-4">
                 <h3 id="previewTitle" class="text-sm font-bold text-white truncate max-w-xs sm:max-w-md">Preview File</h3>
                 <button onclick="closePreviewModal()" class="text-slate-400 hover:text-white p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -561,8 +561,8 @@
     </div>
 
     <!-- MODAL CATATAN / RANGKUMAN TUGAS -->
-    <div id="modalTaskNote" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl space-y-4">
+    <div id="modalTaskNote" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl space-y-4 my-auto">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
                 <div class="flex items-center gap-2">
                     <i data-lucide="notebook-pen" class="w-5 h-5 text-amber-400"></i>
@@ -580,8 +580,8 @@
     </div>
 
     <!-- MODAL DETAIL TANGGAL KALENDER -->
-    <div id="modalCalendarDetail" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl">
+    <div id="modalCalendarDetail" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl my-auto">
             <div class="flex justify-between items-center mb-4">
                 <h3 id="calDetailTitle" class="text-base font-bold text-white">Rincian Tanggal</h3>
                 <button onclick="closeCalendarDetailModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -595,7 +595,7 @@
 
     <!-- MODAL AGENDA -->
     <div id="modalAgenda" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl text-xs space-y-4">
+        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl text-xs space-y-4 my-auto max-h-[90vh] overflow-y-auto custom-scrollbar">
             <h3 id="agendaModalHeader" class="text-base font-bold text-white mb-2">Tambah / Edit Agenda</h3>
             <form onsubmit="saveAgenda(event)" class="space-y-3">
                 <input type="hidden" id="agendaId">
@@ -657,7 +657,7 @@
 
     <!-- MODAL TUGAS -->
     <div id="modalTugas" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl text-xs space-y-4">
+        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl text-xs space-y-4 my-auto max-h-[90vh] overflow-y-auto custom-scrollbar">
             <h3 id="tugasModalHeader" class="text-base font-bold text-white mb-2">Tambah / Edit Tugas</h3>
             <form onsubmit="saveTugas(event)" class="space-y-3">
                 <input type="hidden" id="tugasId">
@@ -711,7 +711,7 @@
 
     <!-- MODAL JADWAL KULIAH -->
     <div id="modalJadwal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl text-xs space-y-4">
+        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl text-xs space-y-4 my-auto max-h-[90vh] overflow-y-auto custom-scrollbar">
             <h3 id="jadwalModalHeader" class="text-base font-bold text-white mb-2">Tambah / Edit Jadwal Kuliah</h3>
             <form onsubmit="saveJadwal(event)" class="space-y-3">
                 <input type="hidden" id="jadwalId">
@@ -754,8 +754,8 @@
     </div>
 
     <!-- MODAL KEUANGAN -->
-    <div id="modalFinance" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl text-xs">
+    <div id="modalFinance" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl text-xs my-auto max-h-[90vh] overflow-y-auto custom-scrollbar">
             <h3 class="text-base font-bold text-white mb-4">Catat Transaksi Keuangan</h3>
             <form onsubmit="saveFinance(event)" class="space-y-3">
                 <div>
@@ -858,7 +858,6 @@
             }
         };
 
-        // Fungsi Load State dengan migrasi otomatis agar sesi akun & data aman tersimpan
         function loadState() {
             const possibleKeys = [DB_KEY, 'MYJADWAL_DATA_V9', 'MYJADWAL_DATA_V8', 'MYJADWAL_DATA_V7', 'MYJADWAL_DATA_V6', 'MYJADWAL_DATA_V5'];
             let loadedData = null;
@@ -1186,7 +1185,7 @@
 
         function logout() {
             appState.currentUser = null;
-            saveState(); // LANGSUNG SIMPAN PERUBAHAN KE LOCALSTORAGE SUPAYA TIDAK TER-RESET KETIKA DI-REFRESH
+            saveState();
             stopAlarmSound();
             document.getElementById('mainApp').classList.add('hidden');
             document.getElementById('authScreen').classList.remove('hidden');
@@ -1272,9 +1271,8 @@
             if (!targetSec) return;
             targetSec.classList.remove('hidden');
             
-            // Trigger animasi fade-in
             targetSec.classList.remove('animate-fade-in');
-            void targetSec.offsetWidth; // Trigger reflow
+            void targetSec.offsetWidth;
             targetSec.classList.add('animate-fade-in');
 
             document.querySelectorAll('.nav-btn').forEach(btn => {
