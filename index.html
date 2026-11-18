@@ -185,33 +185,33 @@
                 </div>
             </div>
 
-            <!-- NAVIGASI IKON FITUR (RESPONSIF 2 BARIS DI HP, FLEX DI DESKTOP, ANIMASI MUNCUL TULISAN SAAT DIKLIK) -->
-            <nav class="grid grid-cols-4 sm:flex sm:flex-row items-center justify-center sm:justify-start gap-2 bg-[#131d38] p-2.5 rounded-2xl border border-slate-800 shadow-sm overflow-x-auto custom-scrollbar">
-                <button onclick="switchTab('dashboard')" id="nav-dashboard" title="Dashboard" class="nav-btn px-3.5 py-3 rounded-xl transition-all duration-300 bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-sm shrink-0 flex items-center gap-2">
+            <!-- NAVIGASI IKON FITUR (FLEX WRAP AGAR AMAN DAN TIDAK MENABRAK DI HP) -->
+            <nav class="flex flex-wrap items-center justify-center sm:justify-start gap-2 bg-[#131d38] p-2.5 rounded-2xl border border-slate-800 shadow-sm">
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" title="Dashboard" class="nav-btn px-3.5 py-2.5 rounded-xl transition-all duration-300 bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-sm shrink-0 flex items-center gap-2">
                     <i data-lucide="layout-dashboard" class="w-5 h-5 shrink-0 transition-transform duration-300 hover:scale-110"></i>
-                    <span class="nav-text text-xs font-semibold whitespace-nowrap max-w-[150px] opacity-100 pl-1">Dashboard</span>
+                    <span class="nav-text text-xs font-semibold whitespace-nowrap opacity-100 pl-1">Dashboard</span>
                 </button>
-                <button onclick="switchTab('jadwal')" id="nav-jadwal" title="Jadwal Kuliah" class="nav-btn px-3 py-3 rounded-xl transition-all duration-300 text-slate-400 hover:text-white hover:bg-slate-800/50 shrink-0 flex items-center gap-0">
+                <button onclick="switchTab('jadwal')" id="nav-jadwal" title="Jadwal Kuliah" class="nav-btn px-3 py-2.5 rounded-xl transition-all duration-300 text-slate-400 hover:text-white hover:bg-slate-800/50 shrink-0 flex items-center gap-0">
                     <i data-lucide="calendar-range" class="w-5 h-5 text-cyan-400 shrink-0 transition-transform duration-300 hover:scale-110"></i>
                     <span class="nav-text text-xs font-semibold whitespace-nowrap max-w-0 opacity-0 overflow-hidden transition-all duration-300 pl-0">Jadwal</span>
                 </button>
-                <button onclick="switchTab('tugas')" id="nav-tugas" title="Tugas" class="nav-btn px-3 py-3 rounded-xl transition-all duration-300 text-slate-400 hover:text-white hover:bg-slate-800/50 shrink-0 flex items-center gap-0">
+                <button onclick="switchTab('tugas')" id="nav-tugas" title="Tugas" class="nav-btn px-3 py-2.5 rounded-xl transition-all duration-300 text-slate-400 hover:text-white hover:bg-slate-800/50 shrink-0 flex items-center gap-0">
                     <i data-lucide="file-text" class="w-5 h-5 text-amber-400 shrink-0 transition-transform duration-300 hover:scale-110"></i>
                     <span class="nav-text text-xs font-semibold whitespace-nowrap max-w-0 opacity-0 overflow-hidden transition-all duration-300 pl-0">Tugas</span>
                 </button>
-                <button onclick="switchTab('agenda')" id="nav-agenda" title="Agenda" class="nav-btn px-3 py-3 rounded-xl transition-all duration-300 text-slate-400 hover:text-white hover:bg-slate-800/50 shrink-0 flex items-center gap-0">
+                <button onclick="switchTab('agenda')" id="nav-agenda" title="Agenda" class="nav-btn px-3 py-2.5 rounded-xl transition-all duration-300 text-slate-400 hover:text-white hover:bg-slate-800/50 shrink-0 flex items-center gap-0">
                     <i data-lucide="calendar-clock" class="w-5 h-5 text-pink-400 shrink-0 transition-transform duration-300 hover:scale-110"></i>
                     <span class="nav-text text-xs font-semibold whitespace-nowrap max-w-0 opacity-0 overflow-hidden transition-all duration-300 pl-0">Agenda</span>
                 </button>
-                <button onclick="switchTab('keuangan')" id="nav-keuangan" title="Keuangan" class="nav-btn nav-owner-only px-3 py-3 rounded-xl transition-all duration-300 text-slate-400 hover:text-white hover:bg-slate-800/50 shrink-0 flex items-center gap-0">
+                <button onclick="switchTab('keuangan')" id="nav-keuangan" title="Keuangan" class="nav-btn nav-owner-only px-3 py-2.5 rounded-xl transition-all duration-300 text-slate-400 hover:text-white hover:bg-slate-800/50 shrink-0 flex items-center gap-0">
                     <i data-lucide="wallet" class="w-5 h-5 text-emerald-400 shrink-0 transition-transform duration-300 hover:scale-110"></i>
                     <span class="nav-text text-xs font-semibold whitespace-nowrap max-w-0 opacity-0 overflow-hidden transition-all duration-300 pl-0">Keuangan</span>
                 </button>
-                <button onclick="switchTab('kalender')" id="nav-kalender" title="Kalender Interaktif" class="nav-btn px-3 py-3 rounded-xl transition-all duration-300 text-slate-400 hover:text-white hover:bg-slate-800/50 shrink-0 flex items-center gap-0">
+                <button onclick="switchTab('kalender')" id="nav-kalender" title="Kalender Interaktif" class="nav-btn px-3 py-2.5 rounded-xl transition-all duration-300 text-slate-400 hover:text-white hover:bg-slate-800/50 shrink-0 flex items-center gap-0">
                     <i data-lucide="calendar-days" class="w-5 h-5 text-purple-400 shrink-0 transition-transform duration-300 hover:scale-110"></i>
                     <span class="nav-text text-xs font-semibold whitespace-nowrap max-w-0 opacity-0 overflow-hidden transition-all duration-300 pl-0">Kalender</span>
                 </button>
-                <button onclick="switchTab('settings')" id="nav-settings" title="Settings" class="nav-btn nav-owner-only px-3 py-3 rounded-xl transition-all duration-300 text-slate-400 hover:text-white hover:bg-slate-800/50 shrink-0 flex items-center gap-0">
+                <button onclick="switchTab('settings')" id="nav-settings" title="Settings" class="nav-btn nav-owner-only px-3 py-2.5 rounded-xl transition-all duration-300 text-slate-400 hover:text-white hover:bg-slate-800/50 shrink-0 flex items-center gap-0">
                     <i data-lucide="settings" class="w-5 h-5 text-blue-400 shrink-0 transition-transform duration-300 hover:scale-110"></i>
                     <span class="nav-text text-xs font-semibold whitespace-nowrap max-w-0 opacity-0 overflow-hidden transition-all duration-300 pl-0">Settings</span>
                 </button>
@@ -787,7 +787,7 @@
 
     <!-- SCRIPT LOGIC -->
     <script>
-        const DB_KEY = 'MYJADWAL_DATA_V8';
+        const DB_KEY = 'MYJADWAL_DATA_V9';
         let appState = {
             currentUser: null,
             savedAccounts: [],
@@ -855,9 +855,9 @@
             }
         };
 
-        // Fungsi Load State dengan migrasi otomatis agar data aman saat kode diperbarui
+        // Fungsi Load State dengan migrasi otomatis agar sesi akun & data aman tersimpan
         function loadState() {
-            const possibleKeys = [DB_KEY, 'MYJADWAL_DATA_V7', 'MYJADWAL_DATA_V6', 'MYJADWAL_DATA_V5'];
+            const possibleKeys = [DB_KEY, 'MYJADWAL_DATA_V8', 'MYJADWAL_DATA_V7', 'MYJADWAL_DATA_V6', 'MYJADWAL_DATA_V5'];
             let loadedData = null;
 
             for (const key of possibleKeys) {
@@ -872,11 +872,10 @@
 
             if (loadedData) {
                 try { 
-                    const activeSession = appState.currentUser || loadedData.currentUser;
                     appState = {
                         ...appState,
                         ...loadedData,
-                        currentUser: activeSession,
+                        currentUser: loadedData.currentUser || appState.currentUser,
                         settings: {
                             ...appState.settings,
                             ...(loadedData.settings || {})
@@ -1262,7 +1261,7 @@
                 btn.classList.add('text-slate-400', 'px-3', 'gap-0');
                 const txt = btn.querySelector('.nav-text');
                 if (txt) {
-                    txt.classList.remove('max-w-[150px]', 'opacity-100', 'pl-1');
+                    txt.classList.remove('opacity-100');
                     txt.classList.add('max-w-0', 'opacity-0', 'pl-0');
                 }
             });
@@ -1274,7 +1273,7 @@
                 const activeTxt = activeBtn.querySelector('.nav-text');
                 if (activeTxt) {
                     activeTxt.classList.remove('max-w-0', 'opacity-0', 'pl-0');
-                    activeTxt.classList.add('max-w-[150px]', 'opacity-100', 'pl-1');
+                    activeTxt.classList.add('opacity-100', 'pl-1');
                 }
             }
             if (tabId === 'kalender') renderFullCalendar();
