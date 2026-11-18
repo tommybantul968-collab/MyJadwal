@@ -43,6 +43,15 @@
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #6366f1; border-radius: 9999px; }
         html.light .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; }
 
+        /* Animasi Transisi Tampilan Fitur */
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.98) translateY(6px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeInScale 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
         /* Perbaikan Menyeluruh Mode Terang (Light Mode) */
         html.light body { background-color: #f8fafc !important; color: #0f172a !important; }
         html.light header { background-color: rgba(255, 255, 255, 0.95) !important; border-color: #e2e8f0 !important; }
@@ -176,40 +185,40 @@
                 </div>
             </div>
 
-            <!-- NAVIGASI IKON FITUR (Responsif & Rapi di HP) -->
-            <nav class="flex items-center justify-start gap-2 bg-[#131d38] p-2 rounded-2xl border border-slate-800 text-xs overflow-x-auto custom-scrollbar shadow-sm">
-                <button onclick="switchTab('dashboard')" id="nav-dashboard" title="Dashboard" class="nav-btn flex items-center gap-2 px-3.5 py-2 rounded-xl font-semibold transition-all bg-gradient-to-r from-violet-600 to-indigo-600 text-white shrink-0 shadow-sm">
-                    <i data-lucide="layout-dashboard" class="w-4 h-4 shrink-0"></i>
-                    <span class="nav-text">Dashboard</span>
+            <!-- NAVIGASI IKON FITUR (RESPONSIF 2 BARIS DI HP, FLEX DI DESKTOP, ANIMASI MUNCUL TULISAN SAAT DIKLIK) -->
+            <nav class="grid grid-cols-4 sm:flex sm:flex-row items-center justify-center sm:justify-start gap-2 bg-[#131d38] p-2.5 rounded-2xl border border-slate-800 shadow-sm overflow-x-auto custom-scrollbar">
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" title="Dashboard" class="nav-btn px-3.5 py-3 rounded-xl transition-all duration-300 bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-sm shrink-0 flex items-center gap-2">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5 shrink-0 transition-transform duration-300 hover:scale-110"></i>
+                    <span class="nav-text text-xs font-semibold whitespace-nowrap max-w-[150px] opacity-100 pl-1">Dashboard</span>
                 </button>
-                <button onclick="switchTab('jadwal')" id="nav-jadwal" title="Jadwal Kuliah" class="nav-btn flex items-center gap-2 px-3.5 py-2 rounded-xl font-semibold text-slate-400 hover:text-white hover:bg-slate-800/50 transition-all shrink-0">
-                    <i data-lucide="calendar-range" class="w-4 h-4 shrink-0 text-cyan-400"></i>
-                    <span class="nav-text hidden">Jadwal Kuliah</span>
+                <button onclick="switchTab('jadwal')" id="nav-jadwal" title="Jadwal Kuliah" class="nav-btn px-3 py-3 rounded-xl transition-all duration-300 text-slate-400 hover:text-white hover:bg-slate-800/50 shrink-0 flex items-center gap-0">
+                    <i data-lucide="calendar-range" class="w-5 h-5 text-cyan-400 shrink-0 transition-transform duration-300 hover:scale-110"></i>
+                    <span class="nav-text text-xs font-semibold whitespace-nowrap max-w-0 opacity-0 overflow-hidden transition-all duration-300 pl-0">Jadwal</span>
                 </button>
-                <button onclick="switchTab('tugas')" id="nav-tugas" title="Tugas" class="nav-btn flex items-center gap-2 px-3.5 py-2 rounded-xl font-semibold text-slate-400 hover:text-white hover:bg-slate-800/50 transition-all shrink-0">
-                    <i data-lucide="file-text" class="w-4 h-4 shrink-0 text-amber-400"></i>
-                    <span class="nav-text hidden">Tugas</span>
+                <button onclick="switchTab('tugas')" id="nav-tugas" title="Tugas" class="nav-btn px-3 py-3 rounded-xl transition-all duration-300 text-slate-400 hover:text-white hover:bg-slate-800/50 shrink-0 flex items-center gap-0">
+                    <i data-lucide="file-text" class="w-5 h-5 text-amber-400 shrink-0 transition-transform duration-300 hover:scale-110"></i>
+                    <span class="nav-text text-xs font-semibold whitespace-nowrap max-w-0 opacity-0 overflow-hidden transition-all duration-300 pl-0">Tugas</span>
                 </button>
-                <button onclick="switchTab('agenda')" id="nav-agenda" title="Agenda" class="nav-btn flex items-center gap-2 px-3.5 py-2 rounded-xl font-semibold text-slate-400 hover:text-white hover:bg-slate-800/50 transition-all shrink-0">
-                    <i data-lucide="calendar-clock" class="w-4 h-4 shrink-0 text-pink-400"></i>
-                    <span class="nav-text hidden">Agenda</span>
+                <button onclick="switchTab('agenda')" id="nav-agenda" title="Agenda" class="nav-btn px-3 py-3 rounded-xl transition-all duration-300 text-slate-400 hover:text-white hover:bg-slate-800/50 shrink-0 flex items-center gap-0">
+                    <i data-lucide="calendar-clock" class="w-5 h-5 text-pink-400 shrink-0 transition-transform duration-300 hover:scale-110"></i>
+                    <span class="nav-text text-xs font-semibold whitespace-nowrap max-w-0 opacity-0 overflow-hidden transition-all duration-300 pl-0">Agenda</span>
                 </button>
-                <button onclick="switchTab('keuangan')" id="nav-keuangan" title="Keuangan" class="nav-btn nav-owner-only flex items-center gap-2 px-3.5 py-2 rounded-xl font-semibold text-slate-400 hover:text-white hover:bg-slate-800/50 transition-all shrink-0">
-                    <i data-lucide="wallet" class="w-4 h-4 shrink-0 text-emerald-400"></i>
-                    <span class="nav-text hidden">Keuangan</span>
+                <button onclick="switchTab('keuangan')" id="nav-keuangan" title="Keuangan" class="nav-btn nav-owner-only px-3 py-3 rounded-xl transition-all duration-300 text-slate-400 hover:text-white hover:bg-slate-800/50 shrink-0 flex items-center gap-0">
+                    <i data-lucide="wallet" class="w-5 h-5 text-emerald-400 shrink-0 transition-transform duration-300 hover:scale-110"></i>
+                    <span class="nav-text text-xs font-semibold whitespace-nowrap max-w-0 opacity-0 overflow-hidden transition-all duration-300 pl-0">Keuangan</span>
                 </button>
-                <button onclick="switchTab('kalender')" id="nav-kalender" title="Kalender Interaktif" class="nav-btn flex items-center gap-2 px-3.5 py-2 rounded-xl font-semibold text-slate-400 hover:text-white hover:bg-slate-800/50 transition-all shrink-0">
-                    <i data-lucide="calendar-days" class="w-4 h-4 shrink-0 text-purple-400"></i>
-                    <span class="nav-text hidden">Kalender</span>
+                <button onclick="switchTab('kalender')" id="nav-kalender" title="Kalender Interaktif" class="nav-btn px-3 py-3 rounded-xl transition-all duration-300 text-slate-400 hover:text-white hover:bg-slate-800/50 shrink-0 flex items-center gap-0">
+                    <i data-lucide="calendar-days" class="w-5 h-5 text-purple-400 shrink-0 transition-transform duration-300 hover:scale-110"></i>
+                    <span class="nav-text text-xs font-semibold whitespace-nowrap max-w-0 opacity-0 overflow-hidden transition-all duration-300 pl-0">Kalender</span>
                 </button>
-                <button onclick="switchTab('settings')" id="nav-settings" title="Settings" class="nav-btn nav-owner-only flex items-center gap-2 px-3.5 py-2 rounded-xl font-semibold text-slate-400 hover:text-white hover:bg-slate-800/50 transition-all shrink-0">
-                    <i data-lucide="settings" class="w-4 h-4 shrink-0 text-blue-400"></i>
-                    <span class="nav-text hidden">Settings</span>
+                <button onclick="switchTab('settings')" id="nav-settings" title="Settings" class="nav-btn nav-owner-only px-3 py-3 rounded-xl transition-all duration-300 text-slate-400 hover:text-white hover:bg-slate-800/50 shrink-0 flex items-center gap-0">
+                    <i data-lucide="settings" class="w-5 h-5 text-blue-400 shrink-0 transition-transform duration-300 hover:scale-110"></i>
+                    <span class="nav-text text-xs font-semibold whitespace-nowrap max-w-0 opacity-0 overflow-hidden transition-all duration-300 pl-0">Settings</span>
                 </button>
             </nav>
 
             <!-- DASHBOARD VIEW -->
-            <section id="view-dashboard" class="space-y-6">
+            <section id="view-dashboard" class="space-y-6 animate-fade-in">
                 <!-- WIDGET PENGINGAT ALARM WAKTU NYATA -->
                 <div class="bg-[#0f172a] rounded-3xl p-4 sm:p-5 border border-slate-800 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                     <div class="flex items-center gap-3 sm:gap-4">
@@ -295,7 +304,7 @@
                     </div>
                 </div>
 
-                <!-- 4 STATISTIK KOMPAK GRID (Warna Bervariasi) -->
+                <!-- 4 STATISTIK KOMPAK GRID -->
                 <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                     <div class="bg-[#0f172a] p-4 sm:p-5 rounded-2xl border border-blue-900/40 shadow-sm flex justify-between items-center relative overflow-hidden">
                         <div class="absolute -right-6 -bottom-6 w-20 h-20 bg-blue-500/10 rounded-full blur-xl"></div>
@@ -388,7 +397,7 @@
             </section>
 
             <!-- AGENDA VIEW -->
-            <section id="view-agenda" class="hidden space-y-6">
+            <section id="view-agenda" class="hidden space-y-6 animate-fade-in">
                 <div class="flex justify-between items-center flex-wrap gap-4">
                     <div>
                         <h2 class="text-xl font-extrabold text-white">Manajemen Agenda</h2>
@@ -402,7 +411,7 @@
             </section>
 
             <!-- TUGAS VIEW -->
-            <section id="view-tugas" class="hidden space-y-6">
+            <section id="view-tugas" class="hidden space-y-6 animate-fade-in">
                 <div class="flex justify-between items-center flex-wrap gap-4">
                     <div>
                         <h2 class="text-xl font-extrabold text-white">Manajemen Tugas Kuliah</h2>
@@ -416,7 +425,7 @@
             </section>
 
             <!-- KEUANGAN VIEW -->
-            <section id="view-keuangan" class="hidden space-y-6">
+            <section id="view-keuangan" class="hidden space-y-6 animate-fade-in">
                 <div class="flex justify-between items-center flex-wrap gap-4">
                     <div>
                         <h2 class="text-xl font-extrabold text-white">Manajemen Keuangan</h2>
@@ -443,7 +452,7 @@
             </section>
 
             <!-- JADWAL KULIAH VIEW -->
-            <section id="view-jadwal" class="hidden space-y-6">
+            <section id="view-jadwal" class="hidden space-y-6 animate-fade-in">
                 <div class="flex justify-between items-center flex-wrap gap-4">
                     <div>
                         <h2 class="text-xl font-extrabold text-white">Jadwal Kuliah Mingguan</h2>
@@ -457,7 +466,7 @@
             </section>
 
             <!-- KALENDER VIEW -->
-            <section id="view-kalender" class="hidden space-y-6">
+            <section id="view-kalender" class="hidden space-y-6 animate-fade-in">
                 <div class="flex justify-between items-center flex-wrap gap-4">
                     <div>
                         <h2 class="text-xl font-extrabold text-white">Kalender Interaktif Lengkap</h2>
@@ -480,7 +489,7 @@
             </section>
 
             <!-- SETTINGS VIEW -->
-            <section id="view-settings" class="hidden space-y-6 max-w-2xl mx-auto">
+            <section id="view-settings" class="hidden space-y-6 max-w-2xl mx-auto animate-fade-in">
                 <div>
                     <h2 class="text-xl font-extrabold text-white">Pengaturan Aplikasi</h2>
                     <p class="text-xs text-slate-400">Tema visual, notifikasi, manajemen data, dan akun.</p>
@@ -778,7 +787,7 @@
 
     <!-- SCRIPT LOGIC -->
     <script>
-        const DB_KEY = 'MYJADWAL_DATA_V7';
+        const DB_KEY = 'MYJADWAL_DATA_V8';
         let appState = {
             currentUser: null,
             savedAccounts: [],
@@ -846,17 +855,34 @@
             }
         };
 
+        // Fungsi Load State dengan migrasi otomatis agar data aman saat kode diperbarui
         function loadState() {
-            const saved = localStorage.getItem(DB_KEY);
-            if (saved) {
+            const possibleKeys = [DB_KEY, 'MYJADWAL_DATA_V7', 'MYJADWAL_DATA_V6', 'MYJADWAL_DATA_V5'];
+            let loadedData = null;
+
+            for (const key of possibleKeys) {
+                const saved = localStorage.getItem(key);
+                if (saved) {
+                    try {
+                        loadedData = JSON.parse(saved);
+                        break;
+                    } catch(e) {}
+                }
+            }
+
+            if (loadedData) {
                 try { 
-                    const parsed = JSON.parse(saved);
-                    const activeSession = appState.currentUser || parsed.currentUser;
+                    const activeSession = appState.currentUser || loadedData.currentUser;
                     appState = {
                         ...appState,
-                        ...parsed,
-                        currentUser: activeSession
+                        ...loadedData,
+                        currentUser: activeSession,
+                        settings: {
+                            ...appState.settings,
+                            ...(loadedData.settings || {})
+                        }
                     };
+                    saveState(); 
                 } catch(e) {
                     console.error("Gagal memuat state:", e);
                 }
@@ -1223,21 +1249,33 @@
 
         function switchTab(tabId) {
             document.querySelectorAll('section[id^="view-"]').forEach(sec => sec.classList.add('hidden'));
-            document.getElementById(`view-${tabId}`).classList.remove('hidden');
+            const targetSec = document.getElementById(`view-${tabId}`);
+            targetSec.classList.remove('hidden');
+            
+            // Trigger animasi fade-in
+            targetSec.classList.remove('animate-fade-in');
+            void targetSec.offsetWidth; // Trigger reflow
+            targetSec.classList.add('animate-fade-in');
 
             document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('bg-gradient-to-r', 'from-violet-600', 'to-indigo-600', 'text-white', 'shadow-sm');
-                btn.classList.add('text-slate-400');
+                btn.classList.remove('bg-gradient-to-r', 'from-violet-600', 'to-indigo-600', 'text-white', 'shadow-sm', 'px-3.5', 'gap-2');
+                btn.classList.add('text-slate-400', 'px-3', 'gap-0');
                 const txt = btn.querySelector('.nav-text');
-                if (txt) txt.classList.add('hidden');
+                if (txt) {
+                    txt.classList.remove('max-w-[150px]', 'opacity-100', 'pl-1');
+                    txt.classList.add('max-w-0', 'opacity-0', 'pl-0');
+                }
             });
 
             const activeBtn = document.getElementById(`nav-${tabId}`);
             if (activeBtn) {
-                activeBtn.classList.add('bg-gradient-to-r', 'from-violet-600', 'to-indigo-600', 'text-white', 'shadow-sm');
-                activeBtn.classList.remove('text-slate-400');
+                activeBtn.classList.add('bg-gradient-to-r', 'from-violet-600', 'to-indigo-600', 'text-white', 'shadow-sm', 'px-3.5', 'gap-2');
+                activeBtn.classList.remove('text-slate-400', 'px-3', 'gap-0');
                 const activeTxt = activeBtn.querySelector('.nav-text');
-                if (activeTxt) activeTxt.classList.remove('hidden');
+                if (activeTxt) {
+                    activeTxt.classList.remove('max-w-0', 'opacity-0', 'pl-0');
+                    activeTxt.classList.add('max-w-[150px]', 'opacity-100', 'pl-1');
+                }
             }
             if (tabId === 'kalender') renderFullCalendar();
         }
