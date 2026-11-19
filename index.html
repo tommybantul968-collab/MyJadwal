@@ -29,9 +29,10 @@
         }
     </script>
 
-    <!-- Lucide Icons & Chart.js -->
+    <!-- Lucide Icons, Chart.js & html2pdf.js (Direct PDF Download) -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -184,7 +185,7 @@
                 </div>
             </div>
 
-            <!-- NAVIGASI IKON FITUR (DENGAN ANIMASI & TEKS MUNCUL SAAT DIKLIK) -->
+            <!-- NAVIGASI IKON FITUR -->
             <nav class="flex flex-wrap items-center justify-center sm:justify-start gap-2 bg-[#131d38] p-2.5 rounded-2xl border border-slate-800 shadow-sm">
                 <button onclick="switchTab('dashboard')" id="nav-dashboard" title="Dashboard" class="nav-btn px-3.5 py-2.5 rounded-xl transition-all duration-300 bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-sm shrink-0 flex items-center gap-2">
                     <i data-lucide="layout-dashboard" class="w-5 h-5 shrink-0 transition-transform duration-300 active:scale-90"></i>
@@ -346,7 +347,7 @@
                 <div class="flex justify-between items-center flex-wrap gap-4">
                     <div>
                         <h2 class="text-xl font-extrabold text-white">Notulensi Rapat & Diskusi</h2>
-                        <p class="text-xs text-slate-400">Catat rapat, ambil foto/video kegiatan langsung dari kamera *real-time*, tanda tangan digital, & ekspor PDF.</p>
+                        <p class="text-xs text-slate-400">Catat rapat, ambil foto/video langsung dari kamera real-time, tanda tangan digital, & unduh langsung file PDF.</p>
                     </div>
                     <button onclick="openNotulensiModal()" class="owner-only-btn bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold text-xs px-4 py-2.5 rounded-xl flex items-center gap-2 shadow-md">
                         <i data-lucide="plus" class="w-4 h-4"></i> Buat Notulensi
@@ -436,16 +437,6 @@
                         </button>
                     </div>
 
-                    <div class="flex items-center justify-between pb-6 border-b border-slate-800 flex-wrap gap-4">
-                        <div>
-                            <h4 class="text-sm font-bold text-white">Notifikasi Perangkat Sistem</h4>
-                            <p class="text-xs text-slate-400">Aktifkan push notification perangkat saat data baru masuk.</p>
-                        </div>
-                        <button onclick="requestDeviceNotificationPermission()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-md">
-                            Aktifkan Notifikasi
-                        </button>
-                    </div>
-
                     <div class="space-y-3 pb-6 border-b border-slate-800">
                         <h4 class="text-sm font-bold text-white">Cadangan & Pemulihan Data (JSON)</h4>
                         <div class="flex gap-3 flex-wrap">
@@ -515,7 +506,7 @@
                 </div>
             </div>
 
-            <div class="flex justify-center gap-3 pt-2">
+            <div class="flex justify-center gap-3 pt-2 flex-wrap">
                 <button type="button" id="btnSnapPhoto" onclick="takeSnapshot()" class="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold flex items-center gap-2 shadow-md">
                     <i data-lucide="camera" class="w-4 h-4"></i> Ambil Foto
                 </button>
@@ -653,23 +644,12 @@
         </div>
     </div>
 
-    <!-- MODAL PREVIEW FILE -->
-    <div id="modalPreviewFile" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-2xl w-full p-4 sm:p-6 shadow-2xl flex flex-col max-h-[90vh] my-auto">
-            <div class="flex justify-between items-center mb-4">
-                <h3 id="previewTitle" class="text-sm font-bold text-white truncate max-w-xs sm:max-w-md">Preview File</h3>
-                <button onclick="closePreviewModal()" class="text-slate-400 hover:text-white p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
-            </div>
-            <div id="previewContainer" class="flex-1 overflow-auto bg-[#131d38] rounded-2xl p-2 flex items-center justify-center min-h-[250px] sm:min-h-[300px]"></div>
-            <div class="mt-4 flex justify-end gap-2 flex-wrap">
-                <button onclick="closePreviewModal()" class="px-4 py-2 rounded-xl bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold">Tutup</button>
-            </div>
-        </div>
-    </div>
+    <!-- CONTAINER TERSEMBUNYI UNTUK RENDER PDF -->
+    <div id="pdfRenderArea" style="position: fixed; left: -9999px; top: 0; width: 794px; background: white; color: black;"></div>
 
     <!-- SCRIPT LOGIC LENGKAP -->
     <script>
-        const DB_KEY = 'MYJADWAL_DATA_V15';
+        const DB_KEY = 'MYJADWAL_DATA_V16';
         let appState = {
             currentUser: null,
             savedAccounts: [],
@@ -721,9 +701,14 @@
 
             const getPos = (e) => {
                 const rect = canvas.getBoundingClientRect();
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
                 const clientX = e.touches ? e.touches[0].clientX : e.clientX;
                 const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-                return { x: clientX - rect.left, y: clientY - rect.top };
+                return { 
+                    x: (clientX - rect.left) * scaleX, 
+                    y: (clientY - rect.top) * scaleY 
+                };
             };
 
             const startDraw = (e) => {
@@ -769,89 +754,91 @@
 
         function confirmSignatureAndDownloadPDF() {
             if (!activeNotulensiIdForPDF) return;
+            const targetId = activeNotulensiIdForPDF;
             const sigDataUrl = canvas.toDataURL('image/png');
-            const notul = appState.notulensi.find(n => n.id === activeNotulensiIdForPDF);
+            const notul = appState.notulensi.find(n => n.id === targetId);
             if (notul) {
                 notul.signature = sigDataUrl;
                 saveState();
             }
             closeSignatureModal();
-            generateNotulensiPDF(activeNotulensiIdForPDF);
+            downloadDirectPDF(targetId);
         }
 
-        function generateNotulensiPDF(id) {
+        // --- UNDUH LANGSUNG FILE PDF (TANPA POP-UP PRINT) ---
+        function downloadDirectPDF(id) {
             const notul = appState.notulensi.find(n => n.id === id);
             if (!notul) return;
 
-            const printWindow = window.open('', '_blank');
-            if (!printWindow) {
-                showToast("Pop-up diblokir browser! Izinkan pop-up untuk mengunduh PDF.", "error");
-                return;
+            showToast("Memproses & mengunduh file PDF...", "info");
+
+            const pdfContent = document.createElement('div');
+            pdfContent.style.padding = '35px';
+            pdfContent.style.fontFamily = 'Arial, sans-serif';
+            pdfContent.style.color = '#111111';
+            pdfContent.style.backgroundColor = '#ffffff';
+            pdfContent.style.lineHeight = '1.6';
+
+            pdfContent.innerHTML = `
+                <div style="text-align: center; border-bottom: 3px double #333; padding-bottom: 15px; margin-bottom: 25px;">
+                    <h1 style="margin: 0; font-size: 20px; text-transform: uppercase; letter-spacing: 1px;">Notulensi Rapat Resmi</h1>
+                    <p style="margin: 5px 0 0; font-size: 12px; color: #555;">Portal Akademik MyJadwal Workspace</p>
+                </div>
+
+                <table style="width: 100%; margin-bottom: 20px; font-size: 13px; border-collapse: collapse;">
+                    <tr>
+                        <td style="width: 130px; padding: 5px 0;"><strong>Judul Rapat</strong></td>
+                        <td style="padding: 5px 0;">: ${notul.judul}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 5px 0;"><strong>Tanggal Rapat</strong></td>
+                        <td style="padding: 5px 0;">: ${notul.tanggal}</td>
+                    </tr>
+                </table>
+
+                <div style="font-weight: bold; background: #f1f5f9; padding: 7px 12px; margin-top: 15px; margin-bottom: 10px; font-size: 13px; text-transform: uppercase; border-left: 4px solid #4f46e5;">
+                    Poin Pembahasan
+                </div>
+                <div style="font-size: 13px; white-space: pre-wrap; padding: 0 10px; min-height: 80px;">${notul.pembahasan}</div>
+
+                ${notul.photoData ? `
+                    <div style="margin-top: 25px; text-align: center;">
+                        <div style="font-weight: bold; background: #f1f5f9; padding: 7px 12px; margin-bottom: 12px; font-size: 13px; text-transform: uppercase; text-align: left; border-left: 4px solid #4f46e5;">
+                            Dokumentasi Foto Kegiatan
+                        </div>
+                        <img src="${notul.photoData}" style="max-width: 100%; max-height: 280px; border-radius: 6px; border: 1px solid #cbd5e1;" />
+                    </div>
+                ` : ''}
+
+                <div style="margin-top: 45px; display: flex; justify-content: flex-end;">
+                    <div style="text-align: center; width: 220px;">
+                        <p style="margin: 0; font-size: 12px;">Disahkan oleh,</p>
+                        ${notul.signature ? `<img src="${notul.signature}" style="height: 75px; object-fit: contain; margin: 8px auto; display: block;" />` : '<div style="height: 75px;"></div>'}
+                        <p style="margin: 0; font-size: 13px; font-weight: bold; border-top: 1px solid #111; padding-top: 5px;">(Peserta / Notulis)</p>
+                    </div>
+                </div>
+            `;
+
+            const safeFileName = `Notulensi_${notul.judul.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`;
+
+            const opt = {
+                margin:       0.4,
+                filename:     safeFileName,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+            };
+
+            if (typeof html2pdf !== 'undefined') {
+                html2pdf().set(opt).from(pdfContent).save().then(() => {
+                    showToast("File PDF berhasil diunduh!", "success");
+                }).catch(err => {
+                    console.error(err);
+                    showToast("Gagal membuat PDF.", "error");
+                });
+            } else {
+                showToast("Pustaka PDF belum siap. Pastikan koneksi internet aktif.", "error");
             }
-
-            printWindow.document.write(`
-                <!DOCTYPE html>
-                <html lang="id">
-                <head>
-                    <meta charset="UTF-8">
-                    <title>Notulensi - ${notul.judul}</title>
-                    <style>
-                        body { font-family: 'Inter', Arial, sans-serif; padding: 30px; color: #111; line-height: 1.6; }
-                        .header { text-align: center; border-bottom: 3px double #333; padding-bottom: 15px; margin-bottom: 25px; }
-                        .header h1 { margin: 0; font-size: 22px; text-transform: uppercase; }
-                        .header p { margin: 5px 0 0; font-size: 13px; color: #555; }
-                        .meta-table { width: 100%; margin-bottom: 20px; font-size: 13px; border-collapse: collapse; }
-                        .meta-table td { padding: 6px 0; vertical-align: top; }
-                        .section-title { font-weight: bold; background: #eee; padding: 6px 10px; margin-top: 20px; margin-bottom: 8px; font-size: 13px; text-transform: uppercase; }
-                        .content-box { font-size: 13px; white-space: pre-wrap; padding: 0 10px; }
-                        .footer { margin-top: 40px; display: flex; justify-content: flex-end; }
-                        .sign-area { text-align: center; width: 220px; }
-                        .sign-img { height: 70px; object-fit: contain; margin: 10px 0; }
-                        .photo-container { margin-top: 30px; text-align: center; page-break-inside: avoid; }
-                        .photo-container img { max-width: 100%; max-height: 300px; border-radius: 8px; border: 1px solid #ccc; margin-top: 10px; }
-                    </style>
-                </head>
-                <body>
-                    <div class="header">
-                        <h1>Notulensi Rapat Resmi</h1>
-                        <p>Portal Akademik MyJadwal Workspace</p>
-                    </div>
-
-                    <table class="meta-table">
-                        <tr><td style="width: 140px;"><strong>Judul Rapat</strong></td><td>: ${notul.judul}</td></tr>
-                        <tr><td><strong>Hari / Tanggal</strong></td><td>: ${notul.tanggal}</td></tr>
-                    </table>
-
-                    <div class="section-title">Poin Pembahasan</div>
-                    <div class="content-box">${notul.pembahasan}</div>
-
-                    ${notul.photoData ? `
-                        <div class="photo-container">
-                            <div class="section-title">Dokumentasi Foto Kegiatan</div>
-                            <img src="${notul.photoData}" alt="Foto Dokumentasi Rapat">
-                        </div>
-                    ` : ''}
-
-                    <div class="footer">
-                        <div class="sign-area">
-                            <p style="margin: 0; font-size: 12px;">Disahkan oleh,</p>
-                            ${notul.signature ? `<img src="${notul.signature}" class="sign-img" alt="Tanda Tangan">` : '<div style="height: 70px;"></div>'}
-                            <p style="margin: 0; font-size: 13px; font-weight: bold; border-top: 1px solid #111; padding-top: 4px;">(Peserta / Notulis)</p>
-                        </div>
-                    </div>
-
-                    <script>
-                        window.onload = function() {
-                            setTimeout(() => {
-                                window.print();
-                            }, 500);
-                        }
-                    <\/script>
-                </body>
-                </html>
-            `);
-            printWindow.document.close();
-            showToast("Jendela PDF siap diunduh/dicetak!", "success");
         }
 
         // --- REAL-TIME CAMERA & VIDEO STREAM FUNCTIONS ---
@@ -892,7 +879,7 @@
             canvasSnap.height = videoEl.videoHeight || 480;
             const ctxSnap = canvasSnap.getContext('2d');
             ctxSnap.drawImage(videoEl, 0, 0, canvasSnap.width, canvasSnap.height);
-            tempPhotoData = canvasSnap.toDataURL('image/png');
+            tempPhotoData = canvasSnap.toDataURL('image/jpeg', 0.85);
             showToast("Foto berhasil diambil dari kamera live!", "success");
             updateMediaPreviewUI();
         }
@@ -991,7 +978,7 @@
         }
 
         function loadState() {
-            const possibleKeys = [DB_KEY, 'MYJADWAL_DATA_V14', 'MYJADWAL_DATA_V13', 'MYJADWAL_DATA_V12', 'MYJADWAL_DATA_V11'];
+            const possibleKeys = [DB_KEY, 'MYJADWAL_DATA_V15', 'MYJADWAL_DATA_V14', 'MYJADWAL_DATA_V13'];
             let loadedData = null;
             for (const key of possibleKeys) {
                 const saved = localStorage.getItem(key);
@@ -1279,7 +1266,6 @@
             if (document.getElementById('statTotalNotulensi')) document.getElementById('statTotalNotulensi').innerText = appState.notulensi.length;
 
             const inc = appState.finances.filter(f => f.type === 'Pemasukan').reduce((a, b) => a + b.amount, 0);
-            const exp = appState.finances.filter(f => f.type === 'Pengeluaran').reduce((a, b) => a + b.amount, 0);
             if (document.getElementById('statTotalIncome')) document.getElementById('statTotalIncome').innerText = `Rp ${inc.toLocaleString()}`;
         }
 
@@ -1507,7 +1493,6 @@
             targetSec.classList.remove('hidden');
             if (tabId === 'kalender') renderFullCalendar();
 
-            // Animasi & Tampilkan Teks Navigasi saat diklik
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.classList.remove('bg-gradient-to-r', 'from-violet-600', 'to-indigo-600', 'text-white', 'shadow-sm');
                 btn.classList.add('text-slate-400');
