@@ -29,10 +29,11 @@
         }
     </script>
 
-    <!-- Lucide Icons, Chart.js & html2pdf.js (Direct PDF Download) -->
+    <!-- Lucide Icons, Chart.js, html2pdf.js & qrcodejs (Dynamic QR Generator) -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -347,7 +348,7 @@
                 <div class="flex justify-between items-center flex-wrap gap-4">
                     <div>
                         <h2 class="text-xl font-extrabold text-white">Notulensi Rapat & Diskusi</h2>
-                        <p class="text-xs text-slate-400">Catat rapat, ambil foto/video langsung dari kamera real-time, tanda tangan digital, & unduh langsung file PDF.</p>
+                        <p class="text-xs text-slate-400">Catat rapat, pilih jenis tanda tangan (Manual/QR), & unduh langsung file PDF.</p>
                     </div>
                     <button onclick="openNotulensiModal()" class="owner-only-btn bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold text-xs px-4 py-2.5 rounded-xl flex items-center gap-2 shadow-md">
                         <i data-lucide="plus" class="w-4 h-4"></i> Buat Notulensi
@@ -464,32 +465,81 @@
         </main>
     </div>
 
-    <!-- MODAL SIGNATURE CANVAS -->
-    <div id="modalSignature" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4 overflow-y-auto">
+    <!-- MODAL SIGNATURE CANVAS (MANUAL) -->
+    <div id="modalSignatureManual" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4 overflow-y-auto">
         <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl text-xs space-y-4 my-auto">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
                 <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                    <i data-lucide="pen-tool" class="w-4 h-4 text-indigo-400"></i> Buat Tanda Tangan Digital
+                    <i data-lucide="pen-tool" class="w-4 h-4 text-indigo-400"></i> Tanda Tangan Basah (Manual)
                 </h3>
-                <button onclick="closeSignatureModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+                <button onclick="closeManualSignatureModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
-            <p class="text-slate-400 text-[11px]">Silakan coret tanda tangan Anda pada area di bawah ini menggunakan mouse atau jari/touchscreen HP:</p>
-            
+            <div>
+                <label class="font-semibold block mb-1 text-slate-300">Nama Lengkap Penanda Tangan</label>
+                <input type="text" id="manualSignerName" placeholder="Masukkan nama Anda..." class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white mb-3">
+            </div>
+            <p class="text-slate-400 text-[11px]">Coret tanda tangan di bawah ini:</p>
             <div class="bg-white rounded-2xl p-2 border border-slate-700 relative overflow-hidden flex justify-center">
-                <canvas id="sigCanvas" width="350" height="150" class="cursor-crosshair w-full touch-none bg-white rounded-xl"></canvas>
+                <canvas id="sigCanvas" width="350" height="130" class="cursor-crosshair w-full touch-none bg-white rounded-xl"></canvas>
             </div>
-
             <div class="flex justify-between items-center pt-2">
                 <button type="button" onclick="clearSignature()" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-rose-400 font-semibold">Bersihkan</button>
                 <div class="flex gap-2">
-                    <button type="button" onclick="closeSignatureModal()" class="px-3 py-2 rounded-xl border border-slate-700 text-slate-300">Batal</button>
-                    <button type="button" onclick="confirmSignatureAndDownloadPDF()" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold">Konfirmasi & Unduh PDF</button>
+                    <button type="button" onclick="closeManualSignatureModal()" class="px-3 py-2 rounded-xl border border-slate-700 text-slate-300">Batal</button>
+                    <button type="button" onclick="confirmManualSignatureAndDownload()" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold">Unduh PDF (Manual)</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- MODAL LIVE CAMERA & VIDEO STREAM (REAL-TIME KAMERA) -->
+    <!-- MODAL SIGNATURE DIGITAL (QR) -->
+    <div id="modalSignatureQR" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl text-xs space-y-4 my-auto">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                    <i data-lucide="qr-code" class="w-4 h-4 text-violet-400"></i> Tanda Tangan Elektronik (QR)
+                </h3>
+                <button onclick="closeQRSignatureModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div class="space-y-3">
+                <div>
+                    <label class="font-semibold block mb-1 text-slate-300">Nama Lengkap</label>
+                    <input type="text" id="qrSignerName" placeholder="Nama lengkap..." class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white">
+                </div>
+                <div>
+                    <label class="font-semibold block mb-1 text-slate-300">ID / No. HP</label>
+                    <input type="text" id="qrSignerID" placeholder="08xxxxxxxxxx" class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white">
+                </div>
+                <div class="flex items-center gap-2 pt-1">
+                    <input type="checkbox" id="qrConsentCheck" class="w-4 h-4 rounded bg-[#131d38] border-slate-700 text-violet-600">
+                    <label for="qrConsentCheck" class="text-slate-300 text-[11px]">Saya menyetujui validitas tanda tangan elektronik ini secara sah.</label>
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 pt-3 border-t border-slate-800">
+                <button type="button" onclick="closeQRSignatureModal()" class="px-3 py-2 rounded-xl border border-slate-700 text-slate-300">Batal</button>
+                <button type="button" onclick="confirmQRSignatureAndDownload()" class="px-4 py-2 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-bold">Unduh PDF (Elektronik)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PILIH JENIS TANDA TANGAN -->
+    <div id="modalSelectSignType" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-sm w-full p-6 shadow-2xl text-xs space-y-4 my-auto text-center">
+            <h3 class="text-sm font-bold text-white mb-1">Pilih Metode Tanda Tangan</h3>
+            <p class="text-slate-400 text-[11px] mb-4">Pilih jenis pengesahan dokumen notulensi yang diinginkan.</p>
+            <div class="space-y-3">
+                <button onclick="chooseSignManual()" class="w-full p-3 bg-[#131d38] hover:bg-slate-800 border border-slate-700 rounded-2xl text-white font-bold flex items-center justify-center gap-2 transition">
+                    <i data-lucide="pen-tool" class="w-4 h-4 text-indigo-400"></i> Tanda Tangan Manual (Basah)
+                </button>
+                <button onclick="chooseSignQR()" class="w-full p-3 bg-[#131d38] hover:bg-slate-800 border border-slate-700 rounded-2xl text-white font-bold flex items-center justify-center gap-2 transition">
+                    <i data-lucide="qr-code" class="w-4 h-4 text-violet-400"></i> Tanda Tangan Digital (QR Code)
+                </button>
+            </div>
+            <button onclick="document.getElementById('modalSelectSignType').classList.add('hidden')" class="text-slate-500 hover:text-slate-300 pt-2 text-[11px]">Batal</button>
+        </div>
+    </div>
+
+    <!-- MODAL LIVE CAMERA & VIDEO STREAM -->
     <div id="modalLiveCamera" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4 overflow-y-auto">
         <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl text-xs space-y-4 my-auto text-center">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
@@ -498,16 +548,14 @@
                 </h3>
                 <button onclick="closeLiveCameraModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
-
             <div class="relative bg-black rounded-2xl overflow-hidden border border-slate-700 aspect-video flex items-center justify-center">
                 <video id="liveVideoElement" autoplay playsinline muted class="w-full h-full object-cover"></video>
                 <div id="recordingIndicator" class="hidden absolute top-3 left-3 bg-red-600 text-white px-2.5 py-1 rounded-full text-[10px] font-bold animate-pulse flex items-center gap-1.5">
                     <span class="w-2 h-2 rounded-full bg-white"></span> Merekam...
                 </div>
             </div>
-
             <div class="flex justify-center gap-3 pt-2 flex-wrap">
-                <button type="button" id="btnSnapPhoto" onclick="takeSnapshot()" class="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold flex items-center gap-2 shadow-md">
+                <button type="button" onclick="takeSnapshot()" class="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold flex items-center gap-2 shadow-md">
                     <i data-lucide="camera" class="w-4 h-4"></i> Ambil Foto
                 </button>
                 <button type="button" id="btnRecordVideo" onclick="toggleVideoRecording()" class="px-4 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-bold flex items-center gap-2 shadow-md">
@@ -536,21 +584,17 @@
                     <label class="font-semibold block mb-1 text-slate-300">Poin Pembahasan / Agenda</label>
                     <textarea id="notulensiPembahasan" rows="4" required placeholder="Tuliskan isi pembahasan rapat..." class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white resize-none custom-scrollbar"></textarea>
                 </div>
-
-                <!-- OPSI KAMERA & MEDIA REAL-TIME -->
                 <div class="p-3 bg-[#131d38] rounded-2xl border border-slate-700 space-y-2">
                     <label class="font-bold block text-indigo-400 flex items-center gap-1.5">
                         <i data-lucide="camera" class="w-4 h-4"></i> Ambil Foto / Rekam Video Real-Time Kamera
                     </label>
-                    <p class="text-[11px] text-slate-400">Gunakan kamera perangkat secara langsung untuk mengambil dokumentasi rapat.</p>
                     <div class="flex gap-2 flex-wrap pt-1">
-                        <button type="button" onclick="openLiveCameraModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-[11px] px-3.5 py-2 rounded-xl cursor-pointer flex items-center gap-1.5 transition shadow-md">
+                        <button type="button" onclick="openLiveCameraModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-[11px] px-3.5 py-2 rounded-xl transition shadow-md flex items-center gap-1.5">
                             <i data-lucide="camera" class="w-4 h-4"></i> Buka Kamera Live
                         </button>
                     </div>
                     <div id="mediaPreviewContainer" class="mt-2 flex gap-2 flex-wrap"></div>
                 </div>
-
                 <div class="flex justify-end gap-2 pt-3">
                     <button type="button" onclick="closeNotulensiModal()" class="px-4 py-2 rounded-xl border border-slate-700 text-slate-300">Batal</button>
                     <button type="submit" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold">Simpan Notulensi</button>
@@ -644,12 +688,9 @@
         </div>
     </div>
 
-    <!-- CONTAINER TERSEMBUNYI UNTUK RENDER PDF -->
-    <div id="pdfRenderArea" style="position: fixed; left: -9999px; top: 0; width: 794px; background: white; color: black;"></div>
-
     <!-- SCRIPT LOGIC LENGKAP -->
     <script>
-        const DB_KEY = 'MYJADWAL_DATA_V16';
+        const DB_KEY = 'MYJADWAL_DATA_V19';
         let appState = {
             currentUser: null,
             savedAccounts: [],
@@ -741,31 +782,83 @@
             if (ctx && canvas) { ctx.clearRect(0, 0, canvas.width, canvas.height); }
         }
 
-        function openSignatureModal(id) {
+        // --- MANAJEMEN PILIHAN TANDA TANGAN ---
+        function promptSelectSignType(id) {
             activeNotulensiIdForPDF = id;
+            document.getElementById('modalSelectSignType').classList.remove('hidden');
+        }
+
+        function chooseSignManual() {
+            document.getElementById('modalSelectSignType').classList.add('hidden');
             clearSignature();
-            document.getElementById('modalSignature').classList.remove('hidden');
+            document.getElementById('manualSignerName').value = appState.currentUser ? appState.currentUser.name : '';
+            document.getElementById('modalSignatureManual').classList.remove('hidden');
         }
 
-        function closeSignatureModal() {
-            document.getElementById('modalSignature').classList.add('hidden');
-            activeNotulensiIdForPDF = null;
+        function closeManualSignatureModal() {
+            document.getElementById('modalSignatureManual').classList.add('hidden');
         }
 
-        function confirmSignatureAndDownloadPDF() {
-            if (!activeNotulensiIdForPDF) return;
-            const targetId = activeNotulensiIdForPDF;
+        function confirmManualSignatureAndDownload() {
+            const signerName = document.getElementById('manualSignerName').value.trim();
+            if (!signerName) {
+                showToast("Mohon masukkan nama penanda tangan!", "error");
+                return;
+            }
             const sigDataUrl = canvas.toDataURL('image/png');
+            const targetId = activeNotulensiIdForPDF;
             const notul = appState.notulensi.find(n => n.id === targetId);
             if (notul) {
+                notul.signType = 'manual';
+                notul.signerName = signerName;
                 notul.signature = sigDataUrl;
                 saveState();
             }
-            closeSignatureModal();
+            closeManualSignatureModal();
             downloadDirectPDF(targetId);
         }
 
-        // --- UNDUH LANGSUNG FILE PDF (TANPA POP-UP PRINT) ---
+        function chooseSignQR() {
+            document.getElementById('modalSelectSignType').classList.add('hidden');
+            document.getElementById('qrSignerName').value = appState.currentUser ? appState.currentUser.name : '';
+            document.getElementById('qrSignerID').value = '';
+            document.getElementById('qrConsentCheck').checked = false;
+            document.getElementById('modalSignatureQR').classList.remove('hidden');
+        }
+
+        function closeQRSignatureModal() {
+            document.getElementById('modalSignatureQR').classList.add('hidden');
+        }
+
+        function confirmQRSignatureAndDownload() {
+            const name = document.getElementById('qrSignerName').value.trim();
+            const phoneId = document.getElementById('qrSignerID').value.trim();
+            const consented = document.getElementById('qrConsentCheck').checked;
+
+            if (!name || !phoneId) {
+                showToast("Mohon lengkapi Nama dan ID / No. HP!", "error");
+                return;
+            }
+            if (!consented) {
+                showToast("Anda harus mencentang persetujuan tanda tangan elektronik.", "error");
+                return;
+            }
+
+            const targetId = activeNotulensiIdForPDF;
+            const notul = appState.notulensi.find(n => n.id === targetId);
+            if (notul) {
+                notul.signType = 'qr';
+                notul.signerName = name;
+                notul.signerID = phoneId;
+                // Format interaktif QR saat di-scan/klik: Memunculkan konfirmasi verifikasi dokumen
+                notul.qrUniqueData = `javascript:if(confirm('Lihat Dokumen/verifikasi dokumen?')){alert('Dokumen terverifikasi');}`;
+                saveState();
+            }
+            closeQRSignatureModal();
+            downloadDirectPDF(targetId);
+        }
+
+        // --- UNDUH PDF DENGAN FORMAT TATA LETAK, POSISI KIRI DI BAWAH, & QR FIX ---
         function downloadDirectPDF(id) {
             const notul = appState.notulensi.find(n => n.id === id);
             if (!notul) return;
@@ -778,6 +871,45 @@
             pdfContent.style.color = '#111111';
             pdfContent.style.backgroundColor = '#ffffff';
             pdfContent.style.lineHeight = '1.6';
+
+            let signatureAreaHtml = '';
+            if (notul.signType === 'manual') {
+                signatureAreaHtml = `
+                    <div style="margin-top: 45px; display: flex; justify-content: space-between; align-items: flex-end;">
+                        <div style="text-align: left; width: 280px;">
+                            <p style="margin: 0; font-size: 11px; font-style: italic; color: #555;">Dokumen ini asli dan tertanda tangani secara basah</p>
+                        </div>
+                        <div style="text-align: center; width: 230px;">
+                            <p style="margin: 5px 0 0; font-size: 12px;">Disahkan oleh,</p>
+                            ${notul.signature ? `<img src="${notul.signature}" style="height: 65px; object-fit: contain; margin: 5px auto; display: block;" />` : '<div style="height: 65px;"></div>'}
+                            <p style="margin: 0; font-size: 13px; font-weight: bold; border-top: 1px solid #111; padding-top: 4px;">${notul.signerName || 'Peserta / Notulis'}</p>
+                        </div>
+                    </div>
+                `;
+            } else if (notul.signType === 'qr') {
+                signatureAreaHtml = `
+                    <div style="margin-top: 45px; display: flex; justify-content: space-between; align-items: flex-end;">
+                        <div style="text-align: left; width: 280px;">
+                            <p style="margin: 0; font-size: 11px; font-style: italic; color: #555;">Dokumen ini asli dan tertanda tangani secara elektronik</p>
+                        </div>
+                        <div style="text-align: center; width: 240px;">
+                            <p style="margin: 5px 0 0; font-size: 12px;">Disahkan oleh,</p>
+                            <div id="pdfQrContainer" style="margin: 8px auto; display: inline-block; padding: 6px; background: #fff; border: 1px solid #ddd; border-radius: 4px;"></div>
+                            <p style="margin: 2px 0 0; font-size: 13px; font-weight: bold;">${notul.signerName || 'Nama Lengkap'}</p>
+                        </div>
+                    </div>
+                `;
+            } else {
+                signatureAreaHtml = `
+                    <div style="margin-top: 45px; display: flex; justify-content: flex-end;">
+                        <div style="text-align: center; width: 220px;">
+                            <p style="margin: 0; font-size: 12px;">Disahkan oleh,</p>
+                            <div style="height: 65px;"></div>
+                            <p style="margin: 0; font-size: 13px; font-weight: bold; border-top: 1px solid #111; padding-top: 5px;">(Peserta / Notulis)</p>
+                        </div>
+                    </div>
+                `;
+            }
 
             pdfContent.innerHTML = `
                 <div style="text-align: center; border-bottom: 3px double #333; padding-bottom: 15px; margin-bottom: 25px;">
@@ -799,28 +931,62 @@
                 <div style="font-weight: bold; background: #f1f5f9; padding: 7px 12px; margin-top: 15px; margin-bottom: 10px; font-size: 13px; text-transform: uppercase; border-left: 4px solid #4f46e5;">
                     Poin Pembahasan
                 </div>
-                <div style="font-size: 13px; white-space: pre-wrap; padding: 0 10px; min-height: 80px;">${notul.pembahasan}</div>
+                <div style="font-size: 13px; text-align: justify; white-space: pre-wrap; padding: 0 10px; min-height: 80px; line-height: 1.6;">${notul.pembahasan}</div>
 
                 ${notul.photoData ? `
                     <div style="margin-top: 25px; text-align: center;">
                         <div style="font-weight: bold; background: #f1f5f9; padding: 7px 12px; margin-bottom: 12px; font-size: 13px; text-transform: uppercase; text-align: left; border-left: 4px solid #4f46e5;">
                             Dokumentasi Foto Kegiatan
                         </div>
-                        <img src="${notul.photoData}" style="max-width: 100%; max-height: 280px; border-radius: 6px; border: 1px solid #cbd5e1;" />
+                        <img src="${notul.photoData}" style="max-width: 100%; max-height: 260px; border-radius: 6px; border: 1px solid #cbd5e1;" />
                     </div>
                 ` : ''}
 
-                <div style="margin-top: 45px; display: flex; justify-content: flex-end;">
-                    <div style="text-align: center; width: 220px;">
-                        <p style="margin: 0; font-size: 12px;">Disahkan oleh,</p>
-                        ${notul.signature ? `<img src="${notul.signature}" style="height: 75px; object-fit: contain; margin: 8px auto; display: block;" />` : '<div style="height: 75px;"></div>'}
-                        <p style="margin: 0; font-size: 13px; font-weight: bold; border-top: 1px solid #111; padding-top: 5px;">(Peserta / Notulis)</p>
-                    </div>
-                </div>
+                ${signatureAreaHtml}
             `;
 
-            const safeFileName = `Notulensi_${notul.judul.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`;
+            // Render QR Code dengan memastikan kontainer terpasang di DOM dokumen agar pustaka qrcodejs berhasil melukis canvas/image
+            if (notul.signType === 'qr' && notul.qrUniqueData) {
+                const tempDiv = document.createElement('div');
+                tempDiv.style.position = 'absolute';
+                tempDiv.style.left = '-9999px';
+                document.body.appendChild(tempDiv);
+                
+                new QRCode(tempDiv, {
+                    text: notul.qrUniqueData,
+                    width: 80,
+                    height: 80,
+                    colorDark : "#000000",
+                    colorLight : "#ffffff",
+                    correctLevel : QRCode.CorrectLevel.H
+                });
 
+                setTimeout(() => {
+                    const canvasEl = tempDiv.querySelector('canvas');
+                    const imgEl = tempDiv.querySelector('img');
+                    let qrImgUrl = '';
+                    if (canvasEl) {
+                        qrImgUrl = canvasEl.toDataURL("image/png");
+                    } else if (imgEl) {
+                        qrImgUrl = imgEl.src;
+                    }
+
+                    if (qrImgUrl) {
+                        const container = pdfContent.querySelector('#pdfQrContainer');
+                        if (container) {
+                            container.innerHTML = `<img src="${qrImgUrl}" style="width: 75px; height: 75px; display: block;" />`;
+                        }
+                    }
+                    tempDiv.remove();
+                    processPdfExport(pdfContent, notul.judul);
+                }, 250);
+            } else {
+                processPdfExport(pdfContent, notul.judul);
+            }
+        }
+
+        function processPdfExport(pdfContent, judulRapat) {
+            const safeFileName = `Notulensi_${judulRapat.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`;
             const opt = {
                 margin:       0.4,
                 filename:     safeFileName,
@@ -837,11 +1003,11 @@
                     showToast("Gagal membuat PDF.", "error");
                 });
             } else {
-                showToast("Pustaka PDF belum siap. Pastikan koneksi internet aktif.", "error");
+                showToast("Pustaka PDF belum siap.", "error");
             }
         }
 
-        // --- REAL-TIME CAMERA & VIDEO STREAM FUNCTIONS ---
+        // --- REAL-TIME CAMERA & VIDEO STREAM ---
         async function openLiveCameraModal() {
             document.getElementById('modalLiveCamera').classList.remove('hidden');
             const videoEl = document.getElementById('liveVideoElement');
@@ -855,9 +1021,7 @@
         }
 
         function closeLiveCameraModal() {
-            if (mediaRecorder && mediaRecorder.state === 'recording') {
-                mediaRecorder.stop();
-            }
+            if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop();
             if (mediaStream) {
                 mediaStream.getTracks().forEach(track => track.stop());
                 mediaStream = null;
@@ -870,10 +1034,7 @@
 
         function takeSnapshot() {
             const videoEl = document.getElementById('liveVideoElement');
-            if (!mediaStream) {
-                showToast("Kamera belum aktif!", "error");
-                return;
-            }
+            if (!mediaStream) { showToast("Kamera belum aktif!", "error"); return; }
             const canvasSnap = document.createElement('canvas');
             canvasSnap.width = videoEl.videoWidth || 640;
             canvasSnap.height = videoEl.videoHeight || 480;
@@ -887,39 +1048,22 @@
         function toggleVideoRecording() {
             const recordBtnText = document.getElementById('recordVideoBtnText');
             const indicator = document.getElementById('recordingIndicator');
-
-            if (!mediaStream) {
-                showToast("Kamera belum aktif!", "error");
-                return;
-            }
+            if (!mediaStream) { showToast("Kamera belum aktif!", "error"); return; }
 
             if (!mediaRecorder || mediaRecorder.state === 'inactive') {
                 recordedChunks = [];
                 try {
                     mediaRecorder = new MediaRecorder(mediaStream, { mimeType: 'video/webm' });
                 } catch (e) {
-                    try {
-                        mediaRecorder = new MediaRecorder(mediaStream);
-                    } catch (err) {
-                        showToast("Perekaman video tidak didukung di browser ini.", "error");
-                        return;
+                    try { mediaRecorder = new MediaRecorder(mediaStream); } catch (err) {
+                        showToast("Perekaman video tidak didukung di browser ini.", "error"); return;
                     }
                 }
-
-                mediaRecorder.ondataavailable = function(e) {
-                    if (e.data && e.data.size > 0) {
-                        recordedChunks.push(e.data);
-                    }
-                };
-
-                mediaRecorder.onstop = function() {
+                mediaRecorder.ondataavailable = e => { if (e.data && e.data.size > 0) recordedChunks.push(e.data); };
+                mediaRecorder.onstop = () => {
                     const blob = new Blob(recordedChunks, { type: 'video/webm' });
-                    if (blob.size > 25 * 1024 * 1024) {
-                        showToast("Ukuran video melebihi 25 MB!", "error");
-                        return;
-                    }
                     const reader = new FileReader();
-                    reader.onload = function(evt) {
+                    reader.onload = evt => {
                         tempVideoData = evt.target.result;
                         tempVideoName = `Video_Rapat_${Date.now()}.webm`;
                         showToast("Video berhasil direkam secara live!", "success");
@@ -927,7 +1071,6 @@
                     };
                     reader.readAsDataURL(blob);
                 };
-
                 mediaRecorder.start();
                 recordBtnText.innerText = "Stop Rekam Video";
                 indicator.classList.remove('hidden');
@@ -964,27 +1107,20 @@
 
         function downloadVideo(id) {
             const notul = appState.notulensi.find(n => n.id === id);
-            if (!notul || !notul.videoData) {
-                showToast("Tidak ada file video pada notulensi ini.", "error");
-                return;
-            }
+            if (!notul || !notul.videoData) { showToast("Tidak ada file video pada notulensi ini.", "error"); return; }
             const a = document.createElement('a');
             a.href = notul.videoData;
             a.download = notul.videoName || `Video_Rapat_${notul.id}.webm`;
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
+            document.body.appendChild(a); a.click(); a.remove();
             showToast("Video berhasil diunduh ke perangkat!", "success");
         }
 
         function loadState() {
-            const possibleKeys = [DB_KEY, 'MYJADWAL_DATA_V15', 'MYJADWAL_DATA_V14', 'MYJADWAL_DATA_V13'];
+            const possibleKeys = [DB_KEY, 'MYJADWAL_DATA_V18', 'MYJADWAL_DATA_V17', 'MYJADWAL_DATA_V16'];
             let loadedData = null;
             for (const key of possibleKeys) {
                 const saved = localStorage.getItem(key);
-                if (saved) {
-                    try { loadedData = JSON.parse(saved); break; } catch(e) {}
-                }
+                if (saved) { try { loadedData = JSON.parse(saved); break; } catch(e) {} }
             }
             if (loadedData) {
                 appState = {
@@ -1002,11 +1138,7 @@
         }
 
         function saveState() {
-            try {
-                localStorage.setItem(DB_KEY, JSON.stringify(appState));
-            } catch (e) {
-                showToast("Penyimpanan lokal penuh!", "error");
-            }
+            try { localStorage.setItem(DB_KEY, JSON.stringify(appState)); } catch (e) { showToast("Penyimpanan lokal penuh!", "error"); }
         }
 
         // --- AGENDA CRUD ---
@@ -1036,9 +1168,7 @@
         function closeAgendaModal() { document.getElementById('modalAgenda').classList.add('hidden'); }
         function saveAgenda(e) {
             e.preventDefault();
-            if(appState.currentUser && appState.currentUser.isGuest) {
-                showToast("Akses Tamu tidak diizinkan mengubah data.", "error"); return;
-            }
+            if(appState.currentUser && appState.currentUser.isGuest) { showToast("Akses Tamu tidak diizinkan mengubah data.", "error"); return; }
             const id = document.getElementById('agendaId').value;
             const nama = document.getElementById('agendaNama').value;
             const lokasi = document.getElementById('agendaLokasi').value;
@@ -1061,6 +1191,17 @@
         function deleteAgenda(id) {
             appState.agendas = appState.agendas.filter(a => a.id !== id);
             saveState(); renderAll(); showToast("Agenda dihapus", "info");
+        }
+
+        function updateAgendaInline(id, field, value) {
+            if(appState.currentUser && appState.currentUser.isGuest) { showToast("Akses Tamu tidak diizinkan mengubah data.", "error"); renderAll(); return; }
+            const ag = appState.agendas.find(a => a.id === id);
+            if (ag) {
+                ag[field] = value;
+                saveState();
+                renderAll();
+                showToast("Agenda diperbarui", "success");
+            }
         }
 
         // --- TUGAS CRUD ---
@@ -1088,9 +1229,7 @@
         function closeTugasModal() { document.getElementById('modalTugas').classList.add('hidden'); }
         function saveTugas(e) {
             e.preventDefault();
-            if(appState.currentUser && appState.currentUser.isGuest) {
-                showToast("Akses Tamu tidak diizinkan mengubah data.", "error"); return;
-            }
+            if(appState.currentUser && appState.currentUser.isGuest) { showToast("Akses Tamu tidak diizinkan mengubah data.", "error"); return; }
             const id = document.getElementById('tugasId').value;
             const nama = document.getElementById('tugasNama').value;
             const dosen = document.getElementById('tugasDosen').value;
@@ -1112,6 +1251,17 @@
         function deleteTugas(id) {
             appState.tasks = appState.tasks.filter(t => t.id !== id);
             saveState(); renderAll(); showToast("Tugas dihapus", "info");
+        }
+
+        function updateTugasInline(id, field, value) {
+            if(appState.currentUser && appState.currentUser.isGuest) { showToast("Akses Tamu tidak diizinkan mengubah data.", "error"); renderAll(); return; }
+            const t = appState.tasks.find(x => x.id === id);
+            if (t) {
+                t[field] = value;
+                saveState();
+                renderAll();
+                showToast("Tugas diperbarui", "success");
+            }
         }
 
         // --- NOTULENSI CRUD ---
@@ -1144,9 +1294,7 @@
         function closeNotulensiModal() { document.getElementById('modalNotulensi').classList.add('hidden'); }
         function saveNotulensi(e) {
             e.preventDefault();
-            if (appState.currentUser && appState.currentUser.isGuest) {
-                showToast("Akses Tamu tidak diizinkan mengubah data.", "error"); return;
-            }
+            if (appState.currentUser && appState.currentUser.isGuest) { showToast("Akses Tamu tidak diizinkan mengubah data.", "error"); return; }
             const id = document.getElementById('notulensiId').value;
             const judul = document.getElementById('notulensiJudul').value;
             const tanggal = document.getElementById('notulensiTanggal').value;
@@ -1164,7 +1312,8 @@
             } else {
                 appState.notulensi.push({ 
                     id: 'NOT-' + Date.now(), judul, tanggal, pembahasan, 
-                    signature: null, photoData: tempPhotoData, videoData: tempVideoData, videoName: tempVideoName
+                    signType: null, signature: null, signerName: '', signerID: '', qrUniqueData: '',
+                    photoData: tempPhotoData, videoData: tempVideoData, videoName: tempVideoName
                 });
                 showToast("Notulensi dibuat!", "success");
             }
@@ -1199,9 +1348,7 @@
         function closeJadwalModal() { document.getElementById('modalJadwal').classList.add('hidden'); }
         function saveJadwal(e) {
             e.preventDefault();
-            if(appState.currentUser && appState.currentUser.isGuest) {
-                showToast("Akses Tamu tidak diizinkan mengubah data.", "error"); return;
-            }
+            if(appState.currentUser && appState.currentUser.isGuest) { showToast("Akses Tamu tidak diizinkan mengubah data.", "error"); return; }
             const id = document.getElementById('jadwalId').value;
             const hari = document.getElementById('jadwalHari').value;
             const matkul = document.getElementById('jadwalMatkul').value;
@@ -1229,9 +1376,7 @@
         function closeFinanceModal() { document.getElementById('modalFinance').classList.add('hidden'); }
         function saveFinance(e) {
             e.preventDefault();
-            if(appState.currentUser && appState.currentUser.isGuest) {
-                showToast("Akses Tamu tidak diizinkan mencatat keuangan.", "error"); return;
-            }
+            if(appState.currentUser && appState.currentUser.isGuest) { showToast("Akses Tamu tidak diizinkan mencatat keuangan.", "error"); return; }
             const desc = document.getElementById('finDesc').value;
             const amount = parseFloat(document.getElementById('finAmount').value);
             const type = document.getElementById('finType').value;
@@ -1278,11 +1423,20 @@
                 grid.innerHTML += `
                     <div class="bg-[#0f172a] p-4 sm:p-5 rounded-3xl border border-pink-950/50 space-y-3 flex flex-col justify-between shadow-sm">
                         <div class="space-y-2">
-                            <span class="text-[10px] font-bold uppercase text-pink-400 bg-pink-950/60 px-2 py-0.5 rounded border border-pink-800/40">${a.kriteria || 'Umum'}</span>
+                            <div class="flex items-center justify-between gap-2">
+                                <select onchange="updateAgendaInline('${a.id}', 'kriteria', this.value)" class="text-[10px] font-bold uppercase text-pink-400 bg-pink-950/80 px-2 py-1 rounded border border-pink-800/50 focus:outline-none">
+                                    <option value="Umum" ${a.kriteria === 'Umum' ? 'selected' : ''}>Umum</option>
+                                    <option value="Khusus" ${a.kriteria === 'Khusus' ? 'selected' : ''}>Khusus</option>
+                                    <option value="Tugas" ${a.kriteria === 'Tugas' ? 'selected' : ''}>Tugas</option>
+                                </select>
+                                <select onchange="updateAgendaInline('${a.id}', 'status', this.value)" class="text-[10px] font-bold bg-slate-800 px-2 py-1 rounded text-slate-300 border border-slate-700 focus:outline-none">
+                                    <option value="Belum Terlaksana" ${a.status === 'Belum Terlaksana' ? 'selected' : ''}>Belum Terlaksana</option>
+                                    <option value="Terlaksana" ${a.status === 'Terlaksana' ? 'selected' : ''}>Terlaksana</option>
+                                </select>
+                            </div>
                             <h4 class="font-bold text-white text-sm">${a.nama}</h4>
                             <p class="text-xs text-slate-400">Lokasi: ${a.lokasi}</p>
                             <p class="text-xs text-slate-400 font-mono">${a.tanggal} | ${a.jam} WIB${durasiText}</p>
-                            <span class="text-[10px] bg-slate-800 px-2 py-0.5 rounded text-slate-300 block w-max">${a.status}</span>
                         </div>
                         <div class="flex justify-end gap-2 pt-3 border-t border-slate-800/80">
                             <button onclick="openAgendaModal('${a.id}')" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-pink-400 font-bold text-xs">Edit</button>
@@ -1301,11 +1455,20 @@
                 grid.innerHTML += `
                     <div class="bg-[#0f172a] p-4 sm:p-5 rounded-3xl border border-amber-950/50 space-y-3 flex flex-col justify-between shadow-sm">
                         <div class="space-y-2">
-                            <span class="text-[10px] font-bold uppercase text-amber-400 bg-amber-950/60 px-2 py-0.5 rounded border border-amber-800/40">${t.status}</span>
+                            <div class="flex items-center justify-between gap-2">
+                                <select onchange="updateTugasInline('${t.id}', 'status', this.value)" class="text-[10px] font-bold uppercase text-amber-400 bg-amber-950/80 px-2 py-1 rounded border border-amber-800/50 focus:outline-none">
+                                    <option value="Belum Terkumpul" ${t.status === 'Belum Terkumpul' ? 'selected' : ''}>Belum Terkumpul</option>
+                                    <option value="Terkumpul" ${t.status === 'Terkumpul' ? 'selected' : ''}>Terkumpul</option>
+                                </select>
+                                <select onchange="updateTugasInline('${t.id}', 'pengerjaan', this.value)" class="text-[10px] font-bold bg-slate-800 px-2 py-1 rounded text-slate-300 border border-slate-700 focus:outline-none">
+                                    <option value="Belum dikerjakan" ${t.pengerjaan === 'Belum dikerjakan' ? 'selected' : ''}>Belum dikerjakan</option>
+                                    <option value="Dalam proses" ${t.pengerjaan === 'Dalam proses' ? 'selected' : ''}>Dalam proses</option>
+                                    <option value="Selesai" ${t.pengerjaan === 'Selesai' ? 'selected' : ''}>Selesai</option>
+                                </select>
+                            </div>
                             <h4 class="font-bold text-white text-sm">${t.nama}</h4>
                             <p class="text-xs text-slate-400">Dosen: ${t.dosen}</p>
                             <p class="text-xs text-slate-400 font-mono">Deadline: ${t.deadline.replace('T', ' ')}</p>
-                            <p class="text-xs text-slate-300">Proses: ${t.pengerjaan}</p>
                         </div>
                         <div class="flex justify-end gap-2 pt-3 border-t border-slate-800/80">
                             <button onclick="openTugasModal('${t.id}')" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-400 font-bold text-xs">Edit</button>
@@ -1340,7 +1503,7 @@
                         </div>
                         <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between gap-2 flex-wrap">
                             <div class="flex gap-2 flex-wrap">
-                                <button onclick="openSignatureModal('${n.id}')" class="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center gap-1 shadow-md">
+                                <button onclick="promptSelectSignType('${n.id}')" class="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center gap-1 shadow-md">
                                     <i data-lucide="file-down" class="w-3.5 h-3.5"></i> Unduh PDF
                                 </button>
                                 ${videoBtnHtml}
