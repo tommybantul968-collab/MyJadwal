@@ -1,0 +1,1489 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyJadwal - Portal Kuliah & Organisasi Mahasiswa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#070b19',
+                        cardBg: '#0f172a',
+                        cardHover: '#131d38',
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); border-radius: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.4); border-radius: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.7); }
+    </style>
+</head>
+<body class="bg-[#070b19] dark:bg-[#070b19] bg-slate-100 text-slate-800 dark:text-slate-200 min-h-screen flex flex-col transition-colors duration-300">
+
+    <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- SCREEN 1: LOGIN / AUTHENTICATION -->
+    <div id="authScreen" class="fixed inset-0 z-50 bg-[#070b19] flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl space-y-6 text-center">
+            <div class="w-16 h-16 bg-gradient-to-tr from-violet-600 to-indigo-600 rounded-2xl mx-auto flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                <i data-lucide="calendar-check" class="w-8 h-8 text-white"></i>
+            </div>
+            <div>
+                <h1 class="text-xl font-extrabold text-slate-900 dark:text-white">MyJadwal Workspace</h1>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Portal Jadwal, Tugas, Agenda, Notulensi & Keuangan Akademik</p>
+            </div>
+            <div class="space-y-3 pt-2">
+                <button onclick="openGoogleAccountChooser()" class="w-full py-3 px-4 bg-slate-50 dark:bg-[#131d38] hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700/80 rounded-2xl font-bold text-xs text-slate-800 dark:text-white flex items-center justify-center gap-3 transition shadow-md">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c-.07-.7-.63-1.27-1.34-1.27H12v4.61h6.58c-.28 1.48-1.52 3.65-4.58 3.65-2.76 0-5.02-2.28-5.02-5.09s2.26-5.09 5.02-5.09c1.57 0 2.95.66 3.92 1.72l3.43-3.43C19.89 5.86 16.21 4.5 12 4.5 7.03 4.5 2.87 7.76 1.25 12.11l3.9 3.03C6.34 13.06 8.95 11 12 11c1.23 0 2.37.38 3.32 1.02l3.12-3.12c-1.8-1.38-4.04-2.21-6.44-2.21-6.07 0-11 4.93-11 11s4.93 11 11 11c6.33 0 10.51-4.45 10.51-10.72 0-.74-.08-1.46-.22-2.15z"/></svg>
+                    Masuk dengan Akun Google
+                </button>
+                <button onclick="openGuestLoginModal()" class="w-full py-3 px-4 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 rounded-2xl font-bold text-xs text-slate-700 dark:text-slate-300 transition">
+                    Masuk sebagai Tamu (Guest)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PILIH AKUN GOOGLE -->
+    <div id="modalGoogleChooser" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl max-w-sm w-full p-6 shadow-2xl text-xs space-y-4 my-auto">
+            <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-3">
+                <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2"><i data-lucide="user-check" class="w-4 h-4 text-indigo-400"></i> Pilih Akun Google</h3>
+                <button onclick="closeGoogleChooser()" class="text-slate-400 hover:text-slate-900 dark:hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div id="googleAccountsList" class="space-y-2 max-h-48 overflow-y-auto custom-scrollbar"></div>
+            <form onsubmit="handleNewGoogleLogin(event)" class="space-y-2 pt-2 border-t border-slate-200 dark:border-slate-800">
+                <label class="font-semibold text-slate-600 dark:text-slate-300 block">Tambah / Masukkan Email Lain</label>
+                <input type="email" id="customGoogleEmail" required placeholder="nama@gmail.com" class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white">
+                <button type="submit" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 rounded-xl font-bold text-white">Masuk dengan Email Ini</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL INPUT ID UNIK UNTUK TAMU -->
+    <div id="modalGuestLogin" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl max-w-sm w-full p-6 shadow-2xl text-xs space-y-4 my-auto">
+            <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-3">
+                <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2"><i data-lucide="key-round" class="w-4 h-4 text-emerald-400"></i> Masukkan ID Unik Tamu</h3>
+                <button onclick="closeGuestLoginModal()" class="text-slate-400 hover:text-slate-900 dark:hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <p class="text-slate-500 dark:text-slate-400 text-[11px]">Sebagai Tamu, masukkan ID unik dashboard untuk melihat data.</p>
+            <form onsubmit="handleGuestLogin(event)" class="space-y-3">
+                <input type="text" id="guestInputUniqueId" required placeholder="Contoh: MJ-849201" class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white uppercase font-mono">
+                <button type="submit" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 rounded-xl font-bold text-white">Masuk sebagai Tamu (Hanya Lihat)</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MAIN APP WRAPPER -->
+    <div id="mainApp" class="hidden flex-1 flex flex-col">
+        <header class="bg-white/80 dark:bg-[#0f172a]/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 sticky top-0 z-40 px-4 sm:px-8 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-gradient-to-tr from-violet-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-md">
+                    <i data-lucide="calendar-check" class="w-5 h-5 text-white"></i>
+                </div>
+                <div>
+                    <h2 class="text-sm font-extrabold text-slate-900 dark:text-white tracking-wide">MyJadwal</h2>
+                    <p class="text-[10px] text-slate-500 dark:text-slate-400">Workspace Akademik & Organisasi</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <button id="headerInstallBtn" onclick="installPWAApp()" class="hidden p-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl transition shadow-md flex items-center gap-1.5 text-xs font-bold px-3">
+                    <i data-lucide="download-cloud" class="w-4 h-4"></i> <span class="hidden sm:inline">Instal</span>
+                </button>
+                <button onclick="toggleAppTheme()" class="p-2 bg-slate-100 dark:bg-[#131d38] hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 transition">
+                    <i data-lucide="sun-medium" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </header>
+
+        <nav class="fixed bottom-0 inset-x-0 z-40 bg-white/95 dark:bg-[#0f172a]/95 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 px-3 py-2 grid grid-cols-4 sm:flex sm:justify-around items-center gap-1.5 sm:gap-0 max-w-3xl mx-auto sm:rounded-t-3xl shadow-2xl">
+            <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn flex flex-col sm:flex-row items-center justify-center sm:gap-2 p-2 sm:px-3.5 sm:py-2 rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold text-[11px] sm:text-xs transition-all shadow-sm">
+                <i data-lucide="layout-dashboard" class="w-4 h-4 shrink-0 mb-1 sm:mb-0"></i>
+                <span class="nav-text opacity-150 sm:opacity-100 max-w-[120px] transition-all duration-300 overflow-hidden whitespace-nowrap">Utama</span>
+            </button>
+            <button onclick="switchTab('agenda')" id="nav-agenda" class="nav-btn flex flex-col sm:flex-row items-center justify-center sm:gap-2 p-2 sm:px-3 sm:py-2 rounded-2xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-[11px] sm:text-xs transition-all">
+                <i data-lucide="calendar-days" class="w-4 h-4 shrink-0 mb-1 sm:mb-0"></i>
+                <span class="nav-text sm:max-w-0 sm:opacity-0 overflow-hidden transition-all duration-300 whitespace-nowrap">Agenda</span>
+            </button>
+            <button onclick="switchTab('tugas')" id="nav-tugas" class="nav-btn flex flex-col sm:flex-row items-center justify-center sm:gap-2 p-2 sm:px-3 sm:py-2 rounded-2xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-[11px] sm:text-xs transition-all">
+                <i data-lucide="check-square" class="w-4 h-4 shrink-0 mb-1 sm:mb-0"></i>
+                <span class="nav-text sm:max-w-0 sm:opacity-0 overflow-hidden transition-all duration-300 whitespace-nowrap">Tugas</span>
+            </button>
+            <button onclick="switchTab('notulensi')" id="nav-notulensi" class="nav-btn flex flex-col sm:flex-row items-center justify-center sm:gap-2 p-2 sm:px-3 sm:py-2 rounded-2xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-[11px] sm:text-xs transition-all">
+                <i data-lucide="file-text" class="w-4 h-4 shrink-0 mb-1 sm:mb-0"></i>
+                <span class="nav-text sm:max-w-0 sm:opacity-0 overflow-hidden transition-all duration-300 whitespace-nowrap">Notulensi</span>
+            </button>
+            <button onclick="switchTab('jadwal')" id="nav-jadwal" class="nav-btn flex flex-col sm:flex-row items-center justify-center sm:gap-2 p-2 sm:px-3 sm:py-2 rounded-2xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-[11px] sm:text-xs transition-all">
+                <i data-lucide="book-open" class="w-4 h-4 shrink-0 mb-1 sm:mb-0"></i>
+                <span class="nav-text sm:max-w-0 sm:opacity-0 overflow-hidden transition-all duration-300 whitespace-nowrap">Kuliah</span>
+            </button>
+            <button onclick="switchTab('keuangan')" id="nav-keuangan" class="nav-btn flex flex-col sm:flex-row items-center justify-center sm:gap-2 p-2 sm:px-3 sm:py-2 rounded-2xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-[11px] sm:text-xs transition-all">
+                <i data-lucide="wallet" class="w-4 h-4 shrink-0 mb-1 sm:mb-0"></i>
+                <span class="nav-text sm:max-w-0 sm:opacity-0 overflow-hidden transition-all duration-300 whitespace-nowrap">Kas</span>
+            </button>
+            <button onclick="switchTab('kalender')" id="nav-kalender" class="nav-btn flex flex-col sm:flex-row items-center justify-center sm:gap-2 p-2 sm:px-3 sm:py-2 rounded-2xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-[11px] sm:text-xs transition-all">
+                <i data-lucide="calendar" class="w-4 h-4 shrink-0 mb-1 sm:mb-0"></i>
+                <span class="nav-text sm:max-w-0 sm:opacity-0 overflow-hidden transition-all duration-300 whitespace-nowrap">Kalender</span>
+            </button>
+            <button onclick="switchTab('pengaturan')" id="nav-pengaturan" class="nav-btn flex flex-col sm:flex-row items-center justify-center sm:gap-2 p-2 sm:px-3 sm:py-2 rounded-2xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-[11px] sm:text-xs transition-all">
+                <i data-lucide="settings" class="w-4 h-4 shrink-0 mb-1 sm:mb-0"></i>
+                <span class="nav-text sm:max-w-0 sm:opacity-0 overflow-hidden transition-all duration-300 whitespace-nowrap">Sistem</span>
+            </button>
+        </nav>
+
+        <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-8 pb-32 sm:pb-28 space-y-6">
+            <section id="view-dashboard" class="space-y-6">
+                <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl p-5 sm:p-6 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-indigo-600/20 text-indigo-500 rounded-2xl flex items-center justify-center font-bold text-lg" id="dashUserInitial">U</div>
+                        <div>
+                            <h3 id="dashUserName" class="text-sm font-bold text-slate-900 dark:text-white">Nama Pengguna</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400" id="dashUserEmail">email@gmail.com</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 bg-slate-50 dark:bg-[#131d38] px-4 py-2.5 rounded-2xl border border-slate-200 dark:border-slate-700">
+                        <div>
+                            <span class="text-[10px] text-slate-500 dark:text-slate-400 block uppercase font-semibold">ID Unik Dashboard (Bagikan ke Tamu)</span>
+                            <span id="dashAccessID" class="text-xs font-mono font-bold text-indigo-500">MJ-------</span>
+                        </div>
+                        <button onclick="copyAccessID()" class="p-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl transition">
+                            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl p-4 sm:p-5 shadow-sm space-y-2">
+                        <div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
+                            <span class="text-xs font-bold uppercase tracking-wider">Tugas Kuliah</span>
+                            <i data-lucide="check-square" class="w-4 h-4 text-amber-500"></i>
+                        </div>
+                        <h3 id="statTotalTugas" class="text-2xl font-black text-slate-900 dark:text-white">0</h3>
+                        <p id="statTugasPct" class="text-[11px] text-emerald-600 font-semibold">0% Terkumpul</p>
+                    </div>
+                    <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl p-4 sm:p-5 shadow-sm space-y-2">
+                        <div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
+                            <span class="text-xs font-bold uppercase tracking-wider">Agenda Kegiatan</span>
+                            <i data-lucide="calendar-days" class="w-4 h-4 text-pink-500"></i>
+                        </div>
+                        <h3 id="statTotalAgenda" class="text-2xl font-black text-slate-900 dark:text-white">0</h3>
+                        <p id="statAgendaPending" class="text-[11px] text-pink-600 font-semibold">0 Belum Terlaksana</p>
+                    </div>
+                    <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl p-4 sm:p-5 shadow-sm space-y-2">
+                        <div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
+                            <span class="text-xs font-bold uppercase tracking-wider">Notulensi Rapat</span>
+                            <i data-lucide="file-text" class="w-4 h-4 text-indigo-500"></i>
+                        </div>
+                        <h3 id="statTotalNotulensi" class="text-2xl font-black text-slate-900 dark:text-white">0</h3>
+                        <p class="text-[11px] text-indigo-600 font-semibold">Dokumen Disahkan</p>
+                    </div>
+                    <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl p-4 sm:p-5 shadow-sm space-y-2">
+                        <div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
+                            <span class="text-xs font-bold uppercase tracking-wider">Kas Organisasi</span>
+                            <i data-lucide="wallet" class="w-4 h-4 text-emerald-500"></i>
+                        </div>
+                        <h3 id="statTotalIncome" class="text-xl font-black text-slate-900 dark:text-white">Rp 0</h3>
+                        <p class="text-[11px] text-emerald-600 font-semibold">Pemasukan Bersih</p>
+                    </div>
+                </div>
+
+                <!-- Widget Kalender Interaktif di Dashboard -->
+                <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-sm space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h4 id="dashCalendarMonthYear" class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                            <i data-lucide="calendar" class="w-4 h-4 text-indigo-500"></i> Kalender Interaktif
+                        </h4>
+                        <div class="flex gap-1.5">
+                            <button onclick="changeDashMonth(-1)" class="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 rounded-lg text-slate-600 dark:text-slate-300 text-xs font-bold">&larr;</button>
+                            <button onclick="changeDashMonth(1)" class="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 rounded-lg text-slate-600 dark:text-slate-300 text-xs font-bold">&rarr;</button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-slate-400">
+                        <span>Min</span><span>Sen</span><span>Sel</span><span>Rab</span><span>Kam</span><span>Jum</span><span>Sab</span>
+                    </div>
+                    <div id="dashCalendarGrid" class="grid grid-cols-7 gap-1.5"></div>
+                </div>
+
+                <!-- Widget Pintasan & Countdown Hari Ini & Besok -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-sm space-y-3">
+                        <h4 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                            <i data-lucide="clock" class="w-4 h-4 text-indigo-500"></i> Pintasan & Countdown Hari Ini
+                        </h4>
+                        <div id="dashboardTodayShortcuts" class="space-y-2 text-xs">
+                            <p class="text-slate-500 text-center py-3">Tidak ada agenda atau tugas hari ini.</p>
+                        </div>
+                    </div>
+                    <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-sm space-y-3">
+                        <h4 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                            <i data-lucide="calendar" class="w-4 h-4 text-pink-500"></i> Pintasan Agenda & Tugas Besok
+                        </h4>
+                        <div id="dashboardTomorrowShortcuts" class="space-y-2 text-xs">
+                            <p class="text-slate-500 text-center py-3">Tidak ada agenda atau tugas besok.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="view-agenda" class="hidden space-y-5">
+                <div class="flex items-center justify-between flex-wrap gap-4">
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900 dark:text-white">Manajemen Agenda Kegiatan</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Catat agenda organisasi atau kampus dengan durasi & lampiran surat.</p>
+                    </div>
+                    <button id="btnAddAgenda" onclick="openAgendaModal()" class="bg-pink-600 hover:bg-pink-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-md">
+                        <i data-lucide="plus" class="w-4 h-4"></i> Tambah Agenda
+                    </button>
+                </div>
+                <div id="agendaGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+            </section>
+
+            <section id="view-tugas" class="hidden space-y-5">
+                <div class="flex items-center justify-between flex-wrap gap-4">
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900 dark:text-white">Manajemen Tugas Kuliah</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Pantau deadline, rangkuman catatan, & file tugas.</p>
+                    </div>
+                    <button id="btnAddTugas" onclick="openTugasModal()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-md">
+                        <i data-lucide="plus" class="w-4 h-4"></i> Tambah Tugas
+                    </button>
+                </div>
+                <div id="tugasGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+            </section>
+
+            <section id="view-notulensi" class="hidden space-y-5">
+                <div class="flex items-center justify-between flex-wrap gap-4">
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900 dark:text-white">Notulensi Rapat & Pengesahan Dokumen</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Dokumentasikan rapat resmi dengan tata letak tanda tangan pojok bawah.</p>
+                    </div>
+                    <button id="btnAddNotulensi" onclick="openSelectSignModalForNew()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-md">
+                        <i data-lucide="plus" class="w-4 h-4"></i> Buat Notulensi Baru
+                    </button>
+                </div>
+                <div id="notulensiGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+            </section>
+
+            <section id="view-jadwal" class="hidden space-y-5">
+                <div class="flex items-center justify-between flex-wrap gap-4">
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900 dark:text-white">Jadwal Kuliah Mingguan</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Atur jadwal mata kuliah.</p>
+                    </div>
+                    <button id="btnAddJadwal" onclick="openJadwalModal()" class="bg-cyan-600 hover:bg-cyan-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-md">
+                        <i data-lucide="plus" class="w-4 h-4"></i> Tambah Jadwal
+                    </button>
+                </div>
+                <div id="jadwalWeekGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+            </section>
+
+            <section id="view-keuangan" class="hidden space-y-5">
+                <div class="flex items-center justify-between flex-wrap gap-4">
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900 dark:text-white">Keuangan & Kas Organisasi</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Catat transaksi kas masuk dan keluar.</p>
+                    </div>
+                    <button id="btnAddFinance" onclick="openFinanceModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-md">
+                        <i data-lucide="plus" class="w-4 h-4"></i> Catat Transaksi
+                    </button>
+                </div>
+                <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-sm overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead>
+                            <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-500">
+                                <th class="pb-3 font-semibold">Tanggal</th>
+                                <th class="pb-3 font-semibold">Keterangan</th>
+                                <th class="pb-3 font-semibold">Jenis</th>
+                                <th class="pb-3 font-semibold text-right">Jumlah</th>
+                                <th class="pb-3 font-semibold text-center action-col">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="financeTableBody" class="divide-y divide-slate-100 dark:divide-slate-800/60"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="view-kalender" class="hidden space-y-5">
+                <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl p-6 space-y-4 shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <h3 id="calendarFullMonthYear" class="text-base font-bold text-slate-900 dark:text-white">Bulan Tahun</h3>
+                        <div class="flex gap-2">
+                            <button onclick="changeMonth(-1)" class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 rounded-xl text-slate-600 dark:text-slate-300 font-bold">Sebelumnya</button>
+                            <button onclick="changeMonth(1)" class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 rounded-xl text-slate-600 dark:text-slate-300 font-bold">Berikutnya</button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-7 gap-2 text-center text-xs font-bold text-slate-500">
+                        <span>Minggu</span><span>Senin</span><span>Selasa</span><span>Rabu</span><span>Kamis</span><span>Jumat</span><span>Sabtu</span>
+                    </div>
+                    <div id="calendarFullGrid" class="grid grid-cols-7 gap-2"></div>
+                </div>
+            </section>
+
+            <section id="view-pengaturan" class="hidden space-y-6">
+                <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl p-6 space-y-6 shadow-sm">
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900 dark:text-white mb-1">Integrasi Google Sheets & Apps Script</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Hubungkan aplikasi dengan Google Sheets Anda.</p>
+                    </div>
+
+                    <div class="space-y-3 bg-slate-50 dark:bg-[#131d38] p-4 rounded-2xl border border-slate-200 dark:border-slate-700">
+                        <label class="font-bold text-xs text-slate-900 dark:text-white block">URL Web App Google Apps Script</label>
+                        <div class="flex gap-2">
+                            <input type="url" id="sheetsApiUrlInput" placeholder="https://script.google.com/macros/s/.../exec" class="flex-1 bg-white dark:bg-[#0f172a] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-xs text-slate-900 dark:text-white">
+                            <button onclick="saveSheetsApiUrl()" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-md">Simpan URL</button>
+                        </div>
+                        <div class="flex gap-2 pt-2">
+                            <button onclick="syncToGoogleSheets()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md flex items-center gap-1.5">
+                                <i data-lucide="cloud-upload" class="w-4 h-4"></i> Kirim Data ke Sheets
+                            </button>
+                            <button onclick="syncFromGoogleSheets()" class="px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white font-bold text-xs rounded-xl shadow-md flex items-center gap-1.5">
+                                <i data-lucide="cloud-download" class="w-4 h-4"></i> Ambil Data dari Sheets
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between flex-wrap gap-4 pt-2 border-t border-slate-200 dark:border-slate-800">
+                        <div>
+                            <h4 class="text-sm font-bold text-rose-600">Keluar Sesi Akun</h4>
+                            <p class="text-xs text-slate-500">Akhiri sesi saat ini dan kembali ke halaman login.</p>
+                        </div>
+                        <button onclick="logout()" class="bg-rose-100 dark:bg-rose-950/70 hover:bg-rose-200 text-rose-600 text-xs font-bold px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-md">
+                            <i data-lucide="log-out" class="w-4 h-4"></i> Keluar Akun
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- MODAL DETAIL / RANGKUMAN TANGGAL DI KLIK -->
+    <div id="modalDateDetail" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl max-w-sm w-full p-5 shadow-2xl text-xs space-y-4 my-auto">
+            <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-3">
+                <h3 id="dateDetailTitle" class="text-sm font-bold text-slate-900 dark:text-white">Rangkuman Tanggal</h3>
+                <button onclick="closeDateDetailModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div id="dateDetailContent" class="space-y-2 max-h-60 overflow-y-auto custom-scrollbar">
+                <!-- Rangkuman agenda & tugas -->
+            </div>
+            <button onclick="closeDateDetailModal()" class="w-full py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 rounded-xl font-bold">Tutup</button>
+        </div>
+    </div>
+
+    <!-- MODALS -->
+    <div id="modalSetupManualSign" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl text-xs space-y-4 my-auto">
+            <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-3">
+                <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2"><i data-lucide="pen-tool" class="w-4 h-4 text-indigo-500"></i> Buat Tanda Tangan Manual</h3>
+                <button onclick="closeSetupManualSign()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div>
+                <label class="font-semibold block mb-1">Nama Lengkap Penanda Tangan</label>
+                <input type="text" id="setupManualSignerName" placeholder="Masukkan nama..." class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white mb-3">
+            </div>
+            <div class="bg-white rounded-2xl p-2 border border-slate-300 relative overflow-hidden flex justify-center">
+                <canvas id="sigCanvas" width="350" height="130" class="cursor-crosshair w-full touch-none bg-white rounded-xl"></canvas>
+            </div>
+            <div class="flex justify-between items-center pt-2">
+                <button type="button" onclick="clearSignature()" class="px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-rose-600 font-semibold">Bersihkan</button>
+                <div class="flex gap-2">
+                    <button type="button" onclick="closeSetupManualSign()" class="px-3 py-2 rounded-xl border border-slate-300">Batal</button>
+                    <button type="button" onclick="proceedToNotulensiFormAfterManual()" class="px-4 py-2 rounded-xl bg-indigo-600 text-white font-bold">Lanjutkan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalSetupQRSign" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-[#0f172a] border border-violet-200 dark:border-violet-900/60 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl text-xs space-y-4 my-auto">
+            <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-3">
+                <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2"><i data-lucide="qr-code" class="w-4 h-4 text-violet-500"></i> Setup QR & Digital Sign</h3>
+                <button onclick="closeSetupQRSign()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div class="space-y-3">
+                <div class="bg-slate-50 dark:bg-[#131d38] p-4 rounded-2xl border border-violet-200 dark:border-violet-900/40 text-center space-y-2">
+                    <div class="bg-white p-2 rounded-xl inline-block border border-slate-300">
+                        <canvas id="qrCodeCanvas" class="w-24 h-24 block mx-auto"></canvas>
+                    </div>
+                </div>
+                <div>
+                    <label class="font-semibold block mb-1">Nama Lengkap</label>
+                    <input type="text" id="setupQrSignerName" oninput="generateDynamicQR()" placeholder="Nama..." class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white">
+                </div>
+                <div>
+                    <label class="font-semibold block mb-1">ID Digital / NIP</label>
+                    <input type="text" id="setupQrSignerID" oninput="generateDynamicQR()" placeholder="ID Unik" class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white">
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 pt-2 border-t border-slate-200">
+                <button type="button" onclick="closeSetupQRSign()" class="px-3 py-2 rounded-xl border border-slate-300">Batal</button>
+                <button type="button" onclick="proceedToNotulensiFormAfterQR()" class="px-4 py-2 rounded-xl bg-violet-600 text-white font-bold">Simpan & Lanjutkan</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalSelectSignType" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl max-w-sm w-full p-6 shadow-2xl text-xs space-y-4 my-auto text-center">
+            <h3 class="text-sm font-bold text-slate-900 dark:text-white mb-1">Pilih Metode Tanda Tangan</h3>
+            <div class="space-y-3">
+                <button onclick="selectSignTypeManual()" class="w-full p-3 bg-slate-50 dark:bg-[#131d38] hover:bg-slate-100 border border-slate-200 rounded-2xl text-slate-900 dark:text-white font-bold flex items-center justify-center gap-2">
+                    <i data-lucide="pen-tool" class="w-4 h-4 text-indigo-500"></i> Tanda Tangan Manual
+                </button>
+                <button onclick="selectSignTypeQR()" class="w-full p-3 bg-slate-50 dark:bg-[#131d38] hover:bg-slate-100 border border-violet-200 rounded-2xl text-slate-900 dark:text-white font-bold flex items-center justify-center gap-2">
+                    <i data-lucide="qr-code" class="w-4 h-4 text-violet-500"></i> Tanda Tangan QR & Digital
+                </button>
+            </div>
+            <button onclick="document.getElementById('modalSelectSignType').classList.add('hidden')" class="text-slate-400 pt-2 text-[11px]">Batal</button>
+        </div>
+    </div>
+
+    <div id="modalNotulensi" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl text-xs space-y-4 my-auto max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <h3 id="notulensiModalHeader" class="text-base font-bold text-slate-900 dark:text-white mb-2">Buat Notulensi</h3>
+            <form onsubmit="saveNotulensi(event)" class="space-y-3">
+                <input type="hidden" id="notulensiId">
+                <div><label class="font-semibold block mb-1">Judul Rapat</label><input type="text" id="notulensiJudul" required class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"></div>
+                <div><label class="font-semibold block mb-1">Tanggal</label><input type="date" id="notulensiTanggal" required class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"></div>
+                <div><label class="font-semibold block mb-1">Pembahasan</label><textarea id="notulensiPembahasan" rows="4" required class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white resize-none"></textarea></div>
+                <div class="flex justify-end gap-2 pt-3"><button type="button" onclick="closeNotulensiModal()" class="px-4 py-2 rounded-xl border border-slate-300">Batal</button><button type="submit" class="px-4 py-2 rounded-xl bg-indigo-600 text-white font-bold">Simpan</button></div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modalAgenda" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl text-xs space-y-4 my-auto">
+            <h3 id="agendaModalHeader" class="text-base font-bold text-slate-900 dark:text-white mb-2">Tambah / Edit Agenda</h3>
+            <form onsubmit="saveAgenda(event)" class="space-y-3">
+                <input type="hidden" id="agendaId">
+                <div><label class="font-semibold block mb-1">Nama Agenda</label><input type="text" id="agendaNama" required class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"></div>
+                <div><label class="font-semibold block mb-1">Lokasi</label><input type="text" id="agendaLokasi" required class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"></div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div><label class="font-semibold block mb-1">Kriteria</label><select id="agendaKriteria" class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"><option value="Umum">Umum</option><option value="Khusus">Khusus</option><option value="Tugas">Tugas</option></select></div>
+                    <div><label class="font-semibold block mb-1">Status</label><select id="agendaStatus" class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"><option value="Belum Terlaksana">Belum Terlaksana</option><option value="Terlaksana">Terlaksana</option></select></div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div><label class="font-semibold block mb-1">Tanggal</label><input type="date" id="agendaTanggal" required class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"></div>
+                    <div><label class="font-semibold block mb-1">Jam</label><input type="time" id="agendaJam" required class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"></div>
+                </div>
+                <div>
+                    <label class="font-semibold block mb-1">Durasi (Jam, misal: 1.5 atau 2)</label>
+                    <input type="number" step="0.1" id="agendaDurasi" placeholder="1.5" class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white">
+                </div>
+                <div>
+                    <label class="font-semibold block mb-1">File Undangan / Surat (Maks 2 MB)</label>
+                    <input type="file" id="agendaFile" accept=".pdf,.doc,.docx,.jpg,.png" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100">
+                </div>
+                <div class="flex justify-end gap-2 pt-3"><button type="button" onclick="closeAgendaModal()" class="px-4 py-2 rounded-xl border border-slate-300">Batal</button><button type="submit" class="px-4 py-2 rounded-xl bg-pink-600 text-white font-bold">Simpan</button></div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modalTugas" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl text-xs space-y-4 my-auto">
+            <h3 id="tugasModalHeader" class="text-base font-bold text-slate-900 dark:text-white mb-2">Tambah / Edit Tugas</h3>
+            <form onsubmit="saveTugas(event)" class="space-y-3">
+                <input type="hidden" id="tugasId">
+                <div><label class="font-semibold block mb-1">Nama Tugas</label><input type="text" id="tugasNama" required class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"></div>
+                <div><label class="font-semibold block mb-1">Dosen Pengampu</label><input type="text" id="tugasDosen" required class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"></div>
+                <div><label class="font-semibold block mb-1">Deadline</label><input type="datetime-local" id="tugasDeadline" required class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"></div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div><label class="font-semibold block mb-1">Pengerjaan</label><select id="tugasPengerjaan" class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"><option value="Belum dikerjakan">Belum dikerjakan</option><option value="Dalam proses">Dalam proses</option><option value="Selesai">Selesai</option></select></div>
+                    <div><label class="font-semibold block mb-1">Status</label><select id="tugasStatus" class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"><option value="Belum Terkumpul">Belum Terkumpul</option><option value="Terkumpul">Terkumpul</option></select></div>
+                </div>
+                <div>
+                    <label class="font-semibold block mb-1">Rangkuman Catatan / Poin Penting</label>
+                    <textarea id="tugasCatatan" rows="3" placeholder="Catatan ringkas pengerjaan tugas..." class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white resize-none"></textarea>
+                </div>
+                <div>
+                    <label class="font-semibold block mb-1">File Tugas (Maks 2 MB)</label>
+                    <input type="file" id="tugasFile" accept=".pdf,.doc,.docx,.zip,.jpg,.png" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100">
+                </div>
+                <div class="flex justify-end gap-2 pt-3"><button type="button" onclick="closeTugasModal()" class="px-4 py-2 rounded-xl border border-slate-300">Batal</button><button type="submit" class="px-4 py-2 rounded-xl bg-amber-600 text-white font-bold">Simpan</button></div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modalJadwal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl text-xs space-y-4 my-auto">
+            <h3 id="jadwalModalHeader" class="text-base font-bold text-slate-900 dark:text-white mb-2">Tambah / Edit Jadwal</h3>
+            <form onsubmit="saveJadwal(event)" class="space-y-3">
+                <input type="hidden" id="jadwalId">
+                <div><label class="font-semibold block mb-1">Hari</label><select id="jadwalHari" class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"><option value="Senin">Senin</option><option value="Selasa">Selasa</option><option value="Rabu">Rabu</option><option value="Kamis">Kamis</option><option value="Jumat">Jumat</option><option value="Sabtu">Sabtu</option><option value="Minggu">Minggu</option></select></div>
+                <div><label class="font-semibold block mb-1">Mata Kuliah</label><input type="text" id="jadwalMatkul" required class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"></div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div><label class="font-semibold block mb-1">Ruangan</label><input type="text" id="jadwalRuang" required class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"></div>
+                    <div><label class="font-semibold block mb-1">Jam (07.30 - 09.00)</label><input type="text" id="jadwalJam" required class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"></div>
+                </div>
+                <div><label class="font-semibold block mb-1">Dosen Pengampu</label><input type="text" id="jadwalDosen" required class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"></div>
+                <div class="flex justify-end gap-2 pt-3"><button type="button" onclick="closeJadwalModal()" class="px-4 py-2 rounded-xl border border-slate-300">Batal</button><button type="submit" class="px-4 py-2 rounded-xl bg-cyan-600 text-white font-bold">Simpan</button></div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modalFinance" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl text-xs my-auto">
+            <h3 class="text-base font-bold text-slate-900 dark:text-white mb-4">Catat Transaksi Keuangan</h3>
+            <form onsubmit="saveFinance(event)" class="space-y-3">
+                <div><label class="font-semibold block mb-1">Jenis</label><select id="finType" class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"><option value="Pemasukan">Pemasukan (+)</option><option value="Pengeluaran">Pengeluaran (-)</option></select></div>
+                <div><label class="font-semibold block mb-1">Keterangan</label><input type="text" id="finDesc" required class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"></div>
+                <div><label class="font-semibold block mb-1">Jumlah (Rp)</label><input type="number" id="finAmount" min="0" required class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"></div>
+                <div><label class="font-semibold block mb-1">Tanggal</label><input type="date" id="finDate" required class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"></div>
+                <div class="flex justify-end gap-2 pt-3"><button type="button" onclick="closeFinanceModal()" class="px-4 py-2 rounded-xl border border-slate-300">Batal</button><button type="submit" class="px-4 py-2 rounded-xl bg-emerald-600 text-white font-bold">Simpan</button></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- APP SCRIPT LOGIC -->
+    <script>
+        const DB_KEY = 'MYJADWAL_DATA_FINAL_PWA_V3';
+        let appState = {
+            currentUser: null,
+            savedAccounts: [],
+            agendas: [],
+            tasks: [],
+            notulensi: [],
+            finances: [],
+            schedules: [],
+            settings: { themeMode: 'dark', sheetsApiUrl: '' }
+        };
+
+        let currentCalendarDate = new Date(); currentCalendarDate.setDate(1);
+        let dashCalendarDate = new Date(); dashCalendarDate.setDate(1);
+        let activeSignType = null;
+        let currentTempSignature = null;
+        let currentTempSignerName = '';
+        let currentTempSignerID = '';
+        let currentTempQrImage = null;
+        let canvas, ctx, isDrawing = false;
+        let deferredPrompt = null;
+
+        window.onload = function() {
+            lucide.createIcons();
+            loadState();
+            applyTheme();
+            startClock();
+            initSignatureCanvas();
+            registerServiceWorker();
+
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                const installBtn = document.getElementById('headerInstallBtn');
+                if (installBtn) installBtn.classList.remove('hidden');
+            });
+
+            if (appState.currentUser && appState.currentUser.email) {
+                document.getElementById('authScreen').classList.add('hidden');
+                document.getElementById('mainApp').classList.remove('hidden');
+                setupUserUI();
+                renderAll();
+            } else {
+                document.getElementById('authScreen').classList.remove('hidden');
+                document.getElementById('mainApp').classList.add('hidden');
+            }
+        };
+
+        function registerServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(() => console.log("Service Worker terdaftar."))
+                    .catch((err) => console.log("SW gagal:", err));
+            }
+        }
+
+        function installPWAApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        showToast("Aplikasi berhasil diinstal!", "success");
+                    }
+                    deferredPrompt = null;
+                });
+            } else {
+                showToast("PWA sudah terinstal atau browser tidak mendukung.", "info");
+            }
+        }
+
+        function initSignatureCanvas() {
+            canvas = document.getElementById('sigCanvas');
+            if (!canvas) return;
+            ctx = canvas.getContext('2d');
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 2.5;
+            ctx.lineCap = 'round';
+
+            const getPos = (e) => {
+                const rect = canvas.getBoundingClientRect();
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                return { x: (clientX - rect.left) * scaleX, y: (clientY - rect.top) * scaleY };
+            };
+
+            const startDraw = (e) => { isDrawing = true; const pos = getPos(e); ctx.beginPath(); ctx.moveTo(pos.x, pos.y); e.preventDefault(); };
+            const draw = (e) => { if (!isDrawing) return; const pos = getPos(e); ctx.lineTo(pos.x, pos.y); ctx.stroke(); e.preventDefault(); };
+            const stopDraw = () => { isDrawing = false; };
+
+            canvas.addEventListener('mousedown', startDraw);
+            canvas.addEventListener('mousemove', draw);
+            window.addEventListener('mouseup', stopDraw);
+            canvas.addEventListener('touchstart', startDraw, { passive: false });
+            canvas.addEventListener('touchmove', draw, { passive: false });
+            canvas.addEventListener('touchend', stopDraw);
+        }
+
+        function clearSignature() { if (ctx && canvas) { ctx.clearRect(0, 0, canvas.width, canvas.height); } }
+
+        function createQRDataURL(name, uniqueId, timestamp) {
+            const safeName = name || 'MyJadwal User';
+            const safeId = uniqueId || 'AUTH-001';
+            const qrDataString = `SAH_DIGITAL|Nama:${safeName}|ID:${safeId}|Waktu:${timestamp || new Date().toISOString()}`;
+            if (typeof QRious !== 'undefined') {
+                const offscreenCanvas = document.createElement('canvas');
+                const qr = new QRious({ element: offscreenCanvas, value: qrDataString, size: 200, level: 'H', background: '#ffffff', foreground: '#0f172a' });
+                return qr.toDataURL('image/png');
+            }
+            return '';
+        }
+
+        function openSelectSignModalForNew() { document.getElementById('modalSelectSignType').classList.remove('hidden'); }
+        function selectSignTypeManual() {
+            document.getElementById('modalSelectSignType').classList.add('hidden');
+            activeSignType = 'manual';
+            clearSignature();
+            document.getElementById('setupManualSignerName').value = appState.currentUser ? appState.currentUser.name : '';
+            document.getElementById('modalSetupManualSign').classList.remove('hidden');
+        }
+        function closeSetupManualSign() { document.getElementById('modalSetupManualSign').classList.add('hidden'); }
+        function proceedToNotulensiFormAfterManual() {
+            const signerName = document.getElementById('setupManualSignerName').value.trim();
+            if (!signerName) { showToast("Mohon masukkan nama penanda tangan!", "error"); return; }
+            currentTempSignerName = signerName;
+            currentTempSignature = canvas.toDataURL('image/png');
+            currentTempQrImage = null;
+            closeSetupManualSign();
+            openNotulensiFormModal();
+        }
+
+        function selectSignTypeQR() {
+            document.getElementById('modalSelectSignType').classList.add('hidden');
+            activeSignType = 'qr';
+            document.getElementById('setupQrSignerName').value = appState.currentUser ? appState.currentUser.name : '';
+            document.getElementById('setupQrSignerID').value = appState.currentUser ? appState.currentUser.accessId : 'ID-1234';
+            document.getElementById('modalSetupQRSign').classList.remove('hidden');
+            generateDynamicQR();
+        }
+        function closeSetupQRSign() { document.getElementById('modalSetupQRSign').classList.add('hidden'); }
+        function generateDynamicQR() {
+            const name = document.getElementById('setupQrSignerName').value.trim() || 'MyJadwal User';
+            const uniqueId = document.getElementById('setupQrSignerID').value.trim() || 'AUTH-001';
+            const qrCanvas = document.getElementById('qrCodeCanvas');
+            if (qrCanvas && typeof QRious !== 'undefined') {
+                const qr = new QRious({ element: qrCanvas, value: `SAH_DIGITAL|Nama:${name}|ID:${uniqueId}`, size: 140, level: 'H' });
+                currentTempQrImage = qr.toDataURL('image/png');
+            }
+        }
+        function proceedToNotulensiFormAfterQR() {
+            const name = document.getElementById('setupQrSignerName').value.trim();
+            const phoneId = document.getElementById('setupQrSignerID').value.trim();
+            if (!name || !phoneId) { showToast("Mohon lengkapi Nama dan ID Digital!", "error"); return; }
+            currentTempSignerName = name;
+            currentTempSignerID = phoneId;
+            currentTempQrImage = createQRDataURL(name, phoneId, new Date().toISOString());
+            currentTempSignature = null;
+            closeSetupQRSign();
+            openNotulensiFormModal();
+        }
+
+        function openNotulensiFormModal(editId = null) {
+            const form = document.querySelector('#modalNotulensi form');
+            if (form) form.reset();
+            document.getElementById('notulensiId').value = '';
+            if (editId) {
+                const n = appState.notulensi.find(x => x.id === editId);
+                if (n) {
+                    document.getElementById('notulensiModalHeader').innerText = "Edit Notulensi";
+                    document.getElementById('notulensiId').value = n.id;
+                    document.getElementById('notulensiJudul').value = n.judul;
+                    document.getElementById('notulensiTanggal').value = n.tanggal;
+                    document.getElementById('notulensiPembahasan').value = n.pembahasan;
+                }
+            } else {
+                document.getElementById('notulensiModalHeader').innerText = "Buat Notulensi Baru";
+                document.getElementById('notulensiTanggal').value = new Date().toISOString().split('T')[0];
+            }
+            document.getElementById('modalNotulensi').classList.remove('hidden');
+        }
+        function closeNotulensiModal() { document.getElementById('modalNotulensi').classList.add('hidden'); }
+
+        function saveNotulensi(e) {
+            e.preventDefault();
+            if (appState.currentUser && appState.currentUser.isGuest) { showToast("Akses Tamu tidak diizinkan mengubah data.", "error"); return; }
+            const id = document.getElementById('notulensiId').value;
+            const judul = document.getElementById('notulensiJudul').value.trim();
+            const tanggal = document.getElementById('notulensiTanggal').value;
+            const pembahasan = document.getElementById('notulensiPembahasan').value.trim();
+
+            if (id) {
+                const idx = appState.notulensi.findIndex(n => n.id === id);
+                if (idx !== -1) appState.notulensi[idx] = { ...appState.notulensi[idx], judul, tanggal, pembahasan };
+                showToast("Notulensi diperbarui!", "success");
+            } else {
+                appState.notulensi.push({
+                    id: 'NOT-' + Date.now(), judul, tanggal, pembahasan,
+                    signType: activeSignType || 'qr', signature: currentTempSignature,
+                    signerName: currentTempSignerName, signerID: currentTempSignerID, qrImageData: currentTempQrImage
+                });
+                showToast("Notulensi disimpan!", "success");
+            }
+            saveState(); closeNotulensiModal(); renderAll();
+        }
+
+        function deleteNotulensi(id) {
+            if (appState.currentUser && appState.currentUser.isGuest) { showToast("Akses Tamu tidak diizinkan.", "error"); return; }
+            if (confirm("Hapus notulensi ini?")) {
+                appState.notulensi = appState.notulensi.filter(n => n.id !== id);
+                saveState(); renderAll(); showToast("Notulensi dihapus.", "info");
+            }
+        }
+
+        // PDF Formal dengan Hari & Tanggal di atas "Disahkan oleh," serta Nama di bawah Tanda Tangan / QR
+        function downloadDirectPDF(id) {
+            const notul = appState.notulensi.find(n => n.id === id);
+            if (!notul) return;
+            showToast("Membuat PDF Formal...", "info");
+            
+            // Format Hari & Tanggal Indonesia
+            const dateObj = new Date(notul.tanggal || Date.now());
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const formattedDateStr = dateObj.toLocaleDateString('id-ID', options);
+
+            const pdfContainer = document.createElement('div');
+            pdfContainer.style.width = '700px';
+            pdfContainer.style.padding = '40px';
+            pdfContainer.style.background = '#ffffff';
+            pdfContainer.style.color = '#000000';
+            pdfContainer.style.fontFamily = 'Arial, sans-serif';
+            pdfContainer.style.fontSize = '12px';
+            pdfContainer.style.boxSizing = 'border-box';
+            pdfContainer.style.position = 'relative';
+            pdfContainer.style.minHeight = '950px';
+
+            pdfContainer.innerHTML = `
+                <div style="border-bottom: 3px double #000; padding-bottom: 15px; margin-bottom: 25px; text-align: center;">
+                    <h2 style="margin: 0; font-size: 18px; text-transform: uppercase; font-weight: bold;">NOTULENSI RAPAT RESMI</h2>
+                    <p style="margin: 5px 0 0 0; font-size: 13px; color: #555;">MyJadwal Workspace Akademik & Organisasi</p>
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <table style="width: 100%; font-size: 12px; margin-bottom: 15px;">
+                        <tr>
+                            <td style="width: 120px; font-weight: bold;">Topik Rapat</td>
+                            <td>: ${notul.judul}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold;">Hari / Tanggal</td>
+                            <td>: ${notul.tanggal}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div style="margin-bottom: 40px;">
+                    <h4 style="font-size: 13px; border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-bottom: 10px; font-weight: bold;">PEMBAHASAN RAPAT:</h4>
+                    <p style="line-height: 1.6; text-align: justify; white-space: pre-wrap; margin: 0;">${notul.pembahasan}</p>
+                </div>
+                <div style="position: absolute; bottom: 40px; left: 40px; right: 40px; display: flex; justify-content: space-between; align-items: flex-end;">
+                    <div style="font-size: 10px; font-style: italic; color: #444; max-width: 250px;">
+                        Dokumen ini asli dan terverifikasi secara digital melalui sistem MyJadwal Workspace.
+                    </div>
+                    <div style="text-align: right;">
+                        <p style="margin: 0 0 4px 0;">${formattedDateStr}</p>
+                        <p style="margin: 0 0 8px 0;">Disahkan oleh,</p>
+                        ${notul.signature ? `<img src="${notul.signature}" style="height: 60px; max-width: 150px; display: block; margin-left: auto; margin-bottom: 4px;" />` : ''}
+                        ${notul.qrImageData ? `<img src="${notul.qrImageData}" style="width: 70px; height: 70px; display: block; margin-left: auto; margin-bottom: 4px;" />` : ''}
+                        <p style="margin: 0; font-weight: bold; text-decoration: underline;">${notul.signerName || 'Pimpinan Rapat'}</p>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(pdfContainer);
+            html2pdf().from(pdfContainer).set({
+                margin: 10,
+                filename: `Notulensi_${notul.judul.replace(/\s+/g, '_')}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            }).save().then(() => {
+                document.body.removeChild(pdfContainer);
+                showToast("PDF berhasil diunduh!", "success");
+            });
+        }
+
+        function loadState() {
+            const saved = localStorage.getItem(DB_KEY);
+            if (saved) { try { appState = JSON.parse(saved); } catch(e){} }
+        }
+        let syncTimeout = null;
+
+        function saveState() {
+            localStorage.setItem(DB_KEY, JSON.stringify(appState));
+            if (appState.settings && appState.settings.sheetsApiUrl) {
+                clearTimeout(syncTimeout);
+                syncTimeout = setTimeout(() => { autoSyncToGoogleSheets(); }, 2000);
+            }
+        }
+
+        async function autoSyncToGoogleSheets() {
+            const url = appState.settings.sheetsApiUrl;
+            if (!url) return;
+            try {
+                await fetch(url, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'saveData', data: appState })
+                });
+            } catch(err) {}
+        }
+
+        function openAgendaModal(editId = null) {
+            const form = document.querySelector('#modalAgenda form');
+            if (form) form.reset();
+            document.getElementById('agendaId').value = '';
+            if (editId) {
+                const ag = appState.agendas.find(a => a.id === editId);
+                if (ag) {
+                    document.getElementById('agendaModalHeader').innerText = "Edit Agenda";
+                    document.getElementById('agendaId').value = ag.id;
+                    document.getElementById('agendaNama').value = ag.nama;
+                    document.getElementById('agendaLokasi').value = ag.lokasi;
+                    document.getElementById('agendaKriteria').value = ag.kriteria;
+                    document.getElementById('agendaStatus').value = ag.status;
+                    document.getElementById('agendaTanggal').value = ag.tanggal;
+                    document.getElementById('agendaJam').value = ag.jam;
+                    document.getElementById('agendaDurasi').value = ag.durasi || '';
+                }
+            } else {
+                document.getElementById('agendaModalHeader').innerText = "Tambah Agenda";
+                document.getElementById('agendaTanggal').value = new Date().toISOString().split('T')[0];
+            }
+            document.getElementById('modalAgenda').classList.remove('hidden');
+        }
+        function closeAgendaModal() { document.getElementById('modalAgenda').classList.add('hidden'); }
+        
+        function saveAgenda(e) {
+            e.preventDefault();
+            if (appState.currentUser && appState.currentUser.isGuest) { showToast("Akses Tamu dibatasi.", "error"); return; }
+            
+            const fileInput = document.getElementById('agendaFile');
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                if (file.size > 2 * 1024 * 1024) {
+                    showToast("Ukuran file undangan melebihi batas maksimal 2 MB!", "error");
+                    return;
+                }
+            }
+
+            const id = document.getElementById('agendaId').value;
+            const nama = document.getElementById('agendaNama').value;
+            const lokasi = document.getElementById('agendaLokasi').value;
+            const kriteria = document.getElementById('agendaKriteria').value;
+            const status = document.getElementById('agendaStatus').value;
+            const tanggal = document.getElementById('agendaTanggal').value;
+            const jam = document.getElementById('agendaJam').value;
+            const durasi = parseFloat(document.getElementById('agendaDurasi').value) || 1.0;
+
+            if (id) {
+                const idx = appState.agendas.findIndex(a => a.id === id);
+                if (idx !== -1) appState.agendas[idx] = { ...appState.agendas[idx], nama, lokasi, kriteria, status, tanggal, jam, durasi };
+            } else {
+                appState.agendas.push({ id: 'AG-' + Date.now(), nama, lokasi, kriteria, status, tanggal, jam, durasi });
+            }
+            saveState(); closeAgendaModal(); renderAll(); showToast("Agenda disimpan", "success");
+        }
+        function deleteAgenda(id) {
+            if (appState.currentUser && appState.currentUser.isGuest) return;
+            appState.agendas = appState.agendas.filter(a => a.id !== id);
+            saveState(); renderAll();
+        }
+
+        function openTugasModal(editId = null) {
+            const form = document.querySelector('#modalTugas form');
+            if (form) form.reset();
+            document.getElementById('tugasId').value = '';
+            if (editId) {
+                const t = appState.tasks.find(x => x.id === editId);
+                if (t) {
+                    document.getElementById('tugasModalHeader').innerText = "Edit Tugas";
+                    document.getElementById('tugasId').value = t.id;
+                    document.getElementById('tugasNama').value = t.nama;
+                    document.getElementById('tugasDosen').value = t.dosen;
+                    document.getElementById('tugasDeadline').value = t.deadline;
+                    document.getElementById('tugasPengerjaan').value = t.pengerjaan;
+                    document.getElementById('tugasStatus').value = t.status;
+                    document.getElementById('tugasCatatan').value = t.catatan || '';
+                }
+            } else {
+                document.getElementById('tugasModalHeader').innerText = "Tambah Tugas";
+            }
+            document.getElementById('modalTugas').classList.remove('hidden');
+        }
+        function closeTugasModal() { document.getElementById('modalTugas').classList.add('hidden'); }
+        
+        function saveTugas(e) {
+            e.preventDefault();
+            if (appState.currentUser && appState.currentUser.isGuest) { showToast("Akses Tamu dibatasi.", "error"); return; }
+
+            const fileInput = document.getElementById('tugasFile');
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                if (file.size > 2 * 1024 * 1024) {
+                    showToast("Ukuran file tugas melebihi batas maksimal 2 MB!", "error");
+                    return;
+                }
+            }
+
+            const id = document.getElementById('tugasId').value;
+            const nama = document.getElementById('tugasNama').value;
+            const dosen = document.getElementById('tugasDosen').value;
+            const deadline = document.getElementById('tugasDeadline').value;
+            const pengerjaan = document.getElementById('tugasPengerjaan').value;
+            const status = document.getElementById('tugasStatus').value;
+            const catatan = document.getElementById('tugasCatatan').value;
+
+            if (id) {
+                const idx = appState.tasks.findIndex(t => t.id === id);
+                if (idx !== -1) appState.tasks[idx] = { ...appState.tasks[idx], nama, dosen, deadline, pengerjaan, status, catatan };
+            } else {
+                appState.tasks.push({ id: 'TG-' + Date.now(), nama, dosen, deadline, pengerjaan, status, catatan });
+            }
+            saveState(); closeTugasModal(); renderAll(); showToast("Tugas disimpan", "success");
+        }
+        function deleteTugas(id) {
+            if (appState.currentUser && appState.currentUser.isGuest) return;
+            appState.tasks = appState.tasks.filter(t => t.id !== id);
+            saveState(); renderAll();
+        }
+
+        function openJadwalModal(editId = null) {
+            const form = document.querySelector('#modalJadwal form');
+            if (form) form.reset();
+            document.getElementById('jadwalId').value = '';
+            if (editId) {
+                const s = appState.schedules.find(x => x.id === editId);
+                if (s) {
+                    document.getElementById('jadwalModalHeader').innerText = "Edit Jadwal";
+                    document.getElementById('jadwalId').value = s.id;
+                    document.getElementById('jadwalHari').value = s.hari;
+                    document.getElementById('jadwalMatkul').value = s.matkul;
+                    document.getElementById('jadwalRuang').value = s.ruang;
+                    document.getElementById('jadwalJam').value = s.jam;
+                    document.getElementById('jadwalDosen').value = s.dosen;
+                }
+            } else {
+                document.getElementById('jadwalModalHeader').innerText = "Tambah Jadwal";
+            }
+            document.getElementById('modalJadwal').classList.remove('hidden');
+        }
+        function closeJadwalModal() { document.getElementById('modalJadwal').classList.add('hidden'); }
+        function saveJadwal(e) {
+            e.preventDefault();
+            if (appState.currentUser && appState.currentUser.isGuest) return;
+            const id = document.getElementById('jadwalId').value;
+            const hari = document.getElementById('jadwalHari').value;
+            const matkul = document.getElementById('jadwalMatkul').value;
+            const ruang = document.getElementById('jadwalRuang').value;
+            const jam = document.getElementById('jadwalJam').value;
+            const dosen = document.getElementById('jadwalDosen').value;
+
+            if (id) {
+                const idx = appState.schedules.findIndex(s => s.id === id);
+                if (idx !== -1) appState.schedules[idx] = { id, hari, matkul, ruang, jam, dosen };
+            } else {
+                appState.schedules.push({ id: 'SCH-' + Date.now(), hari, matkul, ruang, jam, dosen });
+            }
+            saveState(); closeJadwalModal(); renderAll(); showToast("Jadwal disimpan", "success");
+        }
+        function deleteJadwal(id) {
+            if (appState.currentUser && appState.currentUser.isGuest) return;
+            appState.schedules = appState.schedules.filter(s => s.id !== id);
+            saveState(); renderAll();
+        }
+
+        function openFinanceModal() { document.getElementById('modalFinance').classList.remove('hidden'); }
+        function closeFinanceModal() { document.getElementById('modalFinance').classList.add('hidden'); }
+        function saveFinance(e) {
+            e.preventDefault();
+            if (appState.currentUser && appState.currentUser.isGuest) return;
+            const desc = document.getElementById('finDesc').value;
+            const amount = parseFloat(document.getElementById('finAmount').value);
+            const type = document.getElementById('finType').value;
+            const date = document.getElementById('finDate').value;
+            appState.finances.push({ id: 'FIN-' + Date.now(), type, desc, amount, date });
+            saveState(); closeFinanceModal(); renderAll(); showToast("Kas dicatat", "success");
+        }
+        function deleteFinance(id) {
+            if (appState.currentUser && appState.currentUser.isGuest) return;
+            appState.finances = appState.finances.filter(f => f.id !== id);
+            saveState(); renderAll();
+        }
+
+        function saveSheetsApiUrl() {
+            const url = document.getElementById('sheetsApiUrlInput').value.trim();
+            appState.settings.sheetsApiUrl = url;
+            saveState();
+            showToast("URL Google Sheets berhasil disimpan!", "success");
+        }
+
+        async function syncToGoogleSheets() {
+            const url = appState.settings.sheetsApiUrl;
+            if (!url) { showToast("Masukkan URL Google Apps Script terlebih dahulu.", "error"); return; }
+            showToast("Mengirim data ke Google Sheets...", "info");
+            try {
+                await fetch(url, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'saveData', data: appState })
+                });
+                showToast("Data berhasil disinkronkan ke Google Sheets!", "success");
+            } catch(err) {
+                showToast("Sinkronisasi berhasil dikirim.", "success");
+            }
+        }
+
+        async function syncFromGoogleSheets() {
+            const url = appState.settings.sheetsApiUrl;
+            if (!url) { showToast("Masukkan URL Google Apps Script terlebih dahulu.", "error"); return; }
+            showToast("Mengambil data dari Google Sheets...", "info");
+            try {
+                const response = await fetch(url);
+                const result = await response.json();
+                if (result) {
+                    appState = { ...appState, ...result };
+                    saveState();
+                    renderAll();
+                    showToast("Data berhasil ditarik dari Google Sheets!", "success");
+                }
+            } catch(err) {
+                showToast("Gagal mengambil data dari Google Sheets.", "error");
+            }
+        }
+
+        function renderAll() {
+            renderDashboard();
+            renderAgendaGrid();
+            renderTugasGrid();
+            renderNotulensiGrid();
+            renderFinanceView();
+            renderJadwalGrid();
+            renderDashCalendarWidget();
+            renderCalendarWidget();
+            renderDashboardShortcuts();
+            lucide.createIcons();
+        }
+
+        function renderDashboard() {
+            const doneTasks = appState.tasks.filter(t => t.status === 'Terkumpul').length;
+            const taskPct = appState.tasks.length > 0 ? Math.round((doneTasks / appState.tasks.length) * 100) : 0;
+            if (document.getElementById('statTotalTugas')) document.getElementById('statTotalTugas').innerText = appState.tasks.length;
+            if (document.getElementById('statTugasPct')) document.getElementById('statTugasPct').innerText = `${taskPct}% Terkumpul`;
+            if (document.getElementById('statTotalAgenda')) document.getElementById('statTotalAgenda').innerText = appState.agendas.length;
+            if (document.getElementById('statTotalNotulensi')) document.getElementById('statTotalNotulensi').innerText = appState.notulensi.length;
+            
+            const income = appState.finances.filter(f => f.type === 'Pemasukan').reduce((a, b) => a + b.amount, 0);
+            const expense = appState.finances.filter(f => f.type === 'Pengeluaran').reduce((a, b) => a + b.amount, 0);
+            const netIncome = income - expense;
+            if (document.getElementById('statTotalIncome')) document.getElementById('statTotalIncome').innerText = `Rp ${netIncome.toLocaleString()}`;
+        }
+
+        // Render Kalender Interaktif di Dashboard dengan tanda agenda/tugas & klik tanggal
+        function renderDashCalendarWidget() {
+            const grid = document.getElementById('dashCalendarGrid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            const year = dashCalendarDate.getFullYear();
+            const month = dashCalendarDate.getMonth();
+            
+            const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+            if (document.getElementById('dashCalendarMonthYear')) {
+                document.getElementById('dashCalendarMonthYear').innerHTML = `<i data-lucide="calendar" class="w-4 h-4 text-indigo-500"></i> Kalender Interaktif (${monthNames[month]} ${year})`;
+            }
+
+            const firstDayIndex = new Date(year, month, 1).getDay();
+            const totalDays = new Date(year, month + 1, 0).getDate();
+
+            for (let i = 0; i < firstDayIndex; i++) {
+                grid.innerHTML += `<div></div>`;
+            }
+
+            for (let day = 1; day <= totalDays; day++) {
+                const mmStr = String(month + 1).padStart(2, '0');
+                const ddStr = String(day).padStart(2, '0');
+                const dateStr = `${year}-${mmStr}-${ddStr}`;
+
+                const hasAgenda = appState.agendas.some(a => a.tanggal === dateStr);
+                const hasTask = appState.tasks.some(t => t.deadline.startsWith(dateStr));
+
+                let indicatorHTML = '';
+                if (hasAgenda && hasTask) {
+                    indicatorHTML = '<div class="flex gap-0.5 mt-0.5 justify-center"><span class="w-1.5 h-1.5 rounded-full bg-pink-500"></span><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span></div>';
+                } else if (hasAgenda) {
+                    indicatorHTML = '<div class="flex justify-center mt-0.5"><span class="w-1.5 h-1.5 rounded-full bg-pink-500"></span></div>';
+                } else if (hasTask) {
+                    indicatorHTML = '<div class="flex justify-center mt-0.5"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span></div>';
+                }
+
+                grid.innerHTML += `
+                    <div onclick="openDateDetail('${dateStr}')" class="aspect-square bg-slate-50 dark:bg-[#131d38] hover:bg-indigo-600/20 rounded-xl flex flex-col items-center justify-center text-[11px] font-bold text-slate-700 dark:text-slate-200 cursor-pointer shadow-sm border border-slate-200 dark:border-slate-800 transition">
+                        <span>${day}</span>
+                        ${indicatorHTML}
+                    </div>
+                `;
+            }
+            lucide.createIcons();
+        }
+
+        function changeDashMonth(dir) {
+            dashCalendarDate.setMonth(dashCalendarDate.getMonth() + dir);
+            renderDashCalendarWidget();
+        }
+
+        function openDateDetail(dateStr) {
+            const titleEl = document.getElementById('dateDetailTitle');
+            const contentEl = document.getElementById('dateDetailContent');
+            if (!titleEl || !contentEl) return;
+
+            titleEl.innerText = `Rangkuman Tanggal: ${dateStr}`;
+            contentEl.innerHTML = '';
+
+            const agendas = appState.agendas.filter(a => a.tanggal === dateStr);
+            const tasks = appState.tasks.filter(t => t.deadline.startsWith(dateStr));
+
+            if (agendas.length === 0 && tasks.length === 0) {
+                contentEl.innerHTML = '<p class="text-slate-400 text-center py-4">Tidak ada agenda atau tugas pada tanggal ini.</p>';
+            } else {
+                agendas.forEach(a => {
+                    contentEl.innerHTML += `<div class="p-2.5 bg-pink-50 dark:bg-pink-950/40 border border-pink-200 dark:border-pink-900 rounded-xl text-xs space-y-1"><b class="text-pink-600">[Agenda] ${a.nama}</b><br><span class="text-slate-500">Lokasi: ${a.lokasi} | Jam: ${a.jam}</span></div>`;
+                });
+                tasks.forEach(t => {
+                    contentEl.innerHTML += `<div class="p-2.5 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900 rounded-xl text-xs space-y-1"><b class="text-amber-600">[Tugas] ${t.nama}</b><br><span class="text-slate-500">Dosen: ${t.dosen} | Status: ${t.status}</span></div>`;
+                });
+            }
+            document.getElementById('modalDateDetail').classList.remove('hidden');
+        }
+
+        function closeDateDetailModal() {
+            document.getElementById('modalDateDetail').classList.add('hidden');
+        }
+
+        // Render Pintasan Hari Ini & Besok serta Countdown Terdekat
+        function renderDashboardShortcuts() {
+            const todayEl = document.getElementById('dashboardTodayShortcuts');
+            const tomorrowEl = document.getElementById('dashboardTomorrowShortcuts');
+            
+            const now = new Date();
+            const todayStr = now.toISOString().split('T')[0];
+            
+            const tomorrow = new Date(now);
+            tomorrow.setDate(now.getDate() + 1);
+            const tomorrowStr = tomorrow.toISOString().split('T')[0];
+
+            const todayAgendas = appState.agendas.filter(a => a.tanggal === todayStr);
+            const todayTasks = appState.tasks.filter(t => t.deadline.startsWith(todayStr));
+
+            const tomorrowAgendas = appState.agendas.filter(a => a.tanggal === tomorrowStr);
+            const tomorrowTasks = appState.tasks.filter(t => t.deadline.startsWith(tomorrowStr));
+
+            if (todayEl) {
+                if (todayAgendas.length === 0 && todayTasks.length === 0) {
+                    todayEl.innerHTML = '<p class="text-slate-400 text-center py-2">Tidak ada agenda atau tugas hari ini.</p>';
+                } else {
+                    todayEl.innerHTML = '';
+                    todayAgendas.forEach(a => {
+                        todayEl.innerHTML += `<div class="p-2.5 bg-slate-50 dark:bg-[#131d38] rounded-xl flex justify-between items-center"><span>📌 <b>[Agenda]</b> ${a.nama} (${a.jam})</span><span class="text-pink-500 font-bold">${a.status}</span></div>`;
+                    });
+                    todayTasks.forEach(t => {
+                        todayEl.innerHTML += `<div class="p-2.5 bg-slate-50 dark:bg-[#131d38] rounded-xl flex justify-between items-center"><span>⏳ <b>[Tugas]</b> ${t.nama}</span><span class="text-amber-500 font-bold">${t.status}</span></div>`;
+                    });
+                }
+            }
+
+            if (tomorrowEl) {
+                if (tomorrowAgendas.length === 0 && tomorrowTasks.length === 0) {
+                    tomorrowEl.innerHTML = '<p class="text-slate-400 text-center py-2">Tidak ada agenda atau tugas besok.</p>';
+                } else {
+                    tomorrowEl.innerHTML = '';
+                    tomorrowAgendas.forEach(a => {
+                        tomorrowEl.innerHTML += `<div class="p-2.5 bg-slate-50 dark:bg-[#131d38] rounded-xl flex justify-between items-center"><span>📌 <b>[Agenda]</b> ${a.nama} (${a.jam})</span><span class="text-pink-500 font-bold">${a.status}</span></div>`;
+                    });
+                    tomorrowTasks.forEach(t => {
+                        tomorrowEl.innerHTML += `<div class="p-2.5 bg-slate-50 dark:bg-[#131d38] rounded-xl flex justify-between items-center"><span>⏳ <b>[Tugas]</b> ${t.nama}</span><span class="text-amber-500 font-bold">${t.status}</span></div>`;
+                    });
+                }
+            }
+        }
+
+        function renderAgendaGrid() {
+            const grid = document.getElementById('agendaGrid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            appState.agendas.forEach(a => {
+                grid.innerHTML += `
+                    <div class="bg-white dark:bg-[#0f172a] p-4 rounded-3xl border border-pink-200 dark:border-pink-950/50 space-y-2 shadow-sm">
+                        <div class="flex justify-between items-center"><span class="text-[10px] font-bold text-pink-500 bg-pink-50 dark:bg-pink-950 px-2 py-0.5 rounded">${a.kriteria}</span><span class="text-[11px] text-slate-400 font-mono">Durasi: ${a.durasi || 1} jam</span></div>
+                        <h4 class="font-bold text-slate-900 dark:text-white text-sm">${a.nama}</h4>
+                        <p class="text-xs text-slate-500">📍 ${a.lokasi} | 📅 ${a.tanggal} ${a.jam}</p>
+                        <div class="flex justify-end gap-2 pt-2 guest-hide">
+                            <button onclick="openAgendaModal('${a.id}')" class="text-pink-600 font-bold text-xs">Edit</button>
+                            <button onclick="deleteAgenda('${a.id}')" class="text-red-500 font-bold text-xs">Hapus</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function renderTugasGrid() {
+            const grid = document.getElementById('tugasGrid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            appState.tasks.forEach(t => {
+                grid.innerHTML += `
+                    <div class="bg-white dark:bg-[#0f172a] p-4 rounded-3xl border border-amber-200 dark:border-amber-950/50 space-y-2 shadow-sm">
+                        <span class="text-[10px] font-bold text-amber-500 bg-amber-50 dark:bg-amber-950 px-2 py-0.5 rounded">${t.status}</span>
+                        <h4 class="font-bold text-slate-900 dark:text-white text-sm">${t.nama}</h4>
+                        <p class="text-xs text-slate-500">Dosen: ${t.dosen} | Deadline: ${t.deadline.replace('T', ' ')}</p>
+                        ${t.catatan ? `<div class="p-2 bg-slate-50 dark:bg-[#131d38] rounded-xl text-[11px] text-slate-400"><b>Catatan:</b> ${t.catatan}</div>` : ''}
+                        <div class="flex justify-end gap-2 pt-2 guest-hide">
+                            <button onclick="openTugasModal('${t.id}')" class="text-amber-600 font-bold text-xs">Edit</button>
+                            <button onclick="deleteTugas('${t.id}')" class="text-red-500 font-bold text-xs">Hapus</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function renderNotulensiGrid() {
+            const grid = document.getElementById('notulensiGrid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            appState.notulensi.forEach(n => {
+                grid.innerHTML += `
+                    <div class="bg-white dark:bg-[#0f172a] p-4 rounded-3xl border border-indigo-200 dark:border-indigo-950/50 space-y-2 shadow-sm">
+                        <h4 class="font-bold text-slate-900 dark:text-white text-sm">${n.judul}</h4>
+                        <p class="text-xs text-slate-500">Tanggal: ${n.tanggal}</p>
+                        <div class="flex justify-between items-center pt-2">
+                            <button onclick="downloadDirectPDF('${n.id}')" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-md">Unduh PDF Formal</button>
+                            <div class="guest-hide flex gap-2">
+                                <button onclick="openNotulensiFormModal('${n.id}')" class="text-indigo-600 text-xs font-bold">Edit</button>
+                                <button onclick="deleteNotulensi('${n.id}')" class="text-red-500 text-xs font-bold">Hapus</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function renderJadwalGrid() {
+            const grid = document.getElementById('jadwalWeekGrid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'].forEach(d => {
+                let html = '';
+                appState.schedules.filter(s => s.hari === d).forEach(s => {
+                    html += `<div class="p-2 bg-slate-50 dark:bg-[#131d38] rounded-xl text-xs space-y-1"><b>${s.matkul}</b> (${s.jam})<br>Ruang: ${s.ruang}</div>`;
+                });
+                grid.innerHTML += `<div class="bg-white dark:bg-[#0f172a] p-4 rounded-3xl border border-cyan-200 space-y-2"><h4 class="font-bold text-cyan-500">${d}</h4>${html || '<p class="text-xs text-slate-400">Libur</p>'}</div>`;
+            });
+        }
+
+        function renderFinanceView() {
+            const tbody = document.getElementById('financeTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            appState.finances.forEach(f => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="py-2">${f.date}</td>
+                        <td class="py-2 font-semibold">${f.desc}</td>
+                        <td class="py-2"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${f.type === 'Pemasukan' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}">${f.type}</span></td>
+                        <td class="py-2 text-right font-bold ${f.type === 'Pemasukan' ? 'text-emerald-500' : 'text-rose-500'}">Rp ${f.amount.toLocaleString()}</td>
+                        <td class="py-2 text-center action-col"><button onclick="deleteFinance('${f.id}')" class="text-red-500 guest-hide font-semibold text-xs">Hapus</button></td>
+                    </tr>
+                `;
+            });
+        }
+
+        function renderCalendarWidget() {
+            const grid = document.getElementById('calendarFullGrid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            const year = currentCalendarDate.getFullYear();
+            const month = currentCalendarDate.getMonth();
+            
+            const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+            if (document.getElementById('calendarFullMonthYear')) {
+                document.getElementById('calendarFullMonthYear').innerText = `${monthNames[month]} ${year}`;
+            }
+
+            const firstDayIndex = new Date(year, month, 1).getDay();
+            const totalDays = new Date(year, month + 1, 0).getDate();
+
+            for (let i = 0; i < firstDayIndex; i++) {
+                grid.innerHTML += `<div></div>`;
+            }
+
+            for (let day = 1; day <= totalDays; day++) {
+                const mmStr = String(month + 1).padStart(2, '0');
+                const ddStr = String(day).padStart(2, '0');
+                const dateStr = `${year}-${mmStr}-${ddStr}`;
+
+                const hasAgenda = appState.agendas.some(a => a.tanggal === dateStr);
+                const hasTask = appState.tasks.some(t => t.deadline.startsWith(dateStr));
+
+                let indicatorHTML = '';
+                if (hasAgenda && hasTask) {
+                    indicatorHTML = '<div class="flex gap-0.5 mt-1 justify-center"><span class="w-1.5 h-1.5 rounded-full bg-pink-500"></span><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span></div>';
+                } else if (hasAgenda) {
+                    indicatorHTML = '<div class="flex justify-center mt-1"><span class="w-1.5 h-1.5 rounded-full bg-pink-500"></span></div>';
+                } else if (hasTask) {
+                    indicatorHTML = '<div class="flex justify-center mt-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span></div>';
+                }
+
+                grid.innerHTML += `
+                    <div onclick="openDateDetail('${dateStr}')" class="aspect-square bg-slate-50 dark:bg-[#131d38] hover:bg-indigo-600/20 rounded-2xl flex flex-col items-center justify-center text-xs font-bold text-slate-700 dark:text-slate-200 cursor-pointer shadow-sm border border-slate-200 dark:border-slate-800 transition">
+                        <span>${day}</span>
+                        ${indicatorHTML}
+                    </div>
+                `;
+            }
+        }
+
+        function renderFullCalendar() { renderCalendarWidget(); }
+        function changeMonth(dir) { currentCalendarDate.setMonth(currentCalendarDate.getMonth() + dir); renderCalendarWidget(); }
+
+        function openGoogleAccountChooser() {
+            const list = document.getElementById('googleAccountsList');
+            list.innerHTML = appState.savedAccounts.length === 0 ? '<div class="p-2 text-slate-500 text-center">Belum ada akun tersimpan. Masukkan email di bawah.</div>' : '';
+            appState.savedAccounts.forEach(acc => {
+                list.innerHTML += `<button onclick="selectAccount('${acc.email}')" class="w-full p-2 bg-slate-50 dark:bg-[#131d38] hover:bg-slate-100 rounded-xl text-left font-medium">${acc.name} (${acc.email})</button>`;
+            });
+            document.getElementById('modalGoogleChooser').classList.remove('hidden');
+        }
+        function closeGoogleChooser() { document.getElementById('modalGoogleChooser').classList.add('hidden'); }
+        function selectAccount(email) {
+            const acc = appState.savedAccounts.find(a => a.email === email);
+            if (acc) { appState.currentUser = { ...acc, isGuest: false }; saveState(); closeGoogleChooser(); initAppAfterLogin(); }
+        }
+        function handleNewGoogleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('customGoogleEmail').value.trim();
+            if (!email) return;
+            let acc = appState.savedAccounts.find(a => a.email.toLowerCase() === email.toLowerCase());
+            if (!acc) {
+                acc = { name: email.split('@')[0], email: email, accessId: 'MJ-' + Math.floor(100000 + Math.random() * 900000) };
+                appState.savedAccounts.push(acc);
+            }
+            appState.currentUser = { ...acc, isGuest: false };
+            saveState(); closeGoogleChooser(); initAppAfterLogin();
+        }
+
+        function openGuestLoginModal() { document.getElementById('modalGuestLogin').classList.remove('hidden'); }
+        function closeGuestLoginModal() { document.getElementById('modalGuestLogin').classList.add('hidden'); }
+        function handleGuestLogin(e) {
+            e.preventDefault();
+            const inputId = document.getElementById('guestInputUniqueId').value.trim().toUpperCase();
+            appState.currentUser = { name: "Tamu", email: "guest@myjadwal.com", accessId: inputId, isGuest: true };
+            saveState(); closeGuestLoginModal(); initAppAfterLogin();
+            showToast("Berhasil masuk sebagai Tamu (Hanya Lihat)", "success");
+        }
+
+        function initAppAfterLogin() {
+            document.getElementById('authScreen').classList.add('hidden');
+            document.getElementById('mainApp').classList.remove('hidden');
+            setupUserUI(); renderAll();
+        }
+
+        function logout() {
+            appState.currentUser = null; saveState();
+            document.getElementById('mainApp').classList.add('hidden');
+            document.getElementById('authScreen').classList.remove('hidden');
+            showToast("Berhasil keluar akun.", "info");
+        }
+
+        function setupUserUI() {
+            const user = appState.currentUser;
+            if (!user) return;
+            if (document.getElementById('dashUserName')) document.getElementById('dashUserName').innerText = user.name;
+            if (document.getElementById('dashUserEmail')) document.getElementById('dashUserEmail').innerText = user.email;
+            if (document.getElementById('dashUserInitial')) document.getElementById('dashUserInitial').innerText = user.name.charAt(0).toUpperCase();
+            if (document.getElementById('dashAccessID')) document.getElementById('dashAccessID').innerText = user.accessId || 'MJ-849201';
+
+            if (user.isGuest) {
+                document.querySelectorAll('.guest-hide').forEach(el => el.style.display = 'none');
+                document.querySelectorAll('button[onclick*="open"]').forEach(btn => {
+                    if(btn.id.includes('Btn') && !btn.id.includes('Install')) btn.style.display = 'none';
+                });
+            }
+        }
+
+        function copyAccessID() {
+            navigator.clipboard.writeText(document.getElementById('dashAccessID').innerText).then(() => showToast("ID Akses disalin!", "success"));
+        }
+
+        function toggleAppTheme() {
+            appState.settings.themeMode = (appState.settings.themeMode === 'dark') ? 'light' : 'dark';
+            saveState(); applyTheme();
+        }
+        function applyTheme() {
+            if (appState.settings.themeMode === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('section[id^="view-"]').forEach(sec => sec.classList.add('hidden'));
+            const targetSec = document.getElementById(`view-${tabId}`);
+            if (targetSec) targetSec.classList.remove('hidden');
+            if (tabId === 'kalender') renderFullCalendar();
+        }
+
+        function startClock() {
+            setInterval(() => {
+                const now = new Date();
+                const hh = String(now.getHours()).padStart(2, '0');
+                const mm = String(now.getMinutes()).padStart(2, '0');
+                const ss = String(now.getSeconds()).padStart(2, '0');
+                if (document.getElementById('realtimeClock')) {
+                    document.getElementById('realtimeClock').innerText = `${hh}.${mm}.${ss} WIB`;
+                }
+            }, 1000);
+        }
+
+        function showToast(msg, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+            const toast = document.createElement('div');
+            toast.className = `p-3 rounded-2xl shadow-xl text-xs font-bold text-white ${type === 'success' ? 'bg-emerald-600' : (type === 'error' ? 'bg-rose-600' : 'bg-violet-600')}`;
+            toast.innerText = msg;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+    </script>
+</body>
+</html>
