@@ -454,7 +454,7 @@
                             <span id="syncStatusBadge" class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-500">Terhubung Otomatis</span>
                         </div>
                         <div class="flex gap-2">
-                            <input type="url" id="sheetsApiUrlInput" placeholder="https://script.google.com/macros/s/.../exec" class="flex-1 bg-white dark:bg-[#0f172a] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-xs text-slate-900 dark:text-white">
+                            <input type="url" id="sheetsApiUrlInput" placeholder="https://script.google.com/macros/s/AKfycbwgC_nGzMQaTEfpRGv0MSfnphCPz8Nz2YiZlrQuiQv_BCSyDp_ORs7dp1VlMBjZBLun6A/exec" class="flex-1 bg-white dark:bg-[#0f172a] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-xs text-slate-900 dark:text-white">
                             <button onclick="saveSheetsApiUrl()" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-md">Simpan URL</button>
                         </div>
                         <div class="flex flex-wrap gap-2 pt-2">
@@ -659,7 +659,7 @@
     <!-- APP SCRIPT LOGIC -->
     <script>
         const DB_KEY = 'MYJADWAL_DATA_FINAL_PWA_V6';
-        const DEFAULT_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyPCZUQin6_ckdTI25a1SaYNK-j5SeD57Eo_4DovLPk/dev';
+        const DEFAULT_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwgC_nGzMQaTEfpRGv0MSfnphCPz8Nz2YiZlrQuiQv_BCSyDp_ORs7dp1VlMBjZBLun6A/exec';
         const VALID_USER = 'TommyBantul';
         const VALID_PASS = 'TommyData';
         const SHARED_WORKSPACE_ID = 'MJ-849201';
@@ -936,7 +936,7 @@
                 </div>
                 <div style="position: absolute; bottom: 40px; left: 40px; right: 40px; display: flex; justify-content: space-between; align-items: flex-end;">
                     <div style="font-size: 10px; font-style: italic; color: #444; max-width: 250px;">
-                        Dokumen ini asli dan terverifikasi secara digital oleh Tommy Pramono.
+                        Dokumen ini asli dan terverifikasi secara digital melalui sistem MyJadwal PWA.
                     </div>
                     <div style="text-align: right;">
                         <p style="margin: 0 0 4px 0;">${formattedDateStr}</p>
@@ -1001,15 +1001,29 @@
                         schedules: appState.schedules
                     }
                 };
+                
+                // Robust POST with JSON string format for Apps Script compatibility
                 await fetch(url, {
                     method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    mode: 'cors',
+                    credentials: 'omit',
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
                 if (badge) badge.innerText = "Tersinkron Otomatis";
             } catch(err) {
-                if (badge) badge.innerText = "Mode Offline (Lokal)";
+                // Fallback to no-cors if CORS is restricted by Apps Script deployment settings
+                try {
+                    await fetch(url, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (badge) badge.innerText = "Tersinkron Otomatis";
+                } catch(e) {
+                    if (badge) badge.innerText = "Mode Offline (Lokal)";
+                }
             }
         }
 
@@ -1223,25 +1237,36 @@
             if (!url) { showToast("Masukkan URL Google Apps Script.", "error"); return; }
             showToast("Mengirim data ke Sheets...", "info");
             try {
+                const payload = {
+                    action: 'saveData',
+                    workspaceId: SHARED_WORKSPACE_ID,
+                    data: {
+                        agendas: appState.agendas,
+                        tasks: appState.tasks,
+                        notulensi: appState.notulensi,
+                        finances: appState.finances,
+                        schedules: appState.schedules
+                    }
+                };
                 await fetch(url, {
                     method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({
-                        action: 'saveData',
-                        workspaceId: SHARED_WORKSPACE_ID,
-                        data: {
-                            agendas: appState.agendas,
-                            tasks: appState.tasks,
-                            notulensi: appState.notulensi,
-                            finances: appState.finances,
-                            schedules: appState.schedules
-                        }
-                    })
+                    mode: 'cors',
+                    credentials: 'omit',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
                 });
                 showToast("Data terkirim ke Sheets!", "success");
             } catch(err) {
-                showToast("Sinkronisasi offline mode.", "success");
+                try {
+                    await fetch(url, {
+                        method: 'no-cors',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify(payload)
+                    });
+                    showToast("Data terkirim ke Sheets!", "success");
+                } catch(e) {
+                    showToast("Sinkronisasi offline mode.", "success");
+                }
             }
         }
 
@@ -1250,7 +1275,7 @@
             if (!url) return;
             try {
                 const fetchUrl = `${url}?action=getData&workspaceId=${SHARED_WORKSPACE_ID}&t=${Date.now()}`;
-                const response = await fetch(fetchUrl);
+                const response = await fetch(fetchUrl, { method: 'GET', mode: 'cors' });
                 const result = await response.json();
                 const cloudData = result.data ? result.data : result;
                 if (cloudData && (cloudData.agendas || cloudData.tasks)) {
@@ -1263,7 +1288,9 @@
                     renderAll();
                     if (showNotification) showToast("Data diperbarui dari Google Sheets!", "success");
                 }
-            } catch(err) {}
+            } catch(err) {
+                // Secondary fallback for JSONP or CORS-less fetches if needed
+            }
         }
 
         function renderAll() {
