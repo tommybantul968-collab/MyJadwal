@@ -446,25 +446,14 @@
                         </div>
                     </div>
 
-                    <div class="space-y-3 bg-slate-50 dark:bg-[#131d38] p-4 rounded-2xl border border-slate-200 dark:border-slate-700">
-                        <div class="flex items-center justify-between flex-wrap gap-2">
+                    <div class="bg-slate-50 dark:bg-[#131d38] p-4 rounded-2xl border border-slate-200 dark:border-slate-700 flex items-center justify-between flex-wrap gap-2">
+                        <div>
                             <label class="font-bold text-xs text-slate-900 dark:text-white flex items-center gap-2">
-                                <i data-lucide="cloud" class="w-4 h-4 text-cyan-500"></i> Koneksi Otomatis Google Sheets & Apps Script
+                                <i data-lucide="cloud" class="w-4 h-4 text-cyan-500"></i> Sinkronisasi Cloud Google Sheets
                             </label>
-                            <span id="syncStatusBadge" class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-500">Terhubung Otomatis</span>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Semua perubahan data tersimpan dan tersinkron otomatis ke Google Sheets di latar belakang.</p>
                         </div>
-                        <div class="flex gap-2">
-                            <input type="url" id="sheetsApiUrlInput" placeholder="https://script.google.com/macros/s/AKfycbwgC_nGzMQaTEfpRGv0MSfnphCPz8Nz2YiZlrQuiQv_BCSyDp_ORs7dp1VlMBjZBLun6A/exec" class="flex-1 bg-white dark:bg-[#0f172a] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-xs text-slate-900 dark:text-white">
-                            <button onclick="saveSheetsApiUrl()" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-md">Simpan URL</button>
-                        </div>
-                        <div class="flex flex-wrap gap-2 pt-2">
-                            <button onclick="syncToGoogleSheets()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md flex items-center gap-1.5">
-                                <i data-lucide="cloud-upload" class="w-4 h-4"></i> Kirim Data ke Sheets
-                            </button>
-                            <button onclick="syncFromGoogleSheets(true)" class="px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white font-bold text-xs rounded-xl shadow-md flex items-center gap-1.5">
-                                <i data-lucide="cloud-download" class="w-4 h-4"></i> Ambil Data dari Sheets
-                            </button>
-                        </div>
+                        <span id="syncStatusBadge" class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-500">Tersinkron Otomatis</span>
                     </div>
 
                     <div class="flex items-center justify-between flex-wrap gap-4 pt-2 border-t border-slate-200 dark:border-slate-800">
@@ -658,8 +647,8 @@
 
     <!-- APP SCRIPT LOGIC -->
     <script>
-        const DB_KEY = 'MYJADWAL_DATA_FINAL_PWA_V6';
-        const DEFAULT_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwgC_nGzMQaTEfpRGv0MSfnphCPz8Nz2YiZlrQuiQv_BCSyDp_ORs7dp1VlMBjZBLun6A/exec';
+        const DB_KEY = 'MYJADWAL_DATA_FINAL_PWA_V7'; // Ubah versi key agar perangkat lain langsung memakai URL baru
+        const DEFAULT_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx6Fnolp-JcJHy5n-mvca42JzC7F6Nr4I2E857psoiIVxCMmdK-qRKzn6yRh-0fFXOnzw/exec';
         const VALID_USER = 'TommyBantul';
         const VALID_PASS = 'TommyData';
         const SHARED_WORKSPACE_ID = 'MJ-849201';
@@ -695,11 +684,7 @@
         window.onload = function() {
             lucide.createIcons();
             loadState();
-            if (!appState.settings.sheetsApiUrl) {
-                appState.settings.sheetsApiUrl = DEFAULT_APPS_SCRIPT_URL;
-            }
-            const urlInput = document.getElementById('sheetsApiUrlInput');
-            if (urlInput) urlInput.value = appState.settings.sheetsApiUrl;
+            appState.settings.sheetsApiUrl = DEFAULT_APPS_SCRIPT_URL;
 
             applyTheme();
             applyFontSize();
@@ -969,7 +954,7 @@
                     appState = {
                         ...appState,
                         ...parsed,
-                        settings: { ...appState.settings, ...(parsed.settings || {}) }
+                        settings: { ...appState.settings, ...(parsed.settings || {}), sheetsApiUrl: DEFAULT_APPS_SCRIPT_URL }
                     };
                 } catch(e){}
             }
@@ -978,41 +963,38 @@
         let syncTimeout = null;
         function saveState(skipCloud = false) {
             localStorage.setItem(DB_KEY, JSON.stringify(appState));
-            if (!skipCloud && appState.settings && appState.settings.sheetsApiUrl) {
+            if (!skipCloud && DEFAULT_APPS_SCRIPT_URL) {
                 clearTimeout(syncTimeout);
-                syncTimeout = setTimeout(() => { autoSyncToGoogleSheets(); }, 1200);
+                syncTimeout = setTimeout(() => { autoSyncToGoogleSheets(); }, 800);
             }
         }
 
         async function autoSyncToGoogleSheets() {
-            const url = appState.settings.sheetsApiUrl || DEFAULT_APPS_SCRIPT_URL;
+            const url = DEFAULT_APPS_SCRIPT_URL;
             if (!url) return;
             const badge = document.getElementById('syncStatusBadge');
             if (badge) badge.innerText = "Menyinkronkan...";
+            const payload = {
+                action: 'saveData',
+                workspaceId: SHARED_WORKSPACE_ID,
+                data: {
+                    agendas: appState.agendas,
+                    tasks: appState.tasks,
+                    notulensi: appState.notulensi,
+                    finances: appState.finances,
+                    schedules: appState.schedules
+                }
+            };
             try {
-                const payload = {
-                    action: 'saveData',
-                    workspaceId: SHARED_WORKSPACE_ID,
-                    data: {
-                        agendas: appState.agendas,
-                        tasks: appState.tasks,
-                        notulensi: appState.notulensi,
-                        finances: appState.finances,
-                        schedules: appState.schedules
-                    }
-                };
-                
-                // Robust POST with JSON string format for Apps Script compatibility
                 await fetch(url, {
                     method: 'POST',
                     mode: 'cors',
                     credentials: 'omit',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify(payload)
                 });
                 if (badge) badge.innerText = "Tersinkron Otomatis";
             } catch(err) {
-                // Fallback to no-cors if CORS is restricted by Apps Script deployment settings
                 try {
                     await fetch(url, {
                         method: 'POST',
