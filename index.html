@@ -14,6 +14,8 @@
                         darkBg: '#070b19',
                         cardBg: '#0f172a',
                         cardHover: '#131d38',
+                        neonBg: '#0a001a',
+                        neonCard: '#1b003a',
                     }
                 }
             }
@@ -30,45 +32,41 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.7); }
     </style>
 </head>
-<body class="bg-[#070b19] dark:bg-[#070b19] bg-slate-100 text-slate-800 dark:text-slate-200 min-h-screen flex flex-col transition-colors duration-300">
+<body id="appBody" class="bg-gradient-to-br from-[#070b19] via-[#0f172a] to-[#1e1b4b] text-slate-100 min-h-screen flex flex-col transition-colors duration-300">
 
     <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
-    <!-- SCREEN 1: LOGIN / AUTHENTICATION -->
+    <!-- SCREEN 1: LOGIN (USERNAME & PASSWORD / TAMU) -->
     <div id="authScreen" class="fixed inset-0 z-50 bg-[#070b19] flex items-center justify-center p-4">
         <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl space-y-6 text-center">
-            <div class="w-16 h-16 bg-gradient-to-tr from-violet-600 to-indigo-600 rounded-2xl mx-auto flex items-center justify-center shadow-lg shadow-indigo-500/30">
+            <div class="w-16 h-16 bg-gradient-to-tr from-pink-600 via-purple-600 to-indigo-600 rounded-2xl mx-auto flex items-center justify-center shadow-lg shadow-pink-500/30">
                 <i data-lucide="calendar-check" class="w-8 h-8 text-white"></i>
             </div>
             <div>
-                <h1 class="text-xl font-extrabold text-slate-900 dark:text-white">MyJadwal Workspace</h1>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Portal Jadwal, Tugas, Agenda, Notulensi & Keuangan Akademik</p>
+                <h1 class="text-xl font-extrabold text-slate-900 dark:text-white">MyJadwal PWA Workspace</h1>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Portal Kuliah, Tugas, Agenda & Hitung Mundur Real-Time</p>
             </div>
-            <div class="space-y-3 pt-2">
-                <button onclick="openGoogleAccountChooser()" class="w-full py-3 px-4 bg-slate-50 dark:bg-[#131d38] hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700/80 rounded-2xl font-bold text-xs text-slate-800 dark:text-white flex items-center justify-center gap-3 transition shadow-md">
-                    <svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c-.07-.7-.63-1.27-1.34-1.27H12v4.61h6.58c-.28 1.48-1.52 3.65-4.58 3.65-2.76 0-5.02-2.28-5.02-5.09s2.26-5.09 5.02-5.09c1.57 0 2.95.66 3.92 1.72l3.43-3.43C19.89 5.86 16.21 4.5 12 4.5 7.03 4.5 2.87 7.76 1.25 12.11l3.9 3.03C6.34 13.06 8.95 11 12 11c1.23 0 2.37.38 3.32 1.02l3.12-3.12c-1.8-1.38-4.04-2.21-6.44-2.21-6.07 0-11 4.93-11 11s4.93 11 11 11c6.33 0 10.51-4.45 10.51-10.72 0-.74-.08-1.46-.22-2.15z"/></svg>
-                    Masuk dengan Akun Google
+            <form onsubmit="handleCredentialLogin(event)" class="space-y-4 text-left pt-2">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Username</label>
+                    <input type="text" id="loginUsername" required placeholder="Masukkan Username..." class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-3 text-slate-900 dark:text-white text-xs">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Password</label>
+                    <input type="password" id="loginPassword" required placeholder="Masukkan Password..." class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-3 text-slate-900 dark:text-white text-xs">
+                </div>
+                <button type="submit" class="w-full py-3 px-4 bg-gradient-to-r from-pink-600 to-indigo-600 hover:opacity-90 rounded-xl font-bold text-xs text-white shadow-md transition">
+                    Masuk Workspace
                 </button>
-                <button onclick="openGuestLoginModal()" class="w-full py-3 px-4 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 rounded-2xl font-bold text-xs text-slate-700 dark:text-slate-300 transition">
-                    Masuk sebagai Tamu (Guest)
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL PILIH AKUN GOOGLE -->
-    <div id="modalGoogleChooser" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl max-w-sm w-full p-6 shadow-2xl text-xs space-y-4 my-auto">
-            <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-3">
-                <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2"><i data-lucide="user-check" class="w-4 h-4 text-indigo-400"></i> Pilih Akun Google</h3>
-                <button onclick="closeGoogleChooser()" class="text-slate-400 hover:text-slate-900 dark:hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
-            </div>
-            <div id="googleAccountsList" class="space-y-2 max-h-48 overflow-y-auto custom-scrollbar"></div>
-            <form onsubmit="handleNewGoogleLogin(event)" class="space-y-2 pt-2 border-t border-slate-200 dark:border-slate-800">
-                <label class="font-semibold text-slate-600 dark:text-slate-300 block">Tambah / Masukkan Email Lain</label>
-                <input type="email" id="customGoogleEmail" required placeholder="nama@gmail.com" class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white">
-                <button type="submit" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 rounded-xl font-bold text-white">Masuk dengan Email Ini</button>
             </form>
+            <div class="relative flex py-1 items-center">
+                <div class="flex-grow border-t border-slate-200 dark:border-slate-800"></div>
+                <span class="flex-shrink mx-4 text-slate-400 text-[10px]">ATAU</span>
+                <div class="flex-grow border-t border-slate-200 dark:border-slate-800"></div>
+            </div>
+            <button onclick="openGuestLoginModal()" class="w-full py-3 px-4 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 rounded-2xl font-bold text-xs text-slate-700 dark:text-slate-300 transition">
+                Masuk sebagai Tamu (Hanya Lihat)
+            </button>
         </div>
     </div>
 
@@ -82,91 +80,119 @@
             <p class="text-slate-500 dark:text-slate-400 text-[11px]">Sebagai Tamu, masukkan ID unik dashboard untuk melihat data.</p>
             <form onsubmit="handleGuestLogin(event)" class="space-y-3">
                 <input type="text" id="guestInputUniqueId" required placeholder="Contoh: MJ-849201" class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white uppercase font-mono">
-                <button type="submit" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 rounded-xl font-bold text-white">Masuk sebagai Tamu (Hanya Lihat)</button>
+                <button type="submit" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 rounded-xl font-bold text-white">Masuk sebagai Tamu</button>
             </form>
         </div>
     </div>
 
     <!-- MAIN APP WRAPPER -->
     <div id="mainApp" class="hidden flex-1 flex flex-col">
-        <header class="bg-white/80 dark:bg-[#0f172a]/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 sticky top-0 z-40 px-4 sm:px-8 py-3 flex items-center justify-between">
+        <header class="bg-white/80 dark:bg-[#0f172a]/85 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 sticky top-0 z-40 px-4 sm:px-8 py-3 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-gradient-to-tr from-violet-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-md">
+                <div class="w-10 h-10 bg-gradient-to-tr from-pink-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-md">
                     <i data-lucide="calendar-check" class="w-5 h-5 text-white"></i>
                 </div>
                 <div>
-                    <h2 class="text-sm font-extrabold text-slate-900 dark:text-white tracking-wide">MyJadwal</h2>
-                    <p class="text-[10px] text-slate-500 dark:text-slate-400">Workspace Akademik & Organisasi</p>
+                    <h2 class="text-sm font-extrabold text-slate-900 dark:text-white tracking-wide">MyJadwal PWA</h2>
+                    <p class="text-[10px] text-pink-500 dark:text-pink-400 font-semibold">Workspace Akademik & Organisasi</p>
                 </div>
             </div>
             <div class="flex items-center gap-3">
                 <button id="headerInstallBtn" onclick="installPWAApp()" class="hidden p-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl transition shadow-md flex items-center gap-1.5 text-xs font-bold px-3">
-                    <i data-lucide="download-cloud" class="w-4 h-4"></i> <span class="hidden sm:inline">Instal</span>
+                    <i data-lucide="download-cloud" class="w-4 h-4"></i> <span class="hidden sm:inline">Instal PWA</span>
                 </button>
-                <button onclick="toggleAppTheme()" class="p-2 bg-slate-100 dark:bg-[#131d38] hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 transition">
+                <button onclick="cycleAppTheme()" class="p-2 bg-slate-100 dark:bg-[#131d38] hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 transition" title="Ganti Tema">
                     <i data-lucide="sun-medium" class="w-4 h-4"></i>
                 </button>
             </div>
         </header>
 
-        <nav class="fixed bottom-0 inset-x-0 z-40 bg-white/95 dark:bg-[#0f172a]/95 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 px-3 py-2 grid grid-cols-4 sm:flex sm:justify-around items-center gap-1.5 sm:gap-0 max-w-3xl mx-auto sm:rounded-t-3xl shadow-2xl">
-            <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn flex flex-col sm:flex-row items-center justify-center sm:gap-2 p-2 sm:px-3.5 sm:py-2 rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold text-[11px] sm:text-xs transition-all shadow-sm">
+        <nav class="fixed bottom-0 inset-x-0 z-40 bg-white/95 dark:bg-[#0f172a]/95 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 px-3 py-2 grid grid-cols-4 sm:flex sm:justify-around items-center gap-1.5 sm:gap-0 max-w-4xl mx-auto sm:rounded-t-3xl shadow-2xl">
+            <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn flex flex-col sm:flex-row items-center justify-center sm:gap-2 p-2 sm:px-3.5 sm:py-2 rounded-2xl bg-gradient-to-r from-pink-600 via-violet-600 to-indigo-600 text-white font-bold text-[11px] sm:text-xs transition-all shadow-sm">
                 <i data-lucide="layout-dashboard" class="w-4 h-4 shrink-0 mb-1 sm:mb-0"></i>
-                <span class="nav-text opacity-150 sm:opacity-100 max-w-[120px] transition-all duration-300 overflow-hidden whitespace-nowrap">Utama</span>
+                <span>Utama</span>
             </button>
             <button onclick="switchTab('agenda')" id="nav-agenda" class="nav-btn flex flex-col sm:flex-row items-center justify-center sm:gap-2 p-2 sm:px-3 sm:py-2 rounded-2xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-[11px] sm:text-xs transition-all">
                 <i data-lucide="calendar-days" class="w-4 h-4 shrink-0 mb-1 sm:mb-0"></i>
-                <span class="nav-text sm:max-w-0 sm:opacity-0 overflow-hidden transition-all duration-300 whitespace-nowrap">Agenda</span>
+                <span>Agenda</span>
             </button>
             <button onclick="switchTab('tugas')" id="nav-tugas" class="nav-btn flex flex-col sm:flex-row items-center justify-center sm:gap-2 p-2 sm:px-3 sm:py-2 rounded-2xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-[11px] sm:text-xs transition-all">
                 <i data-lucide="check-square" class="w-4 h-4 shrink-0 mb-1 sm:mb-0"></i>
-                <span class="nav-text sm:max-w-0 sm:opacity-0 overflow-hidden transition-all duration-300 whitespace-nowrap">Tugas</span>
+                <span>Tugas</span>
             </button>
             <button onclick="switchTab('notulensi')" id="nav-notulensi" class="nav-btn flex flex-col sm:flex-row items-center justify-center sm:gap-2 p-2 sm:px-3 sm:py-2 rounded-2xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-[11px] sm:text-xs transition-all">
                 <i data-lucide="file-text" class="w-4 h-4 shrink-0 mb-1 sm:mb-0"></i>
-                <span class="nav-text sm:max-w-0 sm:opacity-0 overflow-hidden transition-all duration-300 whitespace-nowrap">Notulensi</span>
+                <span>Notulensi</span>
             </button>
             <button onclick="switchTab('jadwal')" id="nav-jadwal" class="nav-btn flex flex-col sm:flex-row items-center justify-center sm:gap-2 p-2 sm:px-3 sm:py-2 rounded-2xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-[11px] sm:text-xs transition-all">
                 <i data-lucide="book-open" class="w-4 h-4 shrink-0 mb-1 sm:mb-0"></i>
-                <span class="nav-text sm:max-w-0 sm:opacity-0 overflow-hidden transition-all duration-300 whitespace-nowrap">Kuliah</span>
+                <span>Kuliah</span>
             </button>
             <button onclick="switchTab('keuangan')" id="nav-keuangan" class="nav-btn flex flex-col sm:flex-row items-center justify-center sm:gap-2 p-2 sm:px-3 sm:py-2 rounded-2xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-[11px] sm:text-xs transition-all">
                 <i data-lucide="wallet" class="w-4 h-4 shrink-0 mb-1 sm:mb-0"></i>
-                <span class="nav-text sm:max-w-0 sm:opacity-0 overflow-hidden transition-all duration-300 whitespace-nowrap">Kas</span>
+                <span>Kas</span>
             </button>
             <button onclick="switchTab('kalender')" id="nav-kalender" class="nav-btn flex flex-col sm:flex-row items-center justify-center sm:gap-2 p-2 sm:px-3 sm:py-2 rounded-2xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-[11px] sm:text-xs transition-all">
                 <i data-lucide="calendar" class="w-4 h-4 shrink-0 mb-1 sm:mb-0"></i>
-                <span class="nav-text sm:max-w-0 sm:opacity-0 overflow-hidden transition-all duration-300 whitespace-nowrap">Kalender</span>
+                <span>Kalender</span>
             </button>
             <button onclick="switchTab('pengaturan')" id="nav-pengaturan" class="nav-btn flex flex-col sm:flex-row items-center justify-center sm:gap-2 p-2 sm:px-3 sm:py-2 rounded-2xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-[11px] sm:text-xs transition-all">
                 <i data-lucide="settings" class="w-4 h-4 shrink-0 mb-1 sm:mb-0"></i>
-                <span class="nav-text sm:max-w-0 sm:opacity-0 overflow-hidden transition-all duration-300 whitespace-nowrap">Sistem</span>
+                <span>Sistem</span>
             </button>
         </nav>
 
         <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-8 pb-32 sm:pb-28 space-y-6">
+            <!-- DASHBOARD -->
             <section id="view-dashboard" class="space-y-6">
-                <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl p-5 sm:p-6 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 bg-indigo-600/20 text-indigo-500 rounded-2xl flex items-center justify-center font-bold text-lg" id="dashUserInitial">U</div>
-                        <div>
-                            <h3 id="dashUserName" class="text-sm font-bold text-slate-900 dark:text-white">Nama Pengguna</h3>
-                            <p class="text-xs text-slate-500 dark:text-slate-400" id="dashUserEmail">email@gmail.com</p>
-                        </div>
+                <!-- BANNER JAM & HARI REAL TIME -->
+                <div class="bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 border border-pink-500/40 rounded-3xl p-6 shadow-xl flex flex-col md:flex-row items-center justify-between gap-4 text-white">
+                    <div class="space-y-1 text-center md:text-left">
+                        <span id="realtimeDayDate" class="text-xs font-bold text-pink-200 uppercase tracking-widest">Senin, 01 Januari 2026</span>
+                        <h3 class="text-2xl sm:text-3xl font-black tracking-tight" id="realtimeClock">00.00.00 WIB</h3>
+                        <p class="text-xs text-slate-100">Halo, <span id="dashUserName" class="font-bold text-pink-200">Tommy Bantul</span>! <span id="dashUserEmail">@TommyBantul</span></p>
                     </div>
-                    <div class="flex items-center gap-3 bg-slate-50 dark:bg-[#131d38] px-4 py-2.5 rounded-2xl border border-slate-200 dark:border-slate-700">
+                    <div class="flex items-center gap-3 bg-black/30 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-white/20">
                         <div>
-                            <span class="text-[10px] text-slate-500 dark:text-slate-400 block uppercase font-semibold">ID Unik Dashboard (Bagikan ke Tamu)</span>
-                            <span id="dashAccessID" class="text-xs font-mono font-bold text-indigo-500">MJ-------</span>
+                            <span class="text-[10px] text-pink-200 block uppercase font-semibold">ID Workspace Bersama</span>
+                            <span id="dashAccessID" class="text-xs font-mono font-bold text-cyan-300">MJ-849201</span>
                         </div>
-                        <button onclick="copyAccessID()" class="p-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl transition">
+                        <button onclick="copyAccessID()" class="p-2 bg-white/20 hover:bg-white/30 text-white rounded-xl transition" title="Salin ID">
                             <i data-lucide="copy" class="w-3.5 h-3.5"></i>
                         </button>
                     </div>
                 </div>
 
+                <!-- PINTASAN HARI INI & BESOK -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <button onclick="filterAgendaByShortcut('today')" class="app-card bg-white dark:bg-[#0f172a] border border-pink-500/30 hover:border-pink-500 p-4 rounded-2xl flex items-center justify-between shadow-sm transition text-left group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-pink-500/15 text-pink-500 flex items-center justify-center font-bold">
+                                <i data-lucide="calendar" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-900 dark:text-white group-hover:text-pink-500 transition">Agenda Hari Ini</h4>
+                                <p id="badgeCountToday" class="text-[11px] text-slate-500">0 Agenda • 0 Tugas</p>
+                            </div>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+                    </button>
+                    <button onclick="filterAgendaByShortcut('tomorrow')" class="app-card bg-white dark:bg-[#0f172a] border border-indigo-500/30 hover:border-indigo-500 p-4 rounded-2xl flex items-center justify-between shadow-sm transition text-left group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-indigo-500/15 text-indigo-500 flex items-center justify-center font-bold">
+                                <i data-lucide="calendar-days" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-900 dark:text-white group-hover:text-indigo-500 transition">Agenda Besok</h4>
+                                <p id="badgeCountTomorrow" class="text-[11px] text-slate-500">0 Agenda • 0 Tugas</p>
+                            </div>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+                    </button>
+                </div>
+
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl p-4 sm:p-5 shadow-sm space-y-2">
+                    <div class="app-card bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl p-4 sm:p-5 shadow-sm space-y-2">
                         <div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
                             <span class="text-xs font-bold uppercase tracking-wider">Tugas Kuliah</span>
                             <i data-lucide="check-square" class="w-4 h-4 text-amber-500"></i>
@@ -174,7 +200,7 @@
                         <h3 id="statTotalTugas" class="text-2xl font-black text-slate-900 dark:text-white">0</h3>
                         <p id="statTugasPct" class="text-[11px] text-emerald-600 font-semibold">0% Terkumpul</p>
                     </div>
-                    <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl p-4 sm:p-5 shadow-sm space-y-2">
+                    <div class="app-card bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl p-4 sm:p-5 shadow-sm space-y-2">
                         <div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
                             <span class="text-xs font-bold uppercase tracking-wider">Agenda Kegiatan</span>
                             <i data-lucide="calendar-days" class="w-4 h-4 text-pink-500"></i>
@@ -182,7 +208,7 @@
                         <h3 id="statTotalAgenda" class="text-2xl font-black text-slate-900 dark:text-white">0</h3>
                         <p id="statAgendaPending" class="text-[11px] text-pink-600 font-semibold">0 Belum Terlaksana</p>
                     </div>
-                    <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl p-4 sm:p-5 shadow-sm space-y-2">
+                    <div class="app-card bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl p-4 sm:p-5 shadow-sm space-y-2">
                         <div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
                             <span class="text-xs font-bold uppercase tracking-wider">Notulensi Rapat</span>
                             <i data-lucide="file-text" class="w-4 h-4 text-indigo-500"></i>
@@ -190,7 +216,7 @@
                         <h3 id="statTotalNotulensi" class="text-2xl font-black text-slate-900 dark:text-white">0</h3>
                         <p class="text-[11px] text-indigo-600 font-semibold">Dokumen Disahkan</p>
                     </div>
-                    <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl p-4 sm:p-5 shadow-sm space-y-2">
+                    <div class="app-card bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl p-4 sm:p-5 shadow-sm space-y-2">
                         <div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
                             <span class="text-xs font-bold uppercase tracking-wider">Kas Organisasi</span>
                             <i data-lucide="wallet" class="w-4 h-4 text-emerald-500"></i>
@@ -200,8 +226,36 @@
                     </div>
                 </div>
 
+                <!-- HITUNG MUNDUR & PINTASAN AGENDA / TUGAS TERDEKAT -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="app-card bg-white dark:bg-[#0f172a] border border-indigo-500/30 rounded-3xl p-5 shadow-sm space-y-3">
+                        <div class="flex items-center justify-between">
+                            <h4 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                <i data-lucide="timer" class="w-4 h-4 text-amber-500"></i> Hitung Mundur Agenda Terdekat
+                            </h4>
+                            <button onclick="playAlarmSound(true)" class="px-2.5 py-1 bg-amber-500/20 text-amber-600 dark:text-amber-300 rounded-lg text-[10px] font-bold flex items-center gap-1">
+                                <i data-lucide="volume-2" class="w-3 h-3"></i> Tes Alarm
+                            </button>
+                        </div>
+                        <div id="dashboardCountdownAgenda" class="space-y-2 text-xs">
+                            <p class="text-slate-500 text-center py-3">Tidak ada agenda mendatang.</p>
+                        </div>
+                    </div>
+                    <div class="app-card bg-white dark:bg-[#0f172a] border border-pink-500/30 rounded-3xl p-5 shadow-sm space-y-3">
+                        <div class="flex items-center justify-between">
+                            <h4 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                <i data-lucide="hourglass" class="w-4 h-4 text-pink-500"></i> Hitung Mundur Deadline Tugas
+                            </h4>
+                            <button onclick="switchTab('tugas')" class="px-2.5 py-1 bg-indigo-600/20 text-indigo-500 dark:text-indigo-300 rounded-lg text-[10px] font-bold">Kelola Tugas</button>
+                        </div>
+                        <div id="dashboardCountdownTask" class="space-y-2 text-xs">
+                            <p class="text-slate-500 text-center py-3">Tidak ada deadline tugas aktif.</p>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Widget Kalender Interaktif di Dashboard -->
-                <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-sm space-y-4">
+                <div class="app-card bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-sm space-y-4">
                     <div class="flex items-center justify-between">
                         <h4 id="dashCalendarMonthYear" class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
                             <i data-lucide="calendar" class="w-4 h-4 text-indigo-500"></i> Kalender Interaktif
@@ -216,91 +270,76 @@
                     </div>
                     <div id="dashCalendarGrid" class="grid grid-cols-7 gap-1.5"></div>
                 </div>
-
-                <!-- Widget Pintasan & Countdown Hari Ini & Besok -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-sm space-y-3">
-                        <h4 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                            <i data-lucide="clock" class="w-4 h-4 text-indigo-500"></i> Pintasan & Countdown Hari Ini
-                        </h4>
-                        <div id="dashboardTodayShortcuts" class="space-y-2 text-xs">
-                            <p class="text-slate-500 text-center py-3">Tidak ada agenda atau tugas hari ini.</p>
-                        </div>
-                    </div>
-                    <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-sm space-y-3">
-                        <h4 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                            <i data-lucide="calendar" class="w-4 h-4 text-pink-500"></i> Pintasan Agenda & Tugas Besok
-                        </h4>
-                        <div id="dashboardTomorrowShortcuts" class="space-y-2 text-xs">
-                            <p class="text-slate-500 text-center py-3">Tidak ada agenda atau tugas besok.</p>
-                        </div>
-                    </div>
-                </div>
             </section>
 
+            <!-- VIEW AGENDA -->
             <section id="view-agenda" class="hidden space-y-5">
                 <div class="flex items-center justify-between flex-wrap gap-4">
                     <div>
                         <h3 class="text-base font-bold text-slate-900 dark:text-white">Manajemen Agenda Kegiatan</h3>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">Catat agenda organisasi atau kampus dengan durasi & lampiran surat.</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Ubah kriteria & status agenda langsung pada kartu tanpa klik edit.</p>
                     </div>
-                    <button id="btnAddAgenda" onclick="openAgendaModal()" class="bg-pink-600 hover:bg-pink-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-md">
+                    <button id="btnAddAgenda" onclick="openAgendaModal()" class="bg-gradient-to-r from-pink-600 to-rose-600 hover:opacity-90 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-md guest-hide">
                         <i data-lucide="plus" class="w-4 h-4"></i> Tambah Agenda
                     </button>
                 </div>
                 <div id="agendaGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
             </section>
 
+            <!-- VIEW TUGAS -->
             <section id="view-tugas" class="hidden space-y-5">
                 <div class="flex items-center justify-between flex-wrap gap-4">
                     <div>
                         <h3 class="text-base font-bold text-slate-900 dark:text-white">Manajemen Tugas Kuliah</h3>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">Pantau deadline, rangkuman catatan, & file tugas.</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Ganti status pengerjaan & pengumpulan tugas secara langsung tanpa klik edit.</p>
                     </div>
-                    <button id="btnAddTugas" onclick="openTugasModal()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-md">
+                    <button id="btnAddTugas" onclick="openTugasModal()" class="bg-gradient-to-r from-amber-500 to-orange-600 hover:opacity-90 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-md guest-hide">
                         <i data-lucide="plus" class="w-4 h-4"></i> Tambah Tugas
                     </button>
                 </div>
                 <div id="tugasGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
             </section>
 
+            <!-- NOTULENSI -->
             <section id="view-notulensi" class="hidden space-y-5">
                 <div class="flex items-center justify-between flex-wrap gap-4">
                     <div>
                         <h3 class="text-base font-bold text-slate-900 dark:text-white">Notulensi Rapat & Pengesahan Dokumen</h3>
                         <p class="text-xs text-slate-500 dark:text-slate-400">Dokumentasikan rapat resmi dengan tata letak tanda tangan pojok bawah.</p>
                     </div>
-                    <button id="btnAddNotulensi" onclick="openSelectSignModalForNew()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-md">
+                    <button id="btnAddNotulensi" onclick="openSelectSignModalForNew()" class="bg-gradient-to-r from-indigo-600 to-violet-600 hover:opacity-90 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-md guest-hide">
                         <i data-lucide="plus" class="w-4 h-4"></i> Buat Notulensi Baru
                     </button>
                 </div>
                 <div id="notulensiGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
             </section>
 
+            <!-- VIEW JADWAL KULIAH -->
             <section id="view-jadwal" class="hidden space-y-5">
                 <div class="flex items-center justify-between flex-wrap gap-4">
                     <div>
                         <h3 class="text-base font-bold text-slate-900 dark:text-white">Jadwal Kuliah Mingguan</h3>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">Atur jadwal mata kuliah.</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Atur dan edit jadwal mata kuliah Anda.</p>
                     </div>
-                    <button id="btnAddJadwal" onclick="openJadwalModal()" class="bg-cyan-600 hover:bg-cyan-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-md">
+                    <button id="btnAddJadwal" onclick="openJadwalModal()" class="bg-gradient-to-r from-cyan-600 to-blue-600 hover:opacity-90 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-md guest-hide">
                         <i data-lucide="plus" class="w-4 h-4"></i> Tambah Jadwal
                     </button>
                 </div>
                 <div id="jadwalWeekGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
             </section>
 
+            <!-- KEUANGAN -->
             <section id="view-keuangan" class="hidden space-y-5">
                 <div class="flex items-center justify-between flex-wrap gap-4">
                     <div>
                         <h3 class="text-base font-bold text-slate-900 dark:text-white">Keuangan & Kas Organisasi</h3>
                         <p class="text-xs text-slate-500 dark:text-slate-400">Catat transaksi kas masuk dan keluar.</p>
                     </div>
-                    <button id="btnAddFinance" onclick="openFinanceModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-md">
+                    <button id="btnAddFinance" onclick="openFinanceModal()" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:opacity-90 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-md guest-hide">
                         <i data-lucide="plus" class="w-4 h-4"></i> Catat Transaksi
                     </button>
                 </div>
-                <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-sm overflow-x-auto">
+                <div class="app-card bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-sm overflow-x-auto">
                     <table class="w-full text-left text-xs">
                         <thead>
                             <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-500">
@@ -316,8 +355,9 @@
                 </div>
             </section>
 
+            <!-- KALENDER -->
             <section id="view-kalender" class="hidden space-y-5">
-                <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl p-6 space-y-4 shadow-sm">
+                <div class="app-card bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl p-6 space-y-4 shadow-sm">
                     <div class="flex items-center justify-between">
                         <h3 id="calendarFullMonthYear" class="text-base font-bold text-slate-900 dark:text-white">Bulan Tahun</h3>
                         <div class="flex gap-2">
@@ -332,24 +372,96 @@
                 </div>
             </section>
 
+            <!-- VIEW PENGATURAN / SISTEM -->
             <section id="view-pengaturan" class="hidden space-y-6">
-                <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl p-6 space-y-6 shadow-sm">
+                <div class="app-card bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl p-6 space-y-6 shadow-sm">
                     <div>
-                        <h3 class="text-base font-bold text-slate-900 dark:text-white mb-1">Integrasi Google Sheets & Apps Script</h3>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">Hubungkan aplikasi dengan Google Sheets Anda.</p>
+                        <h3 class="text-base font-bold text-slate-900 dark:text-white mb-1">Pengaturan Sistem, Tampilan, Notifikasi & Cloud</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Sesuaikan tema aplikasi (Gelap, Terang, Neon Vibrance), izin notifikasi, dan sinkronisasi.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-slate-50 dark:bg-[#131d38] p-4 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3">
+                            <label class="font-bold text-xs text-slate-900 dark:text-white flex items-center gap-2">
+                                <i data-lucide="palette" class="w-4 h-4 text-pink-500"></i> Tema Tampilan PWA
+                            </label>
+                            <div class="grid grid-cols-3 gap-2">
+                                <button onclick="setThemeMode('dark')" id="btnThemeDark" class="py-2 px-3 rounded-xl text-xs font-bold border transition">Gelap</button>
+                                <button onclick="setThemeMode('light')" id="btnThemeLight" class="py-2 px-3 rounded-xl text-xs font-bold border transition">Terang</button>
+                                <button onclick="setThemeMode('neon')" id="btnThemeNeon" class="py-2 px-3 rounded-xl text-xs font-bold border transition">Neon Vibrance</button>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 dark:bg-[#131d38] p-4 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3">
+                            <label class="font-bold text-xs text-slate-900 dark:text-white flex items-center gap-2">
+                                <i data-lucide="type" class="w-4 h-4 text-cyan-500"></i> Ukuran Font Aplikasi
+                            </label>
+                            <div class="grid grid-cols-3 gap-2">
+                                <button onclick="setFontSize('small')" id="btnFontSmall" class="py-2 px-3 rounded-xl text-xs font-bold border transition">Kecil</button>
+                                <button onclick="setFontSize('medium')" id="btnFontMedium" class="py-2 px-3 rounded-xl text-xs font-bold border transition">Sedang</button>
+                                <button onclick="setFontSize('large')" id="btnFontLarge" class="py-2 px-3 rounded-xl text-xs font-bold border transition">Besar</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-slate-50 dark:bg-[#131d38] p-4 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3">
+                            <div class="flex items-center justify-between">
+                                <label class="font-bold text-xs text-slate-900 dark:text-white flex items-center gap-2">
+                                    <i data-lucide="bell-ring" class="w-4 h-4 text-amber-500"></i> Alarm Pengingat (30 Menit)
+                                </label>
+                                <input type="checkbox" id="alarmEnabledToggle" onchange="toggleAlarmSetting()" class="w-4 h-4 accent-indigo-600 rounded">
+                            </div>
+                            <div class="space-y-1">
+                                <div class="flex justify-between text-[11px] text-slate-500 dark:text-slate-400">
+                                    <span>Volume Alarm</span>
+                                    <span id="alarmVolumeLabel">80%</span>
+                                </div>
+                                <input type="range" id="alarmVolumeSlider" min="0" max="100" value="80" oninput="updateAlarmVolume(this.value)" class="w-full accent-indigo-600">
+                            </div>
+                            <button onclick="playAlarmSound(true)" class="w-full py-2 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl transition flex items-center justify-center gap-1.5">
+                                <i data-lucide="volume-2" class="w-4 h-4"></i> Tes Bunyi Alarm Sekarang
+                            </button>
+                        </div>
+
+                        <!-- KONTROL IZINKAN / AKTIFKAN / NONAKTIFKAN NOTIFIKASI -->
+                        <div class="bg-slate-50 dark:bg-[#131d38] p-4 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3 flex flex-col justify-between">
+                            <div class="space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <label class="font-bold text-xs text-slate-900 dark:text-white flex items-center gap-2">
+                                        <i data-lucide="message-square-dot" class="w-4 h-4 text-emerald-500"></i> Push Notifikasi PWA
+                                    </label>
+                                    <span id="notifPermissionStatusBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Menunggu Izin</span>
+                                </div>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400">Kelola izin sistem browser dan status aktif/nonaktif notifikasi latar belakang.</p>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 pt-2">
+                                <button onclick="requestBrowserNotificationPermission()" class="py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition flex items-center justify-center gap-1 shadow-md">
+                                    <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Izinkan Notif
+                                </button>
+                                <button onclick="togglePushNotificationStatus()" id="btnTogglePushStatus" class="py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl transition flex items-center justify-center gap-1 shadow-md">
+                                    <i data-lucide="power" class="w-3.5 h-3.5"></i> Nonaktifkan
+                                </button>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="space-y-3 bg-slate-50 dark:bg-[#131d38] p-4 rounded-2xl border border-slate-200 dark:border-slate-700">
-                        <label class="font-bold text-xs text-slate-900 dark:text-white block">URL Web App Google Apps Script</label>
+                        <div class="flex items-center justify-between flex-wrap gap-2">
+                            <label class="font-bold text-xs text-slate-900 dark:text-white flex items-center gap-2">
+                                <i data-lucide="cloud" class="w-4 h-4 text-cyan-500"></i> Koneksi Otomatis Google Sheets & Apps Script
+                            </label>
+                            <span id="syncStatusBadge" class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-500">Terhubung Otomatis</span>
+                        </div>
                         <div class="flex gap-2">
                             <input type="url" id="sheetsApiUrlInput" placeholder="https://script.google.com/macros/s/.../exec" class="flex-1 bg-white dark:bg-[#0f172a] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-xs text-slate-900 dark:text-white">
                             <button onclick="saveSheetsApiUrl()" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-md">Simpan URL</button>
                         </div>
-                        <div class="flex gap-2 pt-2">
+                        <div class="flex flex-wrap gap-2 pt-2">
                             <button onclick="syncToGoogleSheets()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md flex items-center gap-1.5">
                                 <i data-lucide="cloud-upload" class="w-4 h-4"></i> Kirim Data ke Sheets
                             </button>
-                            <button onclick="syncFromGoogleSheets()" class="px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white font-bold text-xs rounded-xl shadow-md flex items-center gap-1.5">
+                            <button onclick="syncFromGoogleSheets(true)" class="px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white font-bold text-xs rounded-xl shadow-md flex items-center gap-1.5">
                                 <i data-lucide="cloud-download" class="w-4 h-4"></i> Ambil Data dari Sheets
                             </button>
                         </div>
@@ -369,21 +481,19 @@
         </main>
     </div>
 
-    <!-- MODAL DETAIL / RANGKUMAN TANGGAL DI KLIK -->
+    <!-- MODAL DETAIL TANGGAL -->
     <div id="modalDateDetail" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl max-w-sm w-full p-5 shadow-2xl text-xs space-y-4 my-auto">
             <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-3">
                 <h3 id="dateDetailTitle" class="text-sm font-bold text-slate-900 dark:text-white">Rangkuman Tanggal</h3>
                 <button onclick="closeDateDetailModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
-            <div id="dateDetailContent" class="space-y-2 max-h-60 overflow-y-auto custom-scrollbar">
-                <!-- Rangkuman agenda & tugas -->
-            </div>
+            <div id="dateDetailContent" class="space-y-2 max-h-60 overflow-y-auto custom-scrollbar"></div>
             <button onclick="closeDateDetailModal()" class="w-full py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 rounded-xl font-bold">Tutup</button>
         </div>
     </div>
 
-    <!-- MODALS -->
+    <!-- MODALS NOTULENSI & TANDA TANGAN -->
     <div id="modalSetupManualSign" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl text-xs space-y-4 my-auto">
             <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-3">
@@ -479,7 +589,7 @@
                     <div><label class="font-semibold block mb-1">Jam</label><input type="time" id="agendaJam" required class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"></div>
                 </div>
                 <div>
-                    <label class="font-semibold block mb-1">Durasi (Jam, misal: 1.5 atau 2)</label>
+                    <label class="font-semibold block mb-1">Durasi (Jam)</label>
                     <input type="number" step="0.1" id="agendaDurasi" placeholder="1.5" class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white">
                 </div>
                 <div>
@@ -504,8 +614,8 @@
                     <div><label class="font-semibold block mb-1">Status</label><select id="tugasStatus" class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"><option value="Belum Terkumpul">Belum Terkumpul</option><option value="Terkumpul">Terkumpul</option></select></div>
                 </div>
                 <div>
-                    <label class="font-semibold block mb-1">Rangkuman Catatan / Poin Penting</label>
-                    <textarea id="tugasCatatan" rows="3" placeholder="Catatan ringkas pengerjaan tugas..." class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white resize-none"></textarea>
+                    <label class="font-semibold block mb-1">Rangkuman Catatan</label>
+                    <textarea id="tugasCatatan" rows="3" placeholder="Catatan ringkas..." class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white resize-none"></textarea>
                 </div>
                 <div>
                     <label class="font-semibold block mb-1">File Tugas (Maks 2 MB)</label>
@@ -525,7 +635,7 @@
                 <div><label class="font-semibold block mb-1">Mata Kuliah</label><input type="text" id="jadwalMatkul" required class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"></div>
                 <div class="grid grid-cols-2 gap-3">
                     <div><label class="font-semibold block mb-1">Ruangan</label><input type="text" id="jadwalRuang" required class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"></div>
-                    <div><label class="font-semibold block mb-1">Jam (07.30 - 09.00)</label><input type="text" id="jadwalJam" required class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"></div>
+                    <div><label class="font-semibold block mb-1">Jam</label><input type="text" id="jadwalJam" required class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"></div>
                 </div>
                 <div><label class="font-semibold block mb-1">Dosen Pengampu</label><input type="text" id="jadwalDosen" required class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"></div>
                 <div class="flex justify-end gap-2 pt-3"><button type="button" onclick="closeJadwalModal()" class="px-4 py-2 rounded-xl border border-slate-300">Batal</button><button type="submit" class="px-4 py-2 rounded-xl bg-cyan-600 text-white font-bold">Simpan</button></div>
@@ -548,16 +658,27 @@
 
     <!-- APP SCRIPT LOGIC -->
     <script>
-        const DB_KEY = 'MYJADWAL_DATA_FINAL_PWA_V3';
+        const DB_KEY = 'MYJADWAL_DATA_FINAL_PWA_V6';
+        const DEFAULT_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyPCZUQin6_ckdTI25a1SaYNK-j5SeD57Eo_4DovLPk/dev';
+        const VALID_USER = 'TommyBantul';
+        const VALID_PASS = 'TommyData';
+        const SHARED_WORKSPACE_ID = 'MJ-849201';
+
         let appState = {
             currentUser: null,
-            savedAccounts: [],
             agendas: [],
             tasks: [],
             notulensi: [],
             finances: [],
             schedules: [],
-            settings: { themeMode: 'dark', sheetsApiUrl: '' }
+            settings: {
+                themeMode: 'dark',
+                fontSize: 'medium',
+                alarmEnabled: true,
+                alarmVolume: 80,
+                pushNotifEnabled: true,
+                sheetsApiUrl: DEFAULT_APPS_SCRIPT_URL
+            }
         };
 
         let currentCalendarDate = new Date(); currentCalendarDate.setDate(1);
@@ -569,12 +690,21 @@
         let currentTempQrImage = null;
         let canvas, ctx, isDrawing = false;
         let deferredPrompt = null;
+        let notifiedEvents = new Set();
 
         window.onload = function() {
             lucide.createIcons();
             loadState();
+            if (!appState.settings.sheetsApiUrl) {
+                appState.settings.sheetsApiUrl = DEFAULT_APPS_SCRIPT_URL;
+            }
+            const urlInput = document.getElementById('sheetsApiUrlInput');
+            if (urlInput) urlInput.value = appState.settings.sheetsApiUrl;
+
             applyTheme();
-            startClock();
+            applyFontSize();
+            syncSettingsUI();
+            startClockAndReminders();
             initSignatureCanvas();
             registerServiceWorker();
 
@@ -585,11 +715,12 @@
                 if (installBtn) installBtn.classList.remove('hidden');
             });
 
-            if (appState.currentUser && appState.currentUser.email) {
+            if (appState.currentUser && (appState.currentUser.username || appState.currentUser.isGuest)) {
                 document.getElementById('authScreen').classList.add('hidden');
                 document.getElementById('mainApp').classList.remove('hidden');
                 setupUserUI();
                 renderAll();
+                syncFromGoogleSheets(false);
             } else {
                 document.getElementById('authScreen').classList.remove('hidden');
                 document.getElementById('mainApp').classList.add('hidden');
@@ -609,12 +740,12 @@
                 deferredPrompt.prompt();
                 deferredPrompt.userChoice.then((choiceResult) => {
                     if (choiceResult.outcome === 'accepted') {
-                        showToast("Aplikasi berhasil diinstal!", "success");
+                        showToast("Aplikasi PWA berhasil diinstal!", "success");
                     }
                     deferredPrompt = null;
                 });
             } else {
-                showToast("PWA sudah terinstal atau browser tidak mendukung.", "info");
+                showToast("PWA sudah terinstal atau gunakan menu 'Add to Home Screen'.", "info");
             }
         }
 
@@ -684,7 +815,7 @@
             document.getElementById('modalSelectSignType').classList.add('hidden');
             activeSignType = 'qr';
             document.getElementById('setupQrSignerName').value = appState.currentUser ? appState.currentUser.name : '';
-            document.getElementById('setupQrSignerID').value = appState.currentUser ? appState.currentUser.accessId : 'ID-1234';
+            document.getElementById('setupQrSignerID').value = appState.currentUser ? appState.currentUser.accessId : SHARED_WORKSPACE_ID;
             document.getElementById('modalSetupQRSign').classList.remove('hidden');
             generateDynamicQR();
         }
@@ -733,7 +864,7 @@
 
         function saveNotulensi(e) {
             e.preventDefault();
-            if (appState.currentUser && appState.currentUser.isGuest) { showToast("Akses Tamu tidak diizinkan mengubah data.", "error"); return; }
+            if (appState.currentUser && appState.currentUser.isGuest) { showToast("Akses Tamu tidak diizinkan.", "error"); return; }
             const id = document.getElementById('notulensiId').value;
             const judul = document.getElementById('notulensiJudul').value.trim();
             const tanggal = document.getElementById('notulensiTanggal').value;
@@ -755,20 +886,18 @@
         }
 
         function deleteNotulensi(id) {
-            if (appState.currentUser && appState.currentUser.isGuest) { showToast("Akses Tamu tidak diizinkan.", "error"); return; }
+            if (appState.currentUser && appState.currentUser.isGuest) return;
             if (confirm("Hapus notulensi ini?")) {
                 appState.notulensi = appState.notulensi.filter(n => n.id !== id);
                 saveState(); renderAll(); showToast("Notulensi dihapus.", "info");
             }
         }
 
-        // PDF Formal dengan Hari & Tanggal di atas "Disahkan oleh," serta Nama di bawah Tanda Tangan / QR
         function downloadDirectPDF(id) {
             const notul = appState.notulensi.find(n => n.id === id);
             if (!notul) return;
             showToast("Membuat PDF Formal...", "info");
             
-            // Format Hari & Tanggal Indonesia
             const dateObj = new Date(notul.tanggal || Date.now());
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
             const formattedDateStr = dateObj.toLocaleDateString('id-ID', options);
@@ -787,7 +916,7 @@
             pdfContainer.innerHTML = `
                 <div style="border-bottom: 3px double #000; padding-bottom: 15px; margin-bottom: 25px; text-align: center;">
                     <h2 style="margin: 0; font-size: 18px; text-transform: uppercase; font-weight: bold;">NOTULENSI RAPAT RESMI</h2>
-                    <p style="margin: 5px 0 0 0; font-size: 13px; color: #555;">MyJadwal Workspace Akademik & Organisasi</p>
+                    <p style="margin: 5px 0 0 0; font-size: 13px; color: #555;">MyJadwal PWA Workspace Akademik & Organisasi</p>
                 </div>
                 <div style="margin-bottom: 20px;">
                     <table style="width: 100%; font-size: 12px; margin-bottom: 15px;">
@@ -807,7 +936,7 @@
                 </div>
                 <div style="position: absolute; bottom: 40px; left: 40px; right: 40px; display: flex; justify-content: space-between; align-items: flex-end;">
                     <div style="font-size: 10px; font-style: italic; color: #444; max-width: 250px;">
-                        Dokumen ini asli dan terverifikasi secara digital melalui sistem MyJadwal Workspace.
+                        Dokumen ini asli dan terverifikasi secara digital oleh Tommy Pramono.
                     </div>
                     <div style="text-align: right;">
                         <p style="margin: 0 0 4px 0;">${formattedDateStr}</p>
@@ -834,29 +963,54 @@
 
         function loadState() {
             const saved = localStorage.getItem(DB_KEY);
-            if (saved) { try { appState = JSON.parse(saved); } catch(e){} }
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    appState = {
+                        ...appState,
+                        ...parsed,
+                        settings: { ...appState.settings, ...(parsed.settings || {}) }
+                    };
+                } catch(e){}
+            }
         }
-        let syncTimeout = null;
 
-        function saveState() {
+        let syncTimeout = null;
+        function saveState(skipCloud = false) {
             localStorage.setItem(DB_KEY, JSON.stringify(appState));
-            if (appState.settings && appState.settings.sheetsApiUrl) {
+            if (!skipCloud && appState.settings && appState.settings.sheetsApiUrl) {
                 clearTimeout(syncTimeout);
-                syncTimeout = setTimeout(() => { autoSyncToGoogleSheets(); }, 2000);
+                syncTimeout = setTimeout(() => { autoSyncToGoogleSheets(); }, 1200);
             }
         }
 
         async function autoSyncToGoogleSheets() {
-            const url = appState.settings.sheetsApiUrl;
+            const url = appState.settings.sheetsApiUrl || DEFAULT_APPS_SCRIPT_URL;
             if (!url) return;
+            const badge = document.getElementById('syncStatusBadge');
+            if (badge) badge.innerText = "Menyinkronkan...";
             try {
+                const payload = {
+                    action: 'saveData',
+                    workspaceId: SHARED_WORKSPACE_ID,
+                    data: {
+                        agendas: appState.agendas,
+                        tasks: appState.tasks,
+                        notulensi: appState.notulensi,
+                        finances: appState.finances,
+                        schedules: appState.schedules
+                    }
+                };
                 await fetch(url, {
                     method: 'POST',
                     mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'saveData', data: appState })
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payload)
                 });
-            } catch(err) {}
+                if (badge) badge.innerText = "Tersinkron Otomatis";
+            } catch(err) {
+                if (badge) badge.innerText = "Mode Offline (Lokal)";
+            }
         }
 
         function openAgendaModal(editId = null) {
@@ -889,12 +1043,9 @@
             if (appState.currentUser && appState.currentUser.isGuest) { showToast("Akses Tamu dibatasi.", "error"); return; }
             
             const fileInput = document.getElementById('agendaFile');
-            if (fileInput.files.length > 0) {
-                const file = fileInput.files[0];
-                if (file.size > 2 * 1024 * 1024) {
-                    showToast("Ukuran file undangan melebihi batas maksimal 2 MB!", "error");
-                    return;
-                }
+            if (fileInput.files.length > 0 && fileInput.files[0].size > 2 * 1024 * 1024) {
+                showToast("Ukuran file melebihi batas 2 MB!", "error");
+                return;
             }
 
             const id = document.getElementById('agendaId').value;
@@ -914,10 +1065,21 @@
             }
             saveState(); closeAgendaModal(); renderAll(); showToast("Agenda disimpan", "success");
         }
+
+        function quickUpdateAgenda(id, field, value) {
+            if (appState.currentUser && appState.currentUser.isGuest) { showToast("Mode Tamu tidak dapat mengubah status.", "error"); renderAgendaGrid(); return; }
+            const idx = appState.agendas.findIndex(a => a.id === id);
+            if (idx !== -1) {
+                appState.agendas[idx][field] = value;
+                saveState(); renderDashboard();
+                showToast(`Agenda diperbarui (${value})`, "success");
+            }
+        }
+
         function deleteAgenda(id) {
             if (appState.currentUser && appState.currentUser.isGuest) return;
             appState.agendas = appState.agendas.filter(a => a.id !== id);
-            saveState(); renderAll();
+            saveState(); renderAll(); showToast("Agenda dihapus", "info");
         }
 
         function openTugasModal(editId = null) {
@@ -948,12 +1110,9 @@
             if (appState.currentUser && appState.currentUser.isGuest) { showToast("Akses Tamu dibatasi.", "error"); return; }
 
             const fileInput = document.getElementById('tugasFile');
-            if (fileInput.files.length > 0) {
-                const file = fileInput.files[0];
-                if (file.size > 2 * 1024 * 1024) {
-                    showToast("Ukuran file tugas melebihi batas maksimal 2 MB!", "error");
-                    return;
-                }
+            if (fileInput.files.length > 0 && fileInput.files[0].size > 2 * 1024 * 1024) {
+                showToast("Ukuran file melebihi batas 2 MB!", "error");
+                return;
             }
 
             const id = document.getElementById('tugasId').value;
@@ -972,10 +1131,21 @@
             }
             saveState(); closeTugasModal(); renderAll(); showToast("Tugas disimpan", "success");
         }
+
+        function quickUpdateTugas(id, field, value) {
+            if (appState.currentUser && appState.currentUser.isGuest) { showToast("Mode Tamu tidak dapat mengubah status.", "error"); renderTugasGrid(); return; }
+            const idx = appState.tasks.findIndex(t => t.id === id);
+            if (idx !== -1) {
+                appState.tasks[idx][field] = value;
+                saveState(); renderDashboard();
+                showToast(`Status tugas diperbarui (${value})`, "success");
+            }
+        }
+
         function deleteTugas(id) {
             if (appState.currentUser && appState.currentUser.isGuest) return;
             appState.tasks = appState.tasks.filter(t => t.id !== id);
-            saveState(); renderAll();
+            saveState(); renderAll(); showToast("Tugas dihapus", "info");
         }
 
         function openJadwalModal(editId = null) {
@@ -985,7 +1155,7 @@
             if (editId) {
                 const s = appState.schedules.find(x => x.id === editId);
                 if (s) {
-                    document.getElementById('jadwalModalHeader').innerText = "Edit Jadwal";
+                    document.getElementById('jadwalModalHeader').innerText = "Edit Jadwal Kuliah";
                     document.getElementById('jadwalId').value = s.id;
                     document.getElementById('jadwalHari').value = s.hari;
                     document.getElementById('jadwalMatkul').value = s.matkul;
@@ -994,7 +1164,7 @@
                     document.getElementById('jadwalDosen').value = s.dosen;
                 }
             } else {
-                document.getElementById('jadwalModalHeader').innerText = "Tambah Jadwal";
+                document.getElementById('jadwalModalHeader').innerText = "Tambah Jadwal Kuliah";
             }
             document.getElementById('modalJadwal').classList.remove('hidden');
         }
@@ -1020,7 +1190,7 @@
         function deleteJadwal(id) {
             if (appState.currentUser && appState.currentUser.isGuest) return;
             appState.schedules = appState.schedules.filter(s => s.id !== id);
-            saveState(); renderAll();
+            saveState(); renderAll(); showToast("Jadwal dihapus", "info");
         }
 
         function openFinanceModal() { document.getElementById('modalFinance').classList.remove('hidden'); }
@@ -1045,42 +1215,55 @@
             const url = document.getElementById('sheetsApiUrlInput').value.trim();
             appState.settings.sheetsApiUrl = url;
             saveState();
-            showToast("URL Google Sheets berhasil disimpan!", "success");
+            showToast("URL Google Sheets disimpan!", "success");
         }
 
         async function syncToGoogleSheets() {
-            const url = appState.settings.sheetsApiUrl;
-            if (!url) { showToast("Masukkan URL Google Apps Script terlebih dahulu.", "error"); return; }
-            showToast("Mengirim data ke Google Sheets...", "info");
+            const url = appState.settings.sheetsApiUrl || DEFAULT_APPS_SCRIPT_URL;
+            if (!url) { showToast("Masukkan URL Google Apps Script.", "error"); return; }
+            showToast("Mengirim data ke Sheets...", "info");
             try {
                 await fetch(url, {
                     method: 'POST',
                     mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'saveData', data: appState })
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        action: 'saveData',
+                        workspaceId: SHARED_WORKSPACE_ID,
+                        data: {
+                            agendas: appState.agendas,
+                            tasks: appState.tasks,
+                            notulensi: appState.notulensi,
+                            finances: appState.finances,
+                            schedules: appState.schedules
+                        }
+                    })
                 });
-                showToast("Data berhasil disinkronkan ke Google Sheets!", "success");
+                showToast("Data terkirim ke Sheets!", "success");
             } catch(err) {
-                showToast("Sinkronisasi berhasil dikirim.", "success");
+                showToast("Sinkronisasi offline mode.", "success");
             }
         }
 
-        async function syncFromGoogleSheets() {
-            const url = appState.settings.sheetsApiUrl;
-            if (!url) { showToast("Masukkan URL Google Apps Script terlebih dahulu.", "error"); return; }
-            showToast("Mengambil data dari Google Sheets...", "info");
+        async function syncFromGoogleSheets(showNotification = true) {
+            const url = appState.settings.sheetsApiUrl || DEFAULT_APPS_SCRIPT_URL;
+            if (!url) return;
             try {
-                const response = await fetch(url);
+                const fetchUrl = `${url}?action=getData&workspaceId=${SHARED_WORKSPACE_ID}&t=${Date.now()}`;
+                const response = await fetch(fetchUrl);
                 const result = await response.json();
-                if (result) {
-                    appState = { ...appState, ...result };
-                    saveState();
+                const cloudData = result.data ? result.data : result;
+                if (cloudData && (cloudData.agendas || cloudData.tasks)) {
+                    appState.agendas = cloudData.agendas || appState.agendas;
+                    appState.tasks = cloudData.tasks || appState.tasks;
+                    appState.notulensi = cloudData.notulensi || appState.notulensi;
+                    appState.finances = cloudData.finances || appState.finances;
+                    appState.schedules = cloudData.schedules || appState.schedules;
+                    saveState(true);
                     renderAll();
-                    showToast("Data berhasil ditarik dari Google Sheets!", "success");
+                    if (showNotification) showToast("Data diperbarui dari Google Sheets!", "success");
                 }
-            } catch(err) {
-                showToast("Gagal mengambil data dari Google Sheets.", "error");
-            }
+            } catch(err) {}
         }
 
         function renderAll() {
@@ -1092,32 +1275,126 @@
             renderJadwalGrid();
             renderDashCalendarWidget();
             renderCalendarWidget();
-            renderDashboardShortcuts();
+            renderLiveCountdowns();
+            setupUserUI();
+            updateTodayTomorrowBadges();
             lucide.createIcons();
         }
 
         function renderDashboard() {
             const doneTasks = appState.tasks.filter(t => t.status === 'Terkumpul').length;
             const taskPct = appState.tasks.length > 0 ? Math.round((doneTasks / appState.tasks.length) * 100) : 0;
+            const pendingAgenda = appState.agendas.filter(a => a.status !== 'Terlaksana').length;
+
             if (document.getElementById('statTotalTugas')) document.getElementById('statTotalTugas').innerText = appState.tasks.length;
             if (document.getElementById('statTugasPct')) document.getElementById('statTugasPct').innerText = `${taskPct}% Terkumpul`;
             if (document.getElementById('statTotalAgenda')) document.getElementById('statTotalAgenda').innerText = appState.agendas.length;
+            if (document.getElementById('statAgendaPending')) document.getElementById('statAgendaPending').innerText = `${pendingAgenda} Belum Terlaksana`;
             if (document.getElementById('statTotalNotulensi')) document.getElementById('statTotalNotulensi').innerText = appState.notulensi.length;
             
             const income = appState.finances.filter(f => f.type === 'Pemasukan').reduce((a, b) => a + b.amount, 0);
             const expense = appState.finances.filter(f => f.type === 'Pengeluaran').reduce((a, b) => a + b.amount, 0);
-            const netIncome = income - expense;
-            if (document.getElementById('statTotalIncome')) document.getElementById('statTotalIncome').innerText = `Rp ${netIncome.toLocaleString()}`;
+            if (document.getElementById('statTotalIncome')) document.getElementById('statTotalIncome').innerText = `Rp ${(income - expense).toLocaleString()}`;
         }
 
-        // Render Kalender Interaktif di Dashboard dengan tanda agenda/tugas & klik tanggal
+        function updateTodayTomorrowBadges() {
+            const todayStr = new Date().toISOString().split('T')[0];
+            const tomorrowDate = new Date(); tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+            const tomorrowStr = tomorrowDate.toISOString().split('T')[0];
+
+            const todayAgendas = appState.agendas.filter(a => a.tanggal === todayStr).length;
+            const todayTasks = appState.tasks.filter(t => t.deadline.startsWith(todayStr)).length;
+            const tomorrowAgendas = appState.agendas.filter(a => a.tanggal === tomorrowStr).length;
+            const tomorrowTasks = appState.tasks.filter(t => t.deadline.startsWith(tomorrowStr)).length;
+
+            if (document.getElementById('badgeCountToday')) {
+                document.getElementById('badgeCountToday').innerText = `${todayAgendas} Agenda • ${todayTasks} Tugas`;
+            }
+            if (document.getElementById('badgeCountTomorrow')) {
+                document.getElementById('badgeCountTomorrow').innerText = `${tomorrowAgendas} Agenda • ${tomorrowTasks} Tugas`;
+            }
+        }
+
+        function filterAgendaByShortcut(type) {
+            const targetDate = new Date();
+            if (type === 'tomorrow') targetDate.setDate(targetDate.getDate() + 1);
+            const dateStr = targetDate.toISOString().split('T')[0];
+            openDateDetail(dateStr);
+        }
+
+        // HITUNG MUNDUR REAL-TIME (JAM, MENIT, DETIK)
+        function renderLiveCountdowns() {
+            const now = new Date();
+            
+            const pendingAgendas = appState.agendas
+                .filter(a => a.status !== 'Terlaksana' && a.tanggal && a.jam)
+                .map(a => ({ ...a, target: new Date(`${a.tanggal}T${a.jam}:00`) }))
+                .filter(a => a.target > now)
+                .sort((a, b) => a.target - b.target);
+
+            const agendaContainer = document.getElementById('dashboardCountdownAgenda');
+            if (agendaContainer) {
+                if (pendingAgendas.length === 0) {
+                    agendaContainer.innerHTML = '<p class="text-slate-400 text-center py-2">Tidak ada agenda mendatang.</p>';
+                } else {
+                    const nextAg = pendingAgendas[0];
+                    const diffMs = nextAg.target - now;
+                    const hours = Math.floor(diffMs / 3600000);
+                    const minutes = Math.floor((diffMs % 3600000) / 60000);
+                    const seconds = Math.floor((diffMs % 60000) / 1000);
+
+                    agendaContainer.innerHTML = `
+                        <div onclick="switchTab('agenda')" class="cursor-pointer p-3 bg-pink-500/10 hover:bg-pink-500/20 border border-pink-500/30 rounded-2xl space-y-2 transition">
+                            <div class="flex justify-between items-center"><b class="text-slate-900 dark:text-white">${nextAg.nama}</b><span class="text-[10px] text-pink-500 font-bold">${nextAg.tanggal}</span></div>
+                            <p class="text-[11px] text-slate-500">📍 ${nextAg.lokasi}</p>
+                            <div class="flex gap-2 pt-1 font-mono text-xs font-bold text-amber-500">
+                                <span class="bg-black/30 px-2 py-1 rounded-lg">${String(hours).padStart(2,'0')} Jam</span> : 
+                                <span class="bg-black/30 px-2 py-1 rounded-lg">${String(minutes).padStart(2,'0')} Mnt</span> : 
+                                <span class="bg-black/30 px-2 py-1 rounded-lg">${String(seconds).padStart(2,'0')} Dtk</span>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            const pendingTasks = appState.tasks
+                .filter(t => t.status !== 'Terkumpul' && t.deadline)
+                .map(t => ({ ...t, target: new Date(t.deadline) }))
+                .filter(t => t.target > now)
+                .sort((a, b) => a.target - b.target);
+
+            const taskContainer = document.getElementById('dashboardCountdownTask');
+            if (taskContainer) {
+                if (pendingTasks.length === 0) {
+                    taskContainer.innerHTML = '<p class="text-slate-400 text-center py-2">Tidak ada deadline tugas aktif.</p>';
+                } else {
+                    const nextTk = pendingTasks[0];
+                    const diffMs = nextTk.target - now;
+                    const hours = Math.floor(diffMs / 3600000);
+                    const minutes = Math.floor((diffMs % 3600000) / 60000);
+                    const seconds = Math.floor((diffMs % 60000) / 1000);
+
+                    taskContainer.innerHTML = `
+                        <div onclick="switchTab('tugas')" class="cursor-pointer p-3 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 rounded-2xl space-y-2 transition">
+                            <div class="flex justify-between items-center"><b class="text-slate-900 dark:text-white">${nextTk.nama}</b><span class="text-[10px] text-amber-500 font-bold">${nextTk.dosen}</span></div>
+                            <p class="text-[11px] text-slate-500">⏳ Deadline: ${nextTk.deadline.replace('T', ' ')}</p>
+                            <div class="flex gap-2 pt-1 font-mono text-xs font-bold text-pink-500">
+                                <span class="bg-black/30 px-2 py-1 rounded-lg">${String(hours).padStart(2,'0')} Jam</span> : 
+                                <span class="bg-black/30 px-2 py-1 rounded-lg">${String(minutes).padStart(2,'0')} Mnt</span> : 
+                                <span class="bg-black/30 px-2 py-1 rounded-lg">${String(seconds).padStart(2,'0')} Dtk</span>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+        }
+
         function renderDashCalendarWidget() {
             const grid = document.getElementById('dashCalendarGrid');
             if (!grid) return;
             grid.innerHTML = '';
             const year = dashCalendarDate.getFullYear();
             const month = dashCalendarDate.getMonth();
-            
             const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
             if (document.getElementById('dashCalendarMonthYear')) {
                 document.getElementById('dashCalendarMonthYear').innerHTML = `<i data-lucide="calendar" class="w-4 h-4 text-indigo-500"></i> Kalender Interaktif (${monthNames[month]} ${year})`;
@@ -1126,26 +1403,16 @@
             const firstDayIndex = new Date(year, month, 1).getDay();
             const totalDays = new Date(year, month + 1, 0).getDate();
 
-            for (let i = 0; i < firstDayIndex; i++) {
-                grid.innerHTML += `<div></div>`;
-            }
+            for (let i = 0; i < firstDayIndex; i++) grid.innerHTML += `<div></div>`;
 
             for (let day = 1; day <= totalDays; day++) {
-                const mmStr = String(month + 1).padStart(2, '0');
-                const ddStr = String(day).padStart(2, '0');
-                const dateStr = `${year}-${mmStr}-${ddStr}`;
-
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                 const hasAgenda = appState.agendas.some(a => a.tanggal === dateStr);
                 const hasTask = appState.tasks.some(t => t.deadline.startsWith(dateStr));
-
                 let indicatorHTML = '';
-                if (hasAgenda && hasTask) {
-                    indicatorHTML = '<div class="flex gap-0.5 mt-0.5 justify-center"><span class="w-1.5 h-1.5 rounded-full bg-pink-500"></span><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span></div>';
-                } else if (hasAgenda) {
-                    indicatorHTML = '<div class="flex justify-center mt-0.5"><span class="w-1.5 h-1.5 rounded-full bg-pink-500"></span></div>';
-                } else if (hasTask) {
-                    indicatorHTML = '<div class="flex justify-center mt-0.5"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span></div>';
-                }
+                if (hasAgenda && hasTask) indicatorHTML = '<div class="flex gap-0.5 mt-0.5 justify-center"><span class="w-1.5 h-1.5 rounded-full bg-pink-500"></span><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span></div>';
+                else if (hasAgenda) indicatorHTML = '<div class="flex justify-center mt-0.5"><span class="w-1.5 h-1.5 rounded-full bg-pink-500"></span></div>';
+                else if (hasTask) indicatorHTML = '<div class="flex justify-center mt-0.5"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span></div>';
 
                 grid.innerHTML += `
                     <div onclick="openDateDetail('${dateStr}')" class="aspect-square bg-slate-50 dark:bg-[#131d38] hover:bg-indigo-600/20 rounded-xl flex flex-col items-center justify-center text-[11px] font-bold text-slate-700 dark:text-slate-200 cursor-pointer shadow-sm border border-slate-200 dark:border-slate-800 transition">
@@ -1157,19 +1424,14 @@
             lucide.createIcons();
         }
 
-        function changeDashMonth(dir) {
-            dashCalendarDate.setMonth(dashCalendarDate.getMonth() + dir);
-            renderDashCalendarWidget();
-        }
+        function changeDashMonth(dir) { dashCalendarDate.setMonth(dashCalendarDate.getMonth() + dir); renderDashCalendarWidget(); }
 
         function openDateDetail(dateStr) {
             const titleEl = document.getElementById('dateDetailTitle');
             const contentEl = document.getElementById('dateDetailContent');
             if (!titleEl || !contentEl) return;
-
             titleEl.innerText = `Rangkuman Tanggal: ${dateStr}`;
             contentEl.innerHTML = '';
-
             const agendas = appState.agendas.filter(a => a.tanggal === dateStr);
             const tasks = appState.tasks.filter(t => t.deadline.startsWith(dateStr));
 
@@ -1185,71 +1447,32 @@
             }
             document.getElementById('modalDateDetail').classList.remove('hidden');
         }
-
-        function closeDateDetailModal() {
-            document.getElementById('modalDateDetail').classList.add('hidden');
-        }
-
-        // Render Pintasan Hari Ini & Besok serta Countdown Terdekat
-        function renderDashboardShortcuts() {
-            const todayEl = document.getElementById('dashboardTodayShortcuts');
-            const tomorrowEl = document.getElementById('dashboardTomorrowShortcuts');
-            
-            const now = new Date();
-            const todayStr = now.toISOString().split('T')[0];
-            
-            const tomorrow = new Date(now);
-            tomorrow.setDate(now.getDate() + 1);
-            const tomorrowStr = tomorrow.toISOString().split('T')[0];
-
-            const todayAgendas = appState.agendas.filter(a => a.tanggal === todayStr);
-            const todayTasks = appState.tasks.filter(t => t.deadline.startsWith(todayStr));
-
-            const tomorrowAgendas = appState.agendas.filter(a => a.tanggal === tomorrowStr);
-            const tomorrowTasks = appState.tasks.filter(t => t.deadline.startsWith(tomorrowStr));
-
-            if (todayEl) {
-                if (todayAgendas.length === 0 && todayTasks.length === 0) {
-                    todayEl.innerHTML = '<p class="text-slate-400 text-center py-2">Tidak ada agenda atau tugas hari ini.</p>';
-                } else {
-                    todayEl.innerHTML = '';
-                    todayAgendas.forEach(a => {
-                        todayEl.innerHTML += `<div class="p-2.5 bg-slate-50 dark:bg-[#131d38] rounded-xl flex justify-between items-center"><span>📌 <b>[Agenda]</b> ${a.nama} (${a.jam})</span><span class="text-pink-500 font-bold">${a.status}</span></div>`;
-                    });
-                    todayTasks.forEach(t => {
-                        todayEl.innerHTML += `<div class="p-2.5 bg-slate-50 dark:bg-[#131d38] rounded-xl flex justify-between items-center"><span>⏳ <b>[Tugas]</b> ${t.nama}</span><span class="text-amber-500 font-bold">${t.status}</span></div>`;
-                    });
-                }
-            }
-
-            if (tomorrowEl) {
-                if (tomorrowAgendas.length === 0 && tomorrowTasks.length === 0) {
-                    tomorrowEl.innerHTML = '<p class="text-slate-400 text-center py-2">Tidak ada agenda atau tugas besok.</p>';
-                } else {
-                    tomorrowEl.innerHTML = '';
-                    tomorrowAgendas.forEach(a => {
-                        tomorrowEl.innerHTML += `<div class="p-2.5 bg-slate-50 dark:bg-[#131d38] rounded-xl flex justify-between items-center"><span>📌 <b>[Agenda]</b> ${a.nama} (${a.jam})</span><span class="text-pink-500 font-bold">${a.status}</span></div>`;
-                    });
-                    tomorrowTasks.forEach(t => {
-                        tomorrowEl.innerHTML += `<div class="p-2.5 bg-slate-50 dark:bg-[#131d38] rounded-xl flex justify-between items-center"><span>⏳ <b>[Tugas]</b> ${t.nama}</span><span class="text-amber-500 font-bold">${t.status}</span></div>`;
-                    });
-                }
-            }
-        }
+        function closeDateDetailModal() { document.getElementById('modalDateDetail').classList.add('hidden'); }
 
         function renderAgendaGrid() {
             const grid = document.getElementById('agendaGrid');
             if (!grid) return;
             grid.innerHTML = '';
+            const isGuest = appState.currentUser && appState.currentUser.isGuest;
             appState.agendas.forEach(a => {
                 grid.innerHTML += `
-                    <div class="bg-white dark:bg-[#0f172a] p-4 rounded-3xl border border-pink-200 dark:border-pink-950/50 space-y-2 shadow-sm">
-                        <div class="flex justify-between items-center"><span class="text-[10px] font-bold text-pink-500 bg-pink-50 dark:bg-pink-950 px-2 py-0.5 rounded">${a.kriteria}</span><span class="text-[11px] text-slate-400 font-mono">Durasi: ${a.durasi || 1} jam</span></div>
+                    <div class="app-card bg-white dark:bg-[#0f172a] p-4 rounded-3xl border border-pink-500/30 space-y-3 shadow-sm">
+                        <div class="flex justify-between items-center gap-2 flex-wrap">
+                            <select ${isGuest ? 'disabled' : ''} onchange="quickUpdateAgenda('${a.id}', 'kriteria', this.value)" class="text-[11px] font-bold text-pink-600 dark:text-pink-400 bg-pink-500/15 border border-pink-500/30 px-2.5 py-1 rounded-xl outline-none cursor-pointer">
+                                <option value="Umum" ${a.kriteria === 'Umum' ? 'selected' : ''}>Kriteria: Umum</option>
+                                <option value="Khusus" ${a.kriteria === 'Khusus' ? 'selected' : ''}>Kriteria: Khusus</option>
+                                <option value="Tugas" ${a.kriteria === 'Tugas' ? 'selected' : ''}>Kriteria: Tugas</option>
+                            </select>
+                            <select ${isGuest ? 'disabled' : ''} onchange="quickUpdateAgenda('${a.id}', 'status', this.value)" class="text-[11px] font-bold ${a.status === 'Terlaksana' ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-500/15 border-emerald-500/30' : 'text-amber-600 dark:text-amber-400 bg-amber-500/15 border-amber-500/30'} border px-2.5 py-1 rounded-xl outline-none cursor-pointer">
+                                <option value="Belum Terlaksana" ${a.status === 'Belum Terlaksana' ? 'selected' : ''}>Belum Terlaksana</option>
+                                <option value="Terlaksana" ${a.status === 'Terlaksana' ? 'selected' : ''}>Terlaksana</option>
+                            </select>
+                        </div>
                         <h4 class="font-bold text-slate-900 dark:text-white text-sm">${a.nama}</h4>
-                        <p class="text-xs text-slate-500">📍 ${a.lokasi} | 📅 ${a.tanggal} ${a.jam}</p>
-                        <div class="flex justify-end gap-2 pt-2 guest-hide">
-                            <button onclick="openAgendaModal('${a.id}')" class="text-pink-600 font-bold text-xs">Edit</button>
-                            <button onclick="deleteAgenda('${a.id}')" class="text-red-500 font-bold text-xs">Hapus</button>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">📍 ${a.lokasi} | 📅 ${a.tanggal} ${a.jam}</p>
+                        <div class="flex justify-end gap-3 pt-2 border-t border-slate-200 dark:border-slate-800 guest-hide">
+                            <button onclick="openAgendaModal('${a.id}')" class="text-pink-600 dark:text-pink-400 font-bold text-xs">Edit</button>
+                            <button onclick="deleteAgenda('${a.id}')" class="text-rose-500 font-bold text-xs">Hapus</button>
                         </div>
                     </div>
                 `;
@@ -1260,16 +1483,27 @@
             const grid = document.getElementById('tugasGrid');
             if (!grid) return;
             grid.innerHTML = '';
+            const isGuest = appState.currentUser && appState.currentUser.isGuest;
             appState.tasks.forEach(t => {
                 grid.innerHTML += `
-                    <div class="bg-white dark:bg-[#0f172a] p-4 rounded-3xl border border-amber-200 dark:border-amber-950/50 space-y-2 shadow-sm">
-                        <span class="text-[10px] font-bold text-amber-500 bg-amber-50 dark:bg-amber-950 px-2 py-0.5 rounded">${t.status}</span>
+                    <div class="app-card bg-white dark:bg-[#0f172a] p-4 rounded-3xl border border-amber-500/30 space-y-3 shadow-sm">
+                        <div class="flex justify-between items-center gap-2 flex-wrap">
+                            <select ${isGuest ? 'disabled' : ''} onchange="quickUpdateTugas('${t.id}', 'pengerjaan', this.value)" class="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-500/15 border border-indigo-500/30 px-2.5 py-1 rounded-xl outline-none cursor-pointer">
+                                <option value="Belum dikerjakan" ${t.pengerjaan === 'Belum dikerjakan' ? 'selected' : ''}>Belum dikerjakan</option>
+                                <option value="Dalam proses" ${t.pengerjaan === 'Dalam proses' ? 'selected' : ''}>Dalam proses</option>
+                                <option value="Selesai" ${t.pengerjaan === 'Selesai' ? 'selected' : ''}>Selesai</option>
+                            </select>
+                            <select ${isGuest ? 'disabled' : ''} onchange="quickUpdateTugas('${t.id}', 'status', this.value)" class="text-[11px] font-bold ${t.status === 'Terkumpul' ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-500/15 border-emerald-500/30' : 'text-rose-600 dark:text-rose-400 bg-rose-500/15 border-rose-500/30'} border px-2.5 py-1 rounded-xl outline-none cursor-pointer">
+                                <option value="Belum Terkumpul" ${t.status === 'Belum Terkumpul' ? 'selected' : ''}>Belum Terkumpul</option>
+                                <option value="Terkumpul" ${t.status === 'Terkumpul' ? 'selected' : ''}>Terkumpul</option>
+                            </select>
+                        </div>
                         <h4 class="font-bold text-slate-900 dark:text-white text-sm">${t.nama}</h4>
-                        <p class="text-xs text-slate-500">Dosen: ${t.dosen} | Deadline: ${t.deadline.replace('T', ' ')}</p>
-                        ${t.catatan ? `<div class="p-2 bg-slate-50 dark:bg-[#131d38] rounded-xl text-[11px] text-slate-400"><b>Catatan:</b> ${t.catatan}</div>` : ''}
-                        <div class="flex justify-end gap-2 pt-2 guest-hide">
-                            <button onclick="openTugasModal('${t.id}')" class="text-amber-600 font-bold text-xs">Edit</button>
-                            <button onclick="deleteTugas('${t.id}')" class="text-red-500 font-bold text-xs">Hapus</button>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Dosen: ${t.dosen} | Deadline: ${t.deadline.replace('T', ' ')}</p>
+                        ${t.catatan ? `<div class="p-2 bg-slate-50 dark:bg-[#131d38] rounded-xl text-[11px] text-slate-500"><b>Catatan:</b> ${t.catatan}</div>` : ''}
+                        <div class="flex justify-end gap-3 pt-2 border-t border-slate-200 dark:border-slate-800 guest-hide">
+                            <button onclick="openTugasModal('${t.id}')" class="text-amber-600 dark:text-amber-400 font-bold text-xs">Edit</button>
+                            <button onclick="deleteTugas('${t.id}')" class="text-rose-500 font-bold text-xs">Hapus</button>
                         </div>
                     </div>
                 `;
@@ -1282,14 +1516,14 @@
             grid.innerHTML = '';
             appState.notulensi.forEach(n => {
                 grid.innerHTML += `
-                    <div class="bg-white dark:bg-[#0f172a] p-4 rounded-3xl border border-indigo-200 dark:border-indigo-950/50 space-y-2 shadow-sm">
+                    <div class="app-card bg-white dark:bg-[#0f172a] p-4 rounded-3xl border border-indigo-500/30 space-y-2 shadow-sm">
                         <h4 class="font-bold text-slate-900 dark:text-white text-sm">${n.judul}</h4>
                         <p class="text-xs text-slate-500">Tanggal: ${n.tanggal}</p>
                         <div class="flex justify-between items-center pt-2">
                             <button onclick="downloadDirectPDF('${n.id}')" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-md">Unduh PDF Formal</button>
-                            <div class="guest-hide flex gap-2">
+                            <div class="guest-hide flex gap-3">
                                 <button onclick="openNotulensiFormModal('${n.id}')" class="text-indigo-600 text-xs font-bold">Edit</button>
-                                <button onclick="deleteNotulensi('${n.id}')" class="text-red-500 text-xs font-bold">Hapus</button>
+                                <button onclick="deleteNotulensi('${n.id}')" class="text-rose-500 text-xs font-bold">Hapus</button>
                             </div>
                         </div>
                     </div>
@@ -1304,9 +1538,21 @@
             ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'].forEach(d => {
                 let html = '';
                 appState.schedules.filter(s => s.hari === d).forEach(s => {
-                    html += `<div class="p-2 bg-slate-50 dark:bg-[#131d38] rounded-xl text-xs space-y-1"><b>${s.matkul}</b> (${s.jam})<br>Ruang: ${s.ruang}</div>`;
+                    html += `
+                        <div class="p-3 bg-slate-50 dark:bg-[#131d38] rounded-2xl text-xs space-y-1.5 border border-cyan-500/20">
+                            <div class="flex justify-between items-start gap-2">
+                                <b class="text-slate-900 dark:text-white">${s.matkul}</b>
+                                <span class="text-[10px] font-mono font-bold text-cyan-600 dark:text-cyan-400 shrink-0">${s.jam}</span>
+                            </div>
+                            <p class="text-[11px] text-slate-500">Ruang: ${s.ruang} • ${s.dosen}</p>
+                            <div class="flex justify-end gap-3 pt-1 guest-hide">
+                                <button onclick="openJadwalModal('${s.id}')" class="text-cyan-600 font-bold text-[11px]">Edit</button>
+                                <button onclick="deleteJadwal('${s.id}')" class="text-rose-500 font-bold text-[11px]">Hapus</button>
+                            </div>
+                        </div>
+                    `;
                 });
-                grid.innerHTML += `<div class="bg-white dark:bg-[#0f172a] p-4 rounded-3xl border border-cyan-200 space-y-2"><h4 class="font-bold text-cyan-500">${d}</h4>${html || '<p class="text-xs text-slate-400">Libur</p>'}</div>`;
+                grid.innerHTML += `<div class="app-card bg-white dark:bg-[#0f172a] p-4 rounded-3xl border border-cyan-500/30 space-y-2.5"><h4 class="font-bold text-cyan-600">${d}</h4>${html || '<p class="text-xs text-slate-400">Tidak ada jadwal</p>'}</div>`;
             });
         }
 
@@ -1317,11 +1563,11 @@
             appState.finances.forEach(f => {
                 tbody.innerHTML += `
                     <tr>
-                        <td class="py-2">${f.date}</td>
-                        <td class="py-2 font-semibold">${f.desc}</td>
-                        <td class="py-2"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${f.type === 'Pemasukan' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}">${f.type}</span></td>
-                        <td class="py-2 text-right font-bold ${f.type === 'Pemasukan' ? 'text-emerald-500' : 'text-rose-500'}">Rp ${f.amount.toLocaleString()}</td>
-                        <td class="py-2 text-center action-col"><button onclick="deleteFinance('${f.id}')" class="text-red-500 guest-hide font-semibold text-xs">Hapus</button></td>
+                        <td class="py-2.5">${f.date}</td>
+                        <td class="py-2.5 font-semibold">${f.desc}</td>
+                        <td class="py-2.5"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${f.type === 'Pemasukan' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}">${f.type}</span></td>
+                        <td class="py-2.5 text-right font-bold ${f.type === 'Pemasukan' ? 'text-emerald-500' : 'text-rose-500'}">Rp ${f.amount.toLocaleString()}</td>
+                        <td class="py-2.5 text-center action-col"><button onclick="deleteFinance('${f.id}')" class="text-rose-500 guest-hide font-semibold text-xs">Hapus</button></td>
                     </tr>
                 `;
             });
@@ -1333,35 +1579,22 @@
             grid.innerHTML = '';
             const year = currentCalendarDate.getFullYear();
             const month = currentCalendarDate.getMonth();
-            
             const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-            if (document.getElementById('calendarFullMonthYear')) {
-                document.getElementById('calendarFullMonthYear').innerText = `${monthNames[month]} ${year}`;
-            }
+            if (document.getElementById('calendarFullMonthYear')) document.getElementById('calendarFullMonthYear').innerText = `${monthNames[month]} ${year}`;
 
             const firstDayIndex = new Date(year, month, 1).getDay();
             const totalDays = new Date(year, month + 1, 0).getDate();
 
-            for (let i = 0; i < firstDayIndex; i++) {
-                grid.innerHTML += `<div></div>`;
-            }
+            for (let i = 0; i < firstDayIndex; i++) grid.innerHTML += `<div></div>`;
 
             for (let day = 1; day <= totalDays; day++) {
-                const mmStr = String(month + 1).padStart(2, '0');
-                const ddStr = String(day).padStart(2, '0');
-                const dateStr = `${year}-${mmStr}-${ddStr}`;
-
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                 const hasAgenda = appState.agendas.some(a => a.tanggal === dateStr);
                 const hasTask = appState.tasks.some(t => t.deadline.startsWith(dateStr));
-
                 let indicatorHTML = '';
-                if (hasAgenda && hasTask) {
-                    indicatorHTML = '<div class="flex gap-0.5 mt-1 justify-center"><span class="w-1.5 h-1.5 rounded-full bg-pink-500"></span><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span></div>';
-                } else if (hasAgenda) {
-                    indicatorHTML = '<div class="flex justify-center mt-1"><span class="w-1.5 h-1.5 rounded-full bg-pink-500"></span></div>';
-                } else if (hasTask) {
-                    indicatorHTML = '<div class="flex justify-center mt-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span></div>';
-                }
+                if (hasAgenda && hasTask) indicatorHTML = '<div class="flex gap-0.5 mt-1 justify-center"><span class="w-1.5 h-1.5 rounded-full bg-pink-500"></span><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span></div>';
+                else if (hasAgenda) indicatorHTML = '<div class="flex justify-center mt-1"><span class="w-1.5 h-1.5 rounded-full bg-pink-500"></span></div>';
+                else if (hasTask) indicatorHTML = '<div class="flex justify-center mt-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span></div>';
 
                 grid.innerHTML += `
                     <div onclick="openDateDetail('${dateStr}')" class="aspect-square bg-slate-50 dark:bg-[#131d38] hover:bg-indigo-600/20 rounded-2xl flex flex-col items-center justify-center text-xs font-bold text-slate-700 dark:text-slate-200 cursor-pointer shadow-sm border border-slate-200 dark:border-slate-800 transition">
@@ -1371,34 +1604,21 @@
                 `;
             }
         }
-
         function renderFullCalendar() { renderCalendarWidget(); }
         function changeMonth(dir) { currentCalendarDate.setMonth(currentCalendarDate.getMonth() + dir); renderCalendarWidget(); }
 
-        function openGoogleAccountChooser() {
-            const list = document.getElementById('googleAccountsList');
-            list.innerHTML = appState.savedAccounts.length === 0 ? '<div class="p-2 text-slate-500 text-center">Belum ada akun tersimpan. Masukkan email di bawah.</div>' : '';
-            appState.savedAccounts.forEach(acc => {
-                list.innerHTML += `<button onclick="selectAccount('${acc.email}')" class="w-full p-2 bg-slate-50 dark:bg-[#131d38] hover:bg-slate-100 rounded-xl text-left font-medium">${acc.name} (${acc.email})</button>`;
-            });
-            document.getElementById('modalGoogleChooser').classList.remove('hidden');
-        }
-        function closeGoogleChooser() { document.getElementById('modalGoogleChooser').classList.add('hidden'); }
-        function selectAccount(email) {
-            const acc = appState.savedAccounts.find(a => a.email === email);
-            if (acc) { appState.currentUser = { ...acc, isGuest: false }; saveState(); closeGoogleChooser(); initAppAfterLogin(); }
-        }
-        function handleNewGoogleLogin(e) {
+        function handleCredentialLogin(e) {
             e.preventDefault();
-            const email = document.getElementById('customGoogleEmail').value.trim();
-            if (!email) return;
-            let acc = appState.savedAccounts.find(a => a.email.toLowerCase() === email.toLowerCase());
-            if (!acc) {
-                acc = { name: email.split('@')[0], email: email, accessId: 'MJ-' + Math.floor(100000 + Math.random() * 900000) };
-                appState.savedAccounts.push(acc);
+            const userInput = document.getElementById('loginUsername').value.trim();
+            const passInput = document.getElementById('loginPassword').value.trim();
+
+            if (userInput === VALID_USER && passInput === VALID_PASS) {
+                appState.currentUser = { name: VALID_USER, username: VALID_USER, email: `${VALID_USER}@myjadwal.app`, accessId: SHARED_WORKSPACE_ID, isGuest: false };
+                saveState(true); initAppAfterLogin(); syncFromGoogleSheets(false);
+                showToast(`Selamat datang kembali, ${VALID_USER}!`, "success");
+            } else {
+                showToast("Username atau Password salah!", "error");
             }
-            appState.currentUser = { ...acc, isGuest: false };
-            saveState(); closeGoogleChooser(); initAppAfterLogin();
         }
 
         function openGuestLoginModal() { document.getElementById('modalGuestLogin').classList.remove('hidden'); }
@@ -1407,8 +1627,9 @@
             e.preventDefault();
             const inputId = document.getElementById('guestInputUniqueId').value.trim().toUpperCase();
             appState.currentUser = { name: "Tamu", email: "guest@myjadwal.com", accessId: inputId, isGuest: true };
-            saveState(); closeGuestLoginModal(); initAppAfterLogin();
-            showToast("Berhasil masuk sebagai Tamu (Hanya Lihat)", "success");
+            saveState(true); closeGuestLoginModal(); initAppAfterLogin();
+            syncFromGoogleSheets(false);
+            showToast("Berhasil masuk sebagai Tamu", "success");
         }
 
         function initAppAfterLogin() {
@@ -1418,7 +1639,7 @@
         }
 
         function logout() {
-            appState.currentUser = null; saveState();
+            appState.currentUser = null; saveState(true);
             document.getElementById('mainApp').classList.add('hidden');
             document.getElementById('authScreen').classList.remove('hidden');
             showToast("Berhasil keluar akun.", "info");
@@ -1428,31 +1649,185 @@
             const user = appState.currentUser;
             if (!user) return;
             if (document.getElementById('dashUserName')) document.getElementById('dashUserName').innerText = user.name;
-            if (document.getElementById('dashUserEmail')) document.getElementById('dashUserEmail').innerText = user.email;
-            if (document.getElementById('dashUserInitial')) document.getElementById('dashUserInitial').innerText = user.name.charAt(0).toUpperCase();
-            if (document.getElementById('dashAccessID')) document.getElementById('dashAccessID').innerText = user.accessId || 'MJ-849201';
-
-            if (user.isGuest) {
-                document.querySelectorAll('.guest-hide').forEach(el => el.style.display = 'none');
-                document.querySelectorAll('button[onclick*="open"]').forEach(btn => {
-                    if(btn.id.includes('Btn') && !btn.id.includes('Install')) btn.style.display = 'none';
-                });
-            }
+            if (document.getElementById('dashUserEmail')) document.getElementById('dashUserEmail').innerText = user.isGuest ? "Mode Tamu" : `@${user.username}`;
+            if (document.getElementById('dashAccessID')) document.getElementById('dashAccessID').innerText = user.accessId || SHARED_WORKSPACE_ID;
+            document.querySelectorAll('.guest-hide').forEach(el => el.style.display = user.isGuest ? 'none' : '');
         }
 
         function copyAccessID() {
             navigator.clipboard.writeText(document.getElementById('dashAccessID').innerText).then(() => showToast("ID Akses disalin!", "success"));
         }
 
-        function toggleAppTheme() {
-            appState.settings.themeMode = (appState.settings.themeMode === 'dark') ? 'light' : 'dark';
-            saveState(); applyTheme();
+        // TEMA DENGAN NEON VIBRANCE YANG SANGAT BERBEDA
+        function cycleAppTheme() {
+            const modes = ['dark', 'light', 'neon'];
+            const nextMode = modes[(modes.indexOf(appState.settings.themeMode || 'dark') + 1) % modes.length];
+            setThemeMode(nextMode);
         }
+
+        function setThemeMode(mode) {
+            appState.settings.themeMode = mode;
+            saveState(true); applyTheme(); syncSettingsUI();
+            showToast(`Tema PWA: ${mode.toUpperCase()}`, "info");
+        }
+
         function applyTheme() {
-            if (appState.settings.themeMode === 'dark') {
-                document.documentElement.classList.add('dark');
+            const mode = appState.settings.themeMode || 'dark';
+            const body = document.getElementById('appBody');
+            const html = document.documentElement;
+
+            if (mode === 'light') {
+                html.classList.remove('dark');
+                body.className = "bg-gradient-to-br from-slate-100 via-indigo-50 to-pink-50 text-slate-900 min-h-screen flex flex-col transition-colors duration-300";
+            } else if (mode === 'neon') {
+                html.classList.add('dark');
+                // Neon Vibrance: Ungu violet pekat dengan aksen border menyala magenta & cyan terang
+                body.className = "bg-gradient-to-br from-[#0a001a] via-[#1b003a] to-[#02182b] text-cyan-200 min-h-screen flex flex-col transition-colors duration-300";
             } else {
-                document.documentElement.classList.remove('dark');
+                html.classList.add('dark');
+                body.className = "bg-gradient-to-br from-[#070b19] via-[#0f172a] to-[#1e1b4b] text-slate-100 min-h-screen flex flex-col transition-colors duration-300";
+            }
+        }
+
+        function setFontSize(size) {
+            appState.settings.fontSize = size;
+            saveState(true); applyFontSize(); syncSettingsUI();
+            showToast(`Ukuran font: ${size}`, "info");
+        }
+
+        function applyFontSize() {
+            const size = appState.settings.fontSize || 'medium';
+            const root = document.documentElement;
+            root.style.fontSize = size === 'small' ? '14px' : (size === 'large' ? '18px' : '16px');
+        }
+
+        function syncSettingsUI() {
+            const mode = appState.settings.themeMode || 'dark';
+            const size = appState.settings.fontSize || 'medium';
+
+            ['dark', 'light', 'neon'].forEach(m => {
+                const btn = document.getElementById(`btnTheme${m.charAt(0).toUpperCase() + m.slice(1)}`);
+                if (btn) btn.className = m === mode ? "py-2 px-3 rounded-xl text-xs font-bold border border-pink-500 bg-pink-600 text-white shadow" : "py-2 px-3 rounded-xl text-xs font-bold border border-slate-700 text-slate-300";
+            });
+
+            ['small', 'medium', 'large'].forEach(s => {
+                const btn = document.getElementById(`btnFont${s.charAt(0).toUpperCase() + s.slice(1)}`);
+                if (btn) btn.className = s === size ? "py-2 px-3 rounded-xl text-xs font-bold border border-cyan-500 bg-cyan-600 text-white shadow" : "py-2 px-3 rounded-xl text-xs font-bold border border-slate-700 text-slate-300";
+            });
+
+            if (document.getElementById('alarmEnabledToggle')) document.getElementById('alarmEnabledToggle').checked = appState.settings.alarmEnabled !== false;
+            if (document.getElementById('alarmVolumeSlider')) document.getElementById('alarmVolumeSlider').value = appState.settings.alarmVolume ?? 80;
+            if (document.getElementById('alarmVolumeLabel')) document.getElementById('alarmVolumeLabel').innerText = `${appState.settings.alarmVolume ?? 80}%`;
+            
+            updateNotifPermissionBadgeUI();
+        }
+
+        function updateNotifPermissionBadgeUI() {
+            const badge = document.getElementById('notifPermissionStatusBadge');
+            const toggleBtn = document.getElementById('btnTogglePushStatus');
+            if (!badge || !toggleBtn) return;
+
+            if (!("Notification" in window)) {
+                badge.innerText = "Tidak Didukung";
+                badge.className = "text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-500";
+                return;
+            }
+
+            if (Notification.permission === "granted") {
+                if (appState.settings.pushNotifEnabled !== false) {
+                    badge.innerText = "Aktif (Diizinkan)";
+                    badge.className = "text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-500";
+                    toggleBtn.innerText = "Nonaktifkan";
+                    toggleBtn.className = "py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl transition flex items-center justify-center gap-1 shadow-md";
+                } else {
+                    badge.innerText = "Dinonaktifkan";
+                    badge.className = "text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-500";
+                    toggleBtn.innerText = "Aktifkan Kembali";
+                    toggleBtn.className = "py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition flex items-center justify-center gap-1 shadow-md";
+                }
+            } else {
+                badge.innerText = "Belum Diizinkan";
+                badge.className = "text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-500";
+                toggleBtn.innerText = "Status Nonaktif";
+            }
+        }
+
+        function requestBrowserNotificationPermission() {
+            if (!("Notification" in window)) {
+                showToast("Browser tidak mendukung push notification.", "error");
+                return;
+            }
+            Notification.requestPermission().then(permission => {
+                if (permission === "granted") {
+                    appState.settings.pushNotifEnabled = true;
+                    saveState(true);
+                    updateNotifPermissionBadgeUI();
+                    showToast("Izin notifikasi berhasil diberikan!", "success");
+                    sendSystemNotification("MyJadwal PWA", "Notifikasi latar belakang diaktifkan.");
+                } else {
+                    showToast("Izin notifikasi ditolak oleh browser.", "error");
+                    updateNotifPermissionBadgeUI();
+                }
+            });
+        }
+
+        function togglePushNotificationStatus() {
+            if (!("Notification" in window)) return;
+            if (Notification.permission !== "granted") {
+                requestBrowserNotificationPermission();
+                return;
+            }
+            appState.settings.pushNotifEnabled = !appState.settings.pushNotifEnabled;
+            saveState(true);
+            updateNotifPermissionBadgeUI();
+            if (appState.settings.pushNotifEnabled) {
+                showToast("Notifikasi PWA diaktifkan.", "success");
+            } else {
+                showToast("Notifikasi PWA dinonaktifkan.", "info");
+            }
+        }
+
+        function toggleAlarmSetting() {
+            appState.settings.alarmEnabled = document.getElementById('alarmEnabledToggle').checked;
+            saveState(true); showToast("Alarm diperbarui", "info");
+        }
+
+        function updateAlarmVolume(val) {
+            appState.settings.alarmVolume = parseInt(val, 10);
+            document.getElementById('alarmVolumeLabel').innerText = `${val}%`;
+            saveState(true);
+        }
+
+        function playAlarmSound(isTest = false) {
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                const audioCtx = new AudioCtx();
+                const vol = (appState.settings.alarmVolume ?? 80) / 100;
+                [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(freq, audioCtx.currentTime + i * 0.2);
+                    gain.gain.setValueAtTime(vol * 0.5, audioCtx.currentTime + i * 0.2);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + i * 0.2 + 0.35);
+                    osc.connect(gain); gain.connect(audioCtx.destination);
+                    osc.start(audioCtx.currentTime + i * 0.2);
+                    osc.stop(audioCtx.currentTime + i * 0.2 + 0.36);
+                });
+                if (isTest) showToast("🔊 Tes Bunyi Alarm Aktif!", "success");
+            } catch (e) {
+                if (isTest) showToast("Ketuk layar sekali agar audio PWA diizinkan.", "error");
+            }
+        }
+
+        function sendSystemNotification(title, bodyText) {
+            if (appState.settings.pushNotifEnabled === false) return;
+            if ("Notification" in window && Notification.permission === "granted") {
+                if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+                    navigator.serviceWorker.ready.then(reg => reg.showNotification(title, { body: bodyText, vibrate: [200, 100, 200] }));
+                } else {
+                    new Notification(title, { body: bodyText });
+                }
             }
         }
 
@@ -1460,19 +1835,64 @@
             document.querySelectorAll('section[id^="view-"]').forEach(sec => sec.classList.add('hidden'));
             const targetSec = document.getElementById(`view-${tabId}`);
             if (targetSec) targetSec.classList.remove('hidden');
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-gradient-to-r', 'from-pink-600', 'via-violet-600', 'to-indigo-600', 'text-white', 'font-bold', 'shadow-sm');
+                btn.classList.add('text-slate-500', 'dark:text-slate-400');
+            });
+            const activeBtn = document.getElementById(`nav-${tabId}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('text-slate-500', 'dark:text-slate-400');
+                activeBtn.classList.add('bg-gradient-to-r', 'from-pink-600', 'via-violet-600', 'to-indigo-600', 'text-white', 'font-bold', 'shadow-sm');
+            }
             if (tabId === 'kalender') renderFullCalendar();
         }
 
-        function startClock() {
-            setInterval(() => {
+        function startClockAndReminders() {
+            const daysIndo = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+            const monthsIndo = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+
+            const updateTick = () => {
                 const now = new Date();
-                const hh = String(now.getHours()).padStart(2, '0');
-                const mm = String(now.getMinutes()).padStart(2, '0');
-                const ss = String(now.getSeconds()).padStart(2, '0');
-                if (document.getElementById('realtimeClock')) {
-                    document.getElementById('realtimeClock').innerText = `${hh}.${mm}.${ss} WIB`;
+                if (document.getElementById('realtimeDayDate')) {
+                    document.getElementById('realtimeDayDate').innerText = `${daysIndo[now.getDay()]}, ${now.getDate()} ${monthsIndo[now.getMonth()]} ${now.getFullYear()}`;
                 }
-            }, 1000);
+                if (document.getElementById('realtimeClock')) {
+                    document.getElementById('realtimeClock').innerText = `${String(now.getHours()).padStart(2, '0')}.${String(now.getMinutes()).padStart(2, '0')}.${String(now.getSeconds()).padStart(2, '0')} WIB`;
+                }
+
+                renderLiveCountdowns();
+
+                if (now.getSeconds() === 0) checkUpcomingReminders(now);
+            };
+
+            updateTick();
+            setInterval(updateTick, 1000);
+        }
+
+        function checkUpcomingReminders(now) {
+            if (appState.settings.pushNotifEnabled === false) return;
+            appState.agendas.forEach(a => {
+                if (a.status === 'Terlaksana' || !a.tanggal || !a.jam) return;
+                const diffMins = Math.round((new Date(`${a.tanggal}T${a.jam}:00`) - now) / 60000);
+                if (diffMins === 30 && !notifiedEvents.has(`AG_30M_${a.id}`)) {
+                    notifiedEvents.add(`AG_30M_${a.id}`);
+                    playAlarmSound(false);
+                    showToast(`⏰ 30 Menit Lagi: Agenda "${a.nama}"`, "info");
+                    sendSystemNotification(`⏰ 30 Menit Lagi: ${a.nama}`, `Menuju ${a.lokasi}`);
+                }
+            });
+
+            appState.tasks.forEach(t => {
+                if (t.status === 'Terkumpul' || !t.deadline) return;
+                const diffMins = Math.round((new Date(t.deadline) - now) / 60000);
+                if (diffMins === 30 && !notifiedEvents.has(`TG_30M_${t.id}`)) {
+                    notifiedEvents.add(`TG_30M_${t.id}`);
+                    playAlarmSound(false);
+                    showToast(`⏰ Deadline Tugas 30 Menit Lagi!`, "error");
+                    sendSystemNotification(`⏰ Deadline 30 Menit Lagi!`, t.nama);
+                }
+            });
         }
 
         function showToast(msg, type = 'info') {
